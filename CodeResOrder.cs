@@ -70,6 +70,13 @@ namespace CSharp_sample
 			State = order.State;
 			CumQty = order.CumQty;
 		}
+
+
+
+		public DateTime GetRecvTime()
+		{
+			return DateTime.Parse(RecvTime);
+		}
 	}
 
 

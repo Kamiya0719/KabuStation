@@ -30,6 +30,7 @@ namespace CSharp_sample
 				if (execType == "20") Tools.CheckJapanInfo();
 				if (execType == "21") Tools.LowPriceCheck();
 				if (execType == "22") RequestBasic.RequestRanking();
+				if (execType == "23") Tools.OldCheck();
 			} catch (Exception e) {
 				CsvControll.ErrorLog("Exception", execType, e.Message, "");
 			}

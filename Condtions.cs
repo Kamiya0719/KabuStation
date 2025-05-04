@@ -107,7 +107,7 @@ namespace CSharp_sample
 				string[] info = codeInfo[i];
 				// 指定日<=計測日　ならスキップ
 				if (Common.NewD2(date, DateTime.Parse(info[0]))) continue;
-				// データが足りないのでアウト → todo これはそもそもこないようにするか
+				// データが足りないのでアウト
 				if (i - diffDay < 0) Common.DebugInfo("ERROR1", info[0], date.ToString(CsvControll.DFORM), i, diffDay);
 				if (Double.Parse(codeInfo[i - diffDay][4]) * ratio <= Double.Parse(info[4])) cnt--;
 				if (cnt <= 0) return true;
@@ -222,7 +222,7 @@ namespace CSharp_sample
 					benefit = Double.Parse(info[4]) / buyPrice - 1;
 					isSell = true;
 				} else {
-					// todo 損切 日経平均に応じた感じかな？模索する必要はあるな 危険度高 + 終値4％マイナスとかなら損切かしら
+					// 損切 日経平均に応じた感じかな？模索する必要はあるな 危険度高 + 終値4％マイナスとかなら損切かしら
 					// 利益最大化になるように検証かしら
 
 					// 1:373, 2:48, 3:36, 4:103
@@ -272,7 +272,7 @@ namespace CSharp_sample
 				if (isSell) {
 					int jRatio = 5 - buyJScore; // 購入時JSCORE時によって調整
 					bool isHalf = buyDate.Month % 3 == 0 && buyDate.Day >= 14;
-					int dateRatio = isHalf ? 2 : 1;// todo 購入時期によって調整
+					int dateRatio = isHalf ? 2 : 1;// 購入時期によって調整
 					havePeriodSum += havePeriod * jRatio / dateRatio;
 					benefitSum += benefit * jRatio / dateRatio;
 
@@ -359,7 +359,7 @@ namespace CSharp_sample
 					DateTime date = DateTime.Parse(japanCond3[i - j][0]);
 					jScoreRaws[j] = res.ContainsKey(date) ? res[date] : 0;
 				}
-				if (i == 2258 || i == 2259) jScoreRaws[0] /= 2; //todo なぜか2024/08/13が２個ある
+				if (i == 2258 || i == 2259) jScoreRaws[0] /= 2;
 				trueRes[DateTime.Parse(japanCond3[i][0])] = ConvertTrueJScore(jScoreRaws[0], jScoreRaws[1], jScoreRaws[2]);
 			}
 			return trueRes;
@@ -561,16 +561,16 @@ namespace CSharp_sample
 			 */
 			List<DateTime> dateList = CsvControll.GetDateList();
 			int limit = 0;
-			foreach (string symbol in CsvControll.GetCodeList()){
+			foreach (string symbol in CsvControll.GetCodeList()) {
 				List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
 				// 120
-				for(int i = 120; i < dateList.Count; i++){
+				for (int i = 120; i < dateList.Count; i++) {
 					SaveAllCondSymbol(codeInfo, symbol, dateList[i]);
 				}
 				break;
 
 				limit++;
-				if(limit > 10) {
+				if (limit > 10) {
 					break;
 				}
 			}
@@ -587,12 +587,12 @@ namespace CSharp_sample
 
 			int a = 0;
 			for (int i = 0; i < periodCntList.GetLength(0); i++) {
-				int period = periodCntList[i,0];
-				int cnt = periodCntList[i,1];
+				int period = periodCntList[i, 0];
+				int cnt = periodCntList[i, 1];
 				for (int j = 0; j < diffDayList.Length; j++) {
 					int diffDay = diffDayList[j];
 					for (int k = 0; k < ratioList.Length; k++) {
-						if(Is51Cond(codeInfo,date,period, diffDay, cnt, ratioList[k])){
+						if (Is51Cond(codeInfo, date, period, diffDay, cnt, ratioList[k])) {
 							a++;
 						}
 					}
@@ -816,7 +816,7 @@ namespace CSharp_sample
 							}
 						}
 						idx++;
-						break;// todo
+						break;
 					}
 				}
 			}

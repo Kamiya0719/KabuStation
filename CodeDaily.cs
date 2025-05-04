@@ -56,9 +56,9 @@ namespace CSharp_sample
 
 			startHave = Int32.Parse(csvInfo[5]);
 			idealSellPrice = Int32.Parse(csvInfo[6]);
-			isBuy = csvInfo[7] == "1";
+			isBuy = Boolean.Parse(csvInfo[7]);
 
-			isLossSell = csvInfo[8] == "1";
+			isLossSell = Boolean.Parse(csvInfo[8]);
 			buyPrice = Int32.Parse(csvInfo[9]);
 			lossSellPrice = Int32.Parse(csvInfo[10]);
 
@@ -67,16 +67,16 @@ namespace CSharp_sample
 
 			fisDate = Int32.Parse(csvInfo[13]);
 			type = Int32.Parse(csvInfo[14]);
-			isTodayBuy = csvInfo[15] == "1";
+			isTodayBuy = Boolean.Parse(csvInfo[15]);
 		}
 
 		public string[] GetSaveInfo()
 		{
 			return new string[16]{
 				Symbol, Exchange.ToString(), yobine.ToString(), TradingUnit.ToString(), lastEndPrice.ToString(),
-				startHave.ToString(), idealSellPrice.ToString(), isBuy?"1":"0", isLossSell ? "1" : "0",
+				startHave.ToString(), idealSellPrice.ToString(), isBuy.ToString(), isLossSell.ToString(),
 				buyPrice.ToString(), lossSellPrice.ToString(), buyNeedNum.ToString(), sellOrderNeed.ToString(),
-				fisDate.ToString(), type.ToString(), isTodayBuy?"1":"0",
+				fisDate.ToString(), type.ToString(), isTodayBuy.ToString(),
 			};
 		}
 
@@ -146,7 +146,10 @@ namespace CSharp_sample
 			if (isLossSell) return;
 
 			// todo sp系は損切はなし？やるならEveryのほうかな
-			if (type == Def.TypeSp) return;
+			if (type == Def.TypeSp) {
+
+				return;
+			}
 
 			isLossSell = true;
 			bool isHalfLoss = Common.IsLossCutDate(date, FisDate());
@@ -169,6 +172,7 @@ namespace CSharp_sample
 		 */
 
 		// #B2# 5分おきとかに取得する注文照会一覧を渡す(3,5のみとする) 旧データとIDごとに比較してどうのこうの
+		// todo #A#でも使う？
 		public void SetOrders(List<CodeResOrder> orders, int jScore, int buyBasePrice, DateTime date)
 		{
 			int buyConfirm = 0; // 今日確定分
@@ -218,6 +222,7 @@ namespace CSharp_sample
 		}
 
 		// #B4# 板情報を渡して売値あるいは買値を設定する
+		// todo #A#でも使う？
 		public void SetBoard(ResponseBoard board, int timeIdx)
 		{
 			int low = YobinePrice(board.LowPrice + yobine);
@@ -240,7 +245,7 @@ namespace CSharp_sample
 			// 売却注文必要(新規・キャンセル後) or 現在売却注文中で終値売却フラグが立っている
 			if ((sellOrderNeed > 0 || sellNowOrders.Count > 0) && isLossSell) lossSellPrice = BoardPrice(board, timeIdx, high, low, false);
 		}
-		// maxは利益最大 minは利益最小 todo 複雑だしテストしたい感あるな
+		// maxは利益最大 minは利益最小
 		private int BoardPrice(ResponseBoard board, int timeIdx, int max, int min, bool isBuy)
 		{
 			// listは値段高い順(損な順)に並ぶ (買 => 0:売1,1:買1,...,9:買9,10:買10) 売りは逆かしら
@@ -302,6 +307,7 @@ namespace CSharp_sample
 
 
 		// #B5# 注文中の中でキャンセルする必要があるやつ あったらキャンセルして今回注文はしない
+		// todo #A#でも使う？
 		public List<string> CancelOrderIds(int timeIdx)
 		{
 			List<string> res = new List<string>();
@@ -372,6 +378,7 @@ namespace CSharp_sample
 			if (type == Def.TypeSp) {
 				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + 1);
 				if (spPrice <= 5 || idealSellPrice <= 5 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
+				if(spPrice <= idealSellPrice - 4) return spPrice + 3;
 				return Math.Max(spPrice, idealSellPrice) - 1;
 			}
 			if (idealSellPrice > 0) return idealSellPrice;
@@ -387,6 +394,7 @@ namespace CSharp_sample
 		public double LastEndPrice() { return lastEndPrice; }
 		public bool IsLossSell() { return isLossSell; }
 		public DateTime FisDate() { return Common.DateParse(fisDate); }
+		public bool IsSp() { return type == Def.TypeSp; }
 
 
 		// 呼び値(値段最低単位)に応じて1,5,10,50...単位に変換

@@ -27,10 +27,10 @@ namespace CSharp_sample
 
 
 			// todo 詳細ランキング確認 ボードで確認かな
-			
+
 			Dictionary<string, Dictionary<string, string>> rankingDic = new Dictionary<string, Dictionary<string, string>>();
 			foreach (string[] tmpRank in CsvControll.GetRankingInfo()) {
-				if(!rankingDic.ContainsKey(tmpRank[0])) rankingDic[tmpRank[0]] = new Dictionary<string, string>();
+				if (!rankingDic.ContainsKey(tmpRank[0])) rankingDic[tmpRank[0]] = new Dictionary<string, string>();
 				rankingDic[tmpRank[0]][tmpRank[1]] = tmpRank[2];
 			}
 			foreach (RankingInfo rankingInfo in RequestBasic.RequestRanking()) {
@@ -43,11 +43,11 @@ namespace CSharp_sample
 			List<string[]> saveRankingInfo = new List<string[]>();
 			foreach (string symbol in rankingDic.Keys) {
 				ResponseBoard boardRes = RequestBasic.RequestBoard(Int32.Parse(symbol), 1);
-				if(boardRes.CurrentPriceTime == null) continue;
+				if (boardRes.CurrentPriceTime == null) continue;
 				DateTime date = DateTime.Parse(boardRes.CurrentPriceTime);
 				rankingDic[symbol][date.ToString("yyyy/MM/dd HH:mm")] = boardRes.ChangePreviousClosePer.ToString();
 				foreach (KeyValuePair<string, string> pair in rankingDic[symbol]) {
-					saveRankingInfo.Add(new string[3] { symbol, pair.Key, pair.Value});
+					saveRankingInfo.Add(new string[3] { symbol, pair.Key, pair.Value });
 				}
 			}
 			CsvControll.SaveRankingInfo(saveRankingInfo);

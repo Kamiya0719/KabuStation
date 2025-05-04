@@ -64,8 +64,9 @@ namespace CSharp_sample
 			MinitesExec.SaveCodeResOrder();
 
 			Tools.DataChecker();
-
 			CsvControll.Log("Interval", "DataChecker", "", "");
+			Tools.OldCheckBase(Common.GetDateByIdx(Common.GetDateIdx(setDate) - 1), posRes, Int32.Parse(CsvControll.GetBuyBasePriceInfo()[0]));
+			CsvControll.Log("Interval", "OldCheckBase", "", "");
 
 			// デイメモを保存して終了 3種使用可能金額/今日買った・売った詳細(判断材料？と金額)
 			SetDayMemo(setDate);
@@ -137,8 +138,6 @@ namespace CSharp_sample
 						}
 						CsvControll.SaveCodeInfo(symbol, new List<string[]>() { data }, true);
 
-						if (Common.Sp10(symbol)) CsvControll.SaveSpInfo(new List<string[]>() { new string[2] { symbol, Tools.IsLowPriceCheck(symbol).ToString() } }, true);
-
 						lastLastEndPrice = Double.Parse(lastEndPrice);
 						lastEndPrice = data[4];
 					} else {
@@ -146,6 +145,7 @@ namespace CSharp_sample
 					}
 				}
 
+				if (Common.Sp10(symbol)) CsvControll.SaveSpInfo(new List<string[]>() { new string[2] { symbol, Tools.IsLowPriceCheck(symbol).ToString() } }, true);
 				if (symbol == "101") continue;
 
 				// 購入・売却対象以外はここで終了(101も) プロ500か現在所持中 なら シンボル情報取得でCodeDailyの基本をセット
@@ -323,7 +323,7 @@ namespace CSharp_sample
 			List<string[]> buyOrder = new List<string[]>(); List<string[]> sellOrder = new List<string[]>();
 			foreach (KeyValuePair<string, CodeResOrder> pair in MinitesExec.GetCodeResOrders()) {
 				if (pair.Value.CumQty <= 0) continue;
-				DateTime date = DateTime.Parse(pair.Value.RecvTime);
+				DateTime date = pair.Value.GetRecvTime();
 				bool isSameD = Common.SameD(lastDate, date);
 				bool isSell = pair.Value.Side == "1";
 				double oldCumQty = oldCumQtys.ContainsKey(pair.Key) ? oldCumQtys[pair.Key] : 0;

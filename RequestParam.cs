@@ -1,10 +1,5 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Security.Policy;
-using System.Text;
-using System.Threading;
 
 namespace CSharp_sample
 {
@@ -94,7 +89,6 @@ namespace CSharp_sample
 		{
 			if (requestType == REQUEST_TYPE.TOKEN) {
 				return new {
-					// todo
 					APIPassword = isTest ? Secret.TestPass : Secret.Pass,
 				};
 			} else if (requestType == REQUEST_TYPE.SENDORDER) {
@@ -329,12 +323,14 @@ namespace CSharp_sample
 		public int Exchange; // 市場コード
 	}
 	// 詳細ランキング
-	public class ResponseRanking {
+	public class ResponseRanking
+	{
 		public int Type; // 種別
 		public string ExchangeDivision; // 市場
 		public RankingInfo[] Ranking; // ランキング
 	}
-	public class RankingInfo{
+	public class RankingInfo
+	{
 		public int No; // 順位 ※ランキング内で同じ順位が返却される場合があります（10位が2件など）
 		public string Trend; // トレンド
 		/*

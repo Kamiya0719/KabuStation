@@ -15,7 +15,7 @@ namespace CSharp_sample
 				idx++;
 			}
 			Console.WriteLine(message + " #End#");
-			CsvControll.SaveDebugInfo(new List<string[]>(){ new string[1]{ message } }, true);
+			CsvControll.SaveDebugInfo(new List<string[]>() { new string[1] { message } }, true);
 		}
 		private static string FormatObject(object o)
 		{
@@ -42,17 +42,14 @@ namespace CSharp_sample
 
 		public static int Sp10BuyPrice(string symbol)
 		{
-			//return Def.SpBuyInfo[symbol];
-
-			// todo
-			foreach(string[] info in CsvControll.GetSpInfo()){
+			foreach (string[] info in CsvControll.GetSpInfo()) {
 				if (info[0] == symbol) return Int32.Parse(info[1]);
 			}
-			CsvControll.ErrorLog("Sp10BuyPrice", symbol, "","");
+			CsvControll.ErrorLog("Sp10BuyPrice", symbol, "", "");
 			return 0;
 		}
 
-		
+
 
 
 		// 営業日休み一覧 2026年になったら順次追加
@@ -118,6 +115,11 @@ namespace CSharp_sample
 		{
 			return (d1 - d2).TotalDays <= 0;
 		}
+		/** d2のほうが新しい(つまり大きい)か同じ 秒単位での比較 */
+		public static bool NewD2Second(DateTime d1, DateTime d2)
+		{
+			return DateTime.Compare(d1, d2) <= 0;
+		}
 
 		/** yyyyMMdd をDateTimeにする */
 		public static DateTime DateParse(int date)
@@ -126,16 +128,6 @@ namespace CSharp_sample
 		}
 
 
-		/** 
-		 * 妥協理想売り trueならidealはhalfのほうにする(everydayのほうかな)
-		 * 損切確定日付 trueなら損切確定状態にする
-		 * 単体購入倍率 1 or 0.5 or 0 その銘柄を購入する金額を半分やら0やらにする
-		 * 全体購入倍率 1 or 0.5 or 0 1日最大額・週最大額・全体最大額を半分にする
-		 * 
-		 * todo 購入額は所持額と購入可能額に応じてばらけさせたいがどうじゃろ
-		 * 
-		 *  
-		 */
 
 		/** 
 		 * 日付による購入倍率 1 or 0.5 or 0 決算日7営業日前=>0も追加かな？ 
