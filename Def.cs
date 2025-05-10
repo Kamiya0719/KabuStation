@@ -4,6 +4,8 @@ namespace CSharp_sample
 {
 	class Def
 	{
+		// 代表となる銘柄 最新まであることが必須 プロ500にいなければならない
+		public const string CapitalSymbol = "1417";
 
 		// トランプモード todo 理想売りはhalfにするかな 損切はオーバーアップ時のみ(全売) 購入はオーバーダウン時のみ？
 		public const bool TranpMode = false;
@@ -16,7 +18,7 @@ namespace CSharp_sample
 
 
 		// todo Sp系の基準購入費ベタ打ち
-		public const int SpBuyBasePricew = 300000;
+		public const int SpBuyBasePricew = 200000;
 		public static readonly Dictionary<string, int> SpBuyInfo = new Dictionary<string, int>() {
 			{ "1435", 0 },
 			{ "2193", 0 },

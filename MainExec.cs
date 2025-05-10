@@ -20,7 +20,7 @@ namespace CSharp_sample
 				if (execType == "10") Condtions.SaveBuyInfo();
 				if (execType == "11") Condtions.BenefitSum();
 				if (execType == "12") Condtions.SaveJapanCond();
-				if (execType == "13") Condtions.SaveAllCond();
+				//if (execType == "13") Condtions.SaveAllCond();
 				if (execType == "14") Tools.AddNewPro500();
 				if (execType == "15") Tools.GetAllResponseSymbol();
 				if (execType == "16") Tools.CheckDateBenefitLoss();
@@ -31,6 +31,9 @@ namespace CSharp_sample
 				if (execType == "21") Tools.LowPriceCheck();
 				if (execType == "22") RequestBasic.RequestRanking();
 				if (execType == "23") Tools.OldCheck();
+				if (execType == "24") Condtions.SaveCond51All();
+				if (execType == "25") Condtions.SaveBenefitAll();
+				if (execType == "26") Condtions.CheckCond51All();
 			} catch (Exception e) {
 				CsvControll.ErrorLog("Exception", execType, e.Message, "");
 			}

@@ -8,8 +8,6 @@ namespace CSharp_sample
 	class Tools
 	{
 
-		// 代表となる銘柄 最新まであることが必須 プロ500にいなければならない
-		public const string CapitalSymbol = "1417";
 
 		/*
 		1.「全コード取得用20250204 - コピー」をポチって作成
@@ -82,7 +80,7 @@ namespace CSharp_sample
 
 			List<DateTime> dateList = new List<DateTime>();
 			foreach (KeyValuePair<string, List<string[]>> pair in list) {
-				if (pair.Key != Tools.CapitalSymbol) continue;
+				if (pair.Key != Def.CapitalSymbol) continue;
 				for (int i = pair.Value.Count - 1; i >= 0; i--) dateList.Add(DateTime.Parse(pair.Value[i][0]));
 			}
 
@@ -696,6 +694,9 @@ namespace CSharp_sample
 
 		}
 
+
+
+		
 
 
 

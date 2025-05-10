@@ -68,6 +68,8 @@ namespace CSharp_sample
 				GetCodeDailys()[pair.Key].SetIsLossSell(pair.Value, jScore, now);
 			}
 
+			CsvControll.Log("Interval", "orderCode", "", "");
+
 			Dictionary<string, List<ResponseOrders>> orderCode = new Dictionary<string, List<ResponseOrders>>();
 			foreach (KeyValuePair<string, CodeDaily> pair in GetCodeDailys()) orderCode[pair.Key] = new List<ResponseOrders>();
 
@@ -79,6 +81,8 @@ namespace CSharp_sample
 				if (!removeSymbols.Contains(order.Symbol) && (order.State == 2 || order.State == 4)) removeSymbols.Add(order.Symbol);
 			}
 			foreach (string removeSymbol in removeSymbols) orderCode.Remove(removeSymbol);
+
+			CsvControll.Log("Interval", "GetCodeResOrders", "", "");
 
 			// 購入注文か売却注文をするため、板情報を見る必要がある銘柄
 			List<string> boardChecks = new List<string>();

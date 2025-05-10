@@ -19,6 +19,188 @@ namespace CSharp_sample
 			if (type == 6) SaveJapanBaseScoreOneDay(DateTime.Parse("2025/01/14"));
 		}
 
+
+		/** 2500コード*2000日*数千パターンの51チェックを全て行って保存する */
+		public static void SaveCond51All()
+		{
+			foreach (string symbol in CsvControll.GetCodeList()) {
+				List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
+				for (int diffDayIdx = 0; diffDayIdx < diffDayList.Length; diffDayIdx++) {
+					for (int ratioIdx = 0; ratioIdx < ratioList.Length; ratioIdx++) {
+						SaveCond51(symbol, codeInfo, diffDayIdx, ratioIdx);
+					}
+				}
+				Common.DebugInfo("SaveCond51All", symbol);
+			}
+		}
+
+		private static void SaveCond51(string symbol, List<string[]> codeInfo, int diffDayIdx, int ratioIdx)
+		{
+			int diffDay = diffDayList[diffDayIdx];
+			double ratio = ratioList[ratioIdx];
+
+			Dictionary<string, bool> list = new Dictionary<string, bool>();
+			for (int i = codeInfo.Count - 1; i >= diffDay; i--) {
+				list[codeInfo[i][0]] = Double.Parse(codeInfo[i - diffDay][4]) * ratio <= Double.Parse(codeInfo[i][4]);
+			}
+
+			List<string[]> saveData = new List<string[]>();
+			for (int i = codeInfo.Count - 1; i >= 120; i--) {
+				string[] saveRow = new string[periodCntList.GetLength(0) + 1];
+				saveRow[0] = codeInfo[i][0]; // 日付
+				for (int p = 0; p < periodCntList.GetLength(0); p++) {
+					int cnt = periodCntList[p, 1];
+					for (int j = 1; j <= periodCntList[p, 0]; j++) {
+						if (list[codeInfo[i - j][0]]) cnt--;
+						if (0 >= cnt) break;
+					}
+					saveRow[p + 1] = 0 >= cnt ? "1" : "0";
+				}
+				saveData.Add(saveRow);
+			}
+
+			// 保存
+			CsvControll.SaveCond51All(saveData, symbol, diffDayIdx, ratioIdx);
+		}
+
+
+
+		/** 利益情報を全て保存する */
+		public static void SaveBenefitAll()
+		{
+			foreach (string symbol in CsvControll.GetCodeList()) {
+				SaveBenefit(symbol);
+			}
+		}
+
+		private static void SaveBenefit(string symbol)
+		{
+			// 買って
+			List<string[]> saveData = new List<string[]>();
+			List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
+			for (int i = 0; i < codeInfo.Count - 42; i++) {
+				// 
+				DateTime date = DateTime.Parse(codeInfo[i][0]);
+				double buyPrice = Double.Parse(codeInfo[i][4]); // 終値で購入
+
+				double sellPrice = Double.Parse(codeInfo[i + 42][4]);
+				int sellPeriod = 0;
+				for (int havePeriod = 1; havePeriod <= 42; havePeriod++) {
+					sellPeriod = havePeriod;
+
+					double sellRatio = 1.01;
+					foreach (KeyValuePair<int, double> pair in Def.idealSellRatio) {
+						if (havePeriod <= pair.Key) sellRatio = pair.Value;
+					}
+					// 理想売り
+					if (Double.Parse(codeInfo[i + havePeriod][2]) >= buyPrice * sellRatio) {
+						sellPrice = buyPrice * sellRatio;
+						break;
+					}
+					// 損切 損失/前日比
+					if (Double.Parse(codeInfo[i + havePeriod][3]) * 100 < buyPrice * (100 - Def.LossCutRatio[0, 0])
+						|| Double.Parse(codeInfo[i + havePeriod][3]) * 100 < Double.Parse(codeInfo[i + havePeriod - 1][4]) * (100 - Def.LossCutRatio[0, 1])) {
+						sellPrice = Double.Parse(codeInfo[i + havePeriod][4]);
+						break;
+					}
+				}
+
+				int benefit = (int)Math.Round((sellPrice / buyPrice - 1) * 100, MidpointRounding.AwayFromZero);
+				//Common.DebugInfo("SaveBenefit", benefit, sellPeriod);
+				saveData.Add(new string[3] { codeInfo[i][0], benefit.ToString(), sellPeriod.ToString() });
+			}
+
+			CsvControll.SaveBenefitAll(saveData, symbol);
+		}
+
+
+
+
+		private static readonly int[] ConfirmAnds = new int[0] {
+
+		};
+		private static readonly int[] ConfirmOrs = new int[0] {
+
+		};
+		private static readonly int[] KouhoAnds = new int[0] {
+
+		};
+		private static readonly int[] KouhoOrs = new int[0] {
+
+		};
+		/** 51条件の全検証 */
+		public static void CheckCond51All()
+		{
+
+			// 事前チェック
+			// 確定And、確定Or、候補And、候補Orはここで保存
+
+
+
+			// 確定条件と候補条件について コード*日付分の情報を保存？	
+			// andは一個でもfalseならそいつはアウト 日付=>[symbol1,...]でfalseを保存　todo日付はDef.CapitalSymbolを使ってintに変換するのもあり？
+			Dictionary<string, List<string>> beforeNotAnd = new Dictionary<string, List<string>>();
+			// orは一個でもtrueならそいつはOK
+			Dictionary<string, bool> beforeOr = new Dictionary<string, bool>();
+
+
+			int[] benefitAll = new int[condNum()];
+			int[] havePeriodAll = new int[condNum()];
+			int[] trueAll = new int[condNum()];
+
+			foreach (string symbol in CsvControll.GetCodeList()) {
+
+				// todo こいつらはstaticに持っておくか？
+				Dictionary<string, int> benefits = new Dictionary<string, int>();
+				Dictionary<string, int> havePeriods = new Dictionary<string, int>();
+				foreach (string[] benefitInfo in CsvControll.GetBenefitAll(symbol)) {
+					benefits[benefitInfo[0]] = Int32.Parse(benefitInfo[1]);
+					havePeriods[benefitInfo[0]] = Int32.Parse(benefitInfo[2]);
+				}
+
+				for (int diffDayIdx = 0; diffDayIdx < diffDayList.Length; diffDayIdx++) {
+					for (int ratioIdx = 0; ratioIdx < ratioList.Length; ratioIdx++) {
+
+
+						List<string[]> cond51All = CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx);
+						for (int pIdx = 0; pIdx < periodCntList.GetLength(0); pIdx++) {
+							foreach(bool isT in new bool[2] { true,false}) {
+								int sumBenefit = 0;
+								int sumhavePeriod = 0;
+								foreach (string[] cond51 in cond51All) {
+									if (benefits.ContainsKey(cond51[0]) && (cond51[pIdx + 1] == "1") == isT) {
+										sumBenefit += benefits[cond51[0]];
+										sumhavePeriod += havePeriods[cond51[0]];
+									}
+								}
+								// 加算？
+
+							}
+						}
+					}
+				}
+
+				break;
+			}
+		}
+
+		private static int GetCondIdx(int pIdx, int ratioIdx, int diffDayIdx,  bool isT)
+		{
+			return pIdx * ratioList.Length * diffDayList.Length * 2 + ratioIdx * diffDayList.Length * 2 + diffDayIdx * 2 + (isT ? 1 : 0);
+		}
+		private static (int,int,int,bool) SplitCondIdx(int condIdx)
+		{
+			int isTIdx = condIdx % 2;
+			int diffDayIdx = (condIdx % (diffDayList.Length * 2) - isTIdx) / 2;
+			int ratioIdx = (condIdx % (ratioList.Length * diffDayList.Length * 2)  - diffDayIdx * 2 - isTIdx) / (diffDayList.Length * 2);
+			int pIdx = (condIdx - ratioIdx * diffDayList.Length * 2 - diffDayIdx * 2 - isTIdx) / (ratioList.Length * diffDayList.Length * 2);
+			return (pIdx, ratioIdx, diffDayIdx, isTIdx == 1);
+		}
+		private static int condNum()
+		{
+			return periodCntList.GetLength(0) * ratioList.Length * diffDayList.Length * 2;
+		}
+
 		private const int Limit = 1600;
 		// 設定したconditionsにて、全コードが(120日目～2024/8/30)の期間にてそれぞれ購入可能かどうかを調べて保存
 		public static void SaveBuyInfo()
@@ -81,7 +263,7 @@ namespace CSharp_sample
 			return isOrOk && isAndOk;
 		}
 
-		private static bool Is51Cond(List<string[]> codeInfo, DateTime date, int period, int diffDay, int cnt, double ratio)
+		public static bool Is51Cond(List<string[]> codeInfo, DateTime date, int period, int diffDay, int cnt, double ratio)
 		{
 			// 51:period日間でdiffDay日前との比率がratio以上となるのがcnt件以上
 			// 53:c1日間でc3日前との比率の平均がa1以上
@@ -547,62 +729,6 @@ namespace CSharp_sample
 		}
 
 
-		// 損失が最大となるidxを
-		public static void SaveAllCond()
-		{
-			/*
-			利益のマイナス値が最大となるように重ねていく
-			4000パターン*2000銘柄*1700日=>bool
-			2000銘柄*1700日それぞれ購入して損か得かの判定(既存の売却基準かしら？もうちょい簡略化か 3% 42日過ぎたら売却で) boolで保存？
-
-			4000パターンそれぞれについて、trueなら購入すると考え、得か損かをboolで判定(2000銘柄*1700日個分)
-			最も損なパターン(損比率が高いもの、多分件数が少ないやつ)を確定、次のandかorを考える
-
-			 */
-			List<DateTime> dateList = CsvControll.GetDateList();
-			int limit = 0;
-			foreach (string symbol in CsvControll.GetCodeList()) {
-				List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
-				// 120
-				for (int i = 120; i < dateList.Count; i++) {
-					SaveAllCondSymbol(codeInfo, symbol, dateList[i]);
-				}
-				break;
-
-				limit++;
-				if (limit > 10) {
-					break;
-				}
-			}
-
-
-		}
-
-		// 4256パターン*2000銘柄*1700日 のiscond結果についてboolのデータをデバッグ用に保存しておく
-		// 保存は捨ておいて一時データかしら
-		// intに14個分の情報保存するか 304個のint
-		// とりあえずどれくらいかかるか計測するか 100時間とかならむりぽ
-		public static void SaveAllCondSymbol(List<string[]> codeInfo, string symbol, DateTime date)
-		{
-
-			int a = 0;
-			for (int i = 0; i < periodCntList.GetLength(0); i++) {
-				int period = periodCntList[i, 0];
-				int cnt = periodCntList[i, 1];
-				for (int j = 0; j < diffDayList.Length; j++) {
-					int diffDay = diffDayList[j];
-					for (int k = 0; k < ratioList.Length; k++) {
-						if (Is51Cond(codeInfo, date, period, diffDay, cnt, ratioList[k])) {
-							a++;
-						}
-					}
-				}
-			}
-
-
-		}
-
-
 		///////////////////////////////////////////
 		// 以下日経平均調査用 もういらんかも？
 		///////////////////////////////////////////
@@ -892,14 +1018,14 @@ namespace CSharp_sample
 		}
 
 
-		private static readonly int[,] periodCntList = new int[38, 2]{
+		public static readonly int[,] periodCntList = new int[38, 2]{
 			{1,1},{3,1},{3,2},{3,3},{6,1},{6,3},{6,4},{6,6},{10,1},{10,3},{10,5},{10,7},{10,10},
 			{20,1},{20,3},{20,5},{20,7},{20,10},{20,15},{20,20},{30,1},{30,3},{30,6},{30,10},
 			{30,15},{30,20},{30,25},{30,30},{50,1},{50,3},{50,6},
 			{50,10},{50,15},{50,20},{50,25},{50,30},{50,40},{50,50},
 		};
-		private static readonly int[] diffDayList = new int[8] { 1, 3, 6, 10, 20, 30, 50, 70 };
-		private static readonly double[] ratioList = new double[14] {
+		public static readonly int[] diffDayList = new int[8] { 1, 3, 6, 10, 20, 30, 50, 70 };
+		public static readonly double[] ratioList = new double[14] {
 			0.65,0.75,0.8,0.85,0.9,0.95,1,1.05,1.1,1.17,1.25,1.35,1.5,1.7
 		};
 		//private static readonly double[] ratioList = new double[1] {

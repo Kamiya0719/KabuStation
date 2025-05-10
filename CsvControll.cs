@@ -47,6 +47,8 @@ namespace CSharp_sample
 			CodeDispInfo, // 現在の銘柄情報確認用
 			ResponseSymbol, // 銘柄情報レスポンス検証用保存
 			DebugInfo, // DebugInfoで出力したやつをとりあえず保存しておく
+			Cond51All, // 全ての51判定情報を一時保存しておく
+			BenefitAll, // 全ての購入時利益情報を一時保存しておく
 		}
 
 		// ファイルタイプごとのファイル名
@@ -84,6 +86,8 @@ namespace CSharp_sample
 			{FILE_TYPE.CodeDispInfo, @"Debug\CodeDispInfo\" }, // 銘柄各種情報表示
 			{FILE_TYPE.ResponseSymbol, @"Debug\ResponseSymbol" }, // 銘柄各種情報表示
 			{FILE_TYPE.DebugInfo, @"Debug\DebugInfo" }, // デバッグ情報一時保存
+			{FILE_TYPE.Cond51All, @"Debug\Cond51All\" }, // 全ての51判定情報を一時保存しておく
+			{FILE_TYPE.BenefitAll, @"Debug\BenefitAll\" }, // 全ての購入時利益情報を一時保存しておく		
 		};
 		public const string DFORM = "yyyy/MM/dd";
 		public const string DFILEFORM = "yyyyMMdd";
@@ -145,7 +149,7 @@ namespace CSharp_sample
 		public static List<DateTime> GetDateList()
 		{
 			List<DateTime> list = new List<DateTime>();
-			foreach (string[] info in GetCodeInfo(Tools.CapitalSymbol)) list.Add(DateTime.Parse(info[0]));
+			foreach (string[] info in GetCodeInfo(Def.CapitalSymbol)) list.Add(DateTime.Parse(info[0]));
 			return list;
 		}
 
@@ -247,6 +251,30 @@ namespace CSharp_sample
 		{
 			SaveCsvDatas(FILE_TYPE.DebugInfo, "", datas, isAddWrite);
 		}
+
+
+		// 全ての51判定情報を一時保存しておく
+		public static void SaveCond51All(List<string[]> datas, string symbol, int diffDayIdx, int ratioIdx)
+		{
+			string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString() + @"\" + symbol;
+			SaveCsvDatas(FILE_TYPE.Cond51All, addName, datas);
+		}
+		public static List<string[]> GetCond51All(string symbol, int diffDayIdx, int ratioIdx)
+		{
+			string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString() + @"\" + symbol;
+			return GetCsvDatas(FILE_TYPE.Cond51All, addName);
+		}
+
+		// 全ての購入時利益情報を一時保存しておく
+		public static void SaveBenefitAll(List<string[]> datas, string symbol)
+		{
+			SaveCsvDatas(FILE_TYPE.BenefitAll, symbol, datas);
+		}
+		public static List<string[]> GetBenefitAll(string symbol)
+		{
+			return GetCsvDatas(FILE_TYPE.BenefitAll, symbol);
+		}
+		
 
 
 		// 翌日日経平均スコア仮閾値を保存
