@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CSharp_sample
 {
@@ -115,7 +118,56 @@ namespace CSharp_sample
 
 
 
-
+		private static readonly int[] NotCond = new int[]{
+			0,2,4,16,32,161,177,193,195,209,211,213,215,224,226,228,230,240,242,256,258,272,288,401,417,419,433,435,437,448,450,452,464,
+			466,480,496,512,593,609,625,641,643,657,659,661,663,672,674,688,801,817,833,835,849,851,865,867,869,881,883,885,887,896,898,
+			900,902,912,914,916,928,930,932,944,946,960,962,976,1073,1089,1105,1107,1120,1122,1124,1126,1136,1138,1152,1154,1168,1170,1184,
+			1265,1281,1297,1299,1313,1315,1329,1331,1333,1335,1344,1346,1348,1360,1362,1376,1392,1408,1473,1489,1505,1507,1521,1523,1537,
+			1539,1541,1553,1555,1557,1559,1568,1570,1584,1681,1697,1699,1713,1715,1729,1731,1733,1745,1747,1749,1761,1763,1765,1767,1777,
+			1779,1781,1783,1792,1794,1796,1798,1808,1810,1812,1814,1824,1826,1828,1840,1842,1844,1856,1858,1872,1874,1969,1985,2001,2003,
+			2016,2018,2020,2022,2032,2034,2036,2048,2050,2052,2064,2066,2080,2082,2096,2161,2177,2193,2209,2211,2225,2227,2229,2240,2242,
+			2244,2246,2256,2258,2260,2272,2274,2288,2290,2304,2320,2369,2385,2401,2403,2417,2419,2433,2435,2437,2449,2451,2453,2455,2464,
+			2466,2468,2480,2482,2496,2498,2512,2528,2577,2593,2609,2611,2625,2627,2629,2641,2643,2645,2657,2659,2661,2663,2673,2675,2677,
+			2679,2688,2704,2801,2803,2817,2819,2833,2835,2837,2849,2851,2853,2865,2867,2869,2871,2881,2883,2885,2887,2897,2899,2901,2903,
+			2905,2912,2914,2916,2918,2920,2928,2930,2932,2934,2936,2944,2946,2948,2950,2960,2962,2964,2966,2976,2978,2980,2992,2994,3008,
+			3089,3105,3121,3136,3138,3140,3142,3144,3152,3154,3156,3158,3168,3170,3172,3174,3184,3186,3188,3190,3200,3202,3204,3216,3218,
+			3232,3297,3313,3329,3331,3345,3347,3360,3362,3364,3366,3368,3376,3378,3380,3382,3392,3394,3396,3398,3408,3410,3412,3424,3426,
+			3440,3442,3505,3521,3537,3539,3553,3555,3569,3571,3573,3584,3586,3588,3590,3600,3602,3604,3606,3616,3618,3620,3632,3634,3636,
+			3648,3650,3664,3713,3729,3745,3747,3761,3763,3765,3777,3779,3781,3793,3795,3797,3799,3808,3810,3812,3814,3824,3826,3828,3840,
+			3842,3844,3856,3858,3872,3874,3888,3921,3937,3953,3955,3969,3971,3973,3985,3987,3989,4001,4003,4005,4007,4017,4019,4021,4023,
+			4032,4034,4036,4048,4050,4064,4066,4080,4096,4145,4147,4161,4163,4177,4179,4181,4193,4195,4197,4199,4209,4211,4213,4215,4225,
+			4227,4229,4231,4241,4243,4245,4247,4249,4256,4369,4371,4373,4385,4387,4389,4391,4401,4403,4405,4407,4417,4419,4421,4423,4433,
+			4435,4437,4439,4441,4449,4451,4453,4455,4457,4465,4467,4469,4471,4473,4475,4480,4482,4484,4486,4488,4490,4496,4498,4500,4502,
+			4504,4512,4514,4516,4518,4520,4528,4530,4532,4534,4544,4546,4548,4550,4560,4562,4564,4566,4576,4578,4673,4689,4704,4706,4708,
+			4710,4712,4714,4720,4722,4724,4726,4728,4736,4738,4740,4742,4744,4752,4754,4756,4758,4768,4770,4772,4774,4784,4786,4788,4800,
+			4865,4881,4897,4899,4913,4915,4928,4930,4932,4934,4936,4944,4946,4948,4950,4952,4960,4962,4964,4966,4976,4978,4980,4982,4992,
+			4994,4996,5008,5010,5024,5073,5089,5091,5105,5107,5121,5123,5125,5137,5139,5141,5152,5154,5156,5158,5160,5168,5170,5172,5174,
+			5184,5186,5188,5190,5200,5202,5204,5216,5218,5220,5232,5234,5281,5297,5299,5313,5315,5329,5331,5333,5345,5347,5349,5351,5361,
+			5363,5365,5367,5376,5378,5380,5382,5392,5394,5396,5398,5408,5410,5412,5424,5426,5428,5440,5442,5456,5489,5505,5507,5521,5523,
+			5525,5537,5539,5541,5553,5555,5557,5559,5569,5571,5573,5575,5585,5587,5589,5591,5600,5602,5604,5606,5616,5618,5620,5632,5634,
+			5636,5648,5650,5664,5680,5713,5715,5729,5731,5733,5745,5747,5749,5761,5763,5765,5767,5777,5779,5781,5783,5793,5795,5797,5799,
+			5801,5809,5811,5813,5815,5817,5824,5826,5828,5840,5842,5856,5858,5872,5888,5937,5939,5941,5953,5955,5957,5969,5971,5973,5975,
+			5985,5987,5989,5991,6001,6003,6005,6007,6009,6017,6019,6021,6023,6025,6033,6035,6037,6039,6041,6043,6048,6161,6163,6165,6167,
+			6177,6179,6181,6183,6193,6195,6197,6199,6209,6211,6213,6215,6217,6225,6227,6229,6231,6233,6241,6243,6245,6247,6249,6251,6257,
+			6259,6261,6263,6265,6267,6272,6274,6276,6278,6280,6282,6284,6288,6290,6292,6294,6296,6298,6304,6306,6308,6310,6312,6314,6320,
+			6322,6324,6326,6328,6336,6338,6340,6342,6344,6352,6354,6356,6358,6368,6370,6372,6465,6481,6496,6498,6500,6502,6504,6506,6508,
+			6512,6514,6516,6518,6520,6522,6528,6530,6532,6534,6536,6538,6544,6546,6548,6550,6552,6560,6562,6564,6566,6576,6578,6580,6582,
+			6592,6594,6596,6657,6673,6689,6705,6707,6720,6722,6724,6726,6728,6730,6736,6738,6740,6742,6744,6746,6752,6754,6756,6758,6760,
+			6768,6770,6772,6774,6776,6784,6786,6788,6790,6800,6802,6804,6806,6816,6818,6865,6881,6897,6899,6913,6915,6929,6931,6933,6944,
+			6946,6948,6950,6952,6954,6960,6962,6964,6966,6968,6970,6976,6978,6980,6982,6984,6992,6994,6996,6998,7008,7010,7012,7014,7024,
+			7026,7028,7040,7073,7089,7105,7107,7121,7123,7125,7137,7139,7141,7153,7155,7157,7159,7168,7170,7172,7174,7176,7178,7184,7186,
+			7188,7190,7192,7200,7202,7204,7206,7208,7216,7218,7220,7222,7232,7234,7236,7238,7248,7250,7252,7264,7297,7313,7315,7329,7331,
+			7333,7345,7347,7349,7361,7363,7365,7367,7377,7379,7381,7383,7392,7394,7396,7398,7400,7402,7408,7410,7412,7414,7416,7424,7426,
+			7428,7430,7440,7442,7444,7446,7456,7458,7460,7472,7474,7505,7521,7523,7537,7539,7541,7553,7555,7557,7569,7571,7573,7575,7585,
+			7587,7589,7591,7601,7603,7605,7607,7609,7616,7618,7620,7622,7624,7632,7634,7636,7638,7648,7650,7652,7654,7664,7666,7668,7680,
+			7682,7684,7696,7729,7745,7747,7761,7763,7765,7777,7779,7781,7783,7793,7795,7797,7799,7809,7811,7813,7815,7817,7825,7827,7829,
+			7831,7833,7840,7842,7844,7846,7848,7856,7858,7860,7862,7872,7874,7876,7878,7888,7890,7892,7904,7906,7920,7953,7955,7969,7971,
+			7973,7985,7987,7989,7991,8001,8003,8005,8007,8017,8019,8021,8023,8033,8035,8037,8039,8041,8049,8051,8053,8055,8057,8059,8064,
+			8066,8068,8070,8080,8082,8084,8096,8098,8112,8114,8128,8177,8179,8181,8193,8195,8197,8199,8209,8211,8213,8215,8225,8227,8229,
+			8231,8233,8241,8243,8245,8247,8249,8257,8259,8261,8263,8265,8267,8273,8275,8277,8279,8281,8283,8288,8401,8403,8405,8407,8417,
+			8419,8421,8423,8425,8433,8435,8437,8439,8441,8449,8451,8453,8455,8457,8459,8465,8467,8469,8471,8473,8475,8481,8483,8485,8487,
+			8489,8491,8493,8497,8499,8501,8503,8505,8507,8509,
+		};
 		private static readonly int[] ConfirmAnds = new int[0] {
 
 		};
@@ -132,16 +184,63 @@ namespace CSharp_sample
 		public static void CheckCond51All()
 		{
 
+
+
 			// 事前チェック
 			// 確定And、確定Or、候補And、候補Orはここで保存
 
 
 
 			// 確定条件と候補条件について コード*日付分の情報を保存？	
-			// andは一個でもfalseならそいつはアウト 日付=>[symbol1,...]でfalseを保存　todo日付はDef.CapitalSymbolを使ってintに変換するのもあり？
+			// andは一個でもfalseならそいつはアウト symbol=>[日付1,...]でfalseを保存
 			Dictionary<string, List<string>> beforeNotAnd = new Dictionary<string, List<string>>();
-			// orは一個でもtrueならそいつはOK
-			Dictionary<string, bool> beforeOr = new Dictionary<string, bool>();
+			// beforeNotAndがfalseのものはスルー orは一個でもtrueならそいつはOK
+			Dictionary<string, List<string>> beforeOr = new Dictionary<string, List<string>>();
+			// beforeNotAndがfalseのものはスルー
+			Dictionary<string, List<string>>[] beforeNotAndKouho = new Dictionary<string, List<string>>[KouhoAnds.Length];
+			// beforeNotAndがfalseのものはスルー beforeOrがtrueのものはスルー
+			Dictionary<string, List<string>>[] beforeOrKouho = new Dictionary<string, List<string>>[KouhoOrs.Length];
+
+
+			foreach (string symbol in CsvControll.GetCodeList()) {
+				beforeNotAnd[symbol] = new List<string>();
+				foreach (int condIdx in ConfirmAnds) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(condIdx);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if ((cond51[pIdx + 1] == "1") != isT) beforeNotAnd[symbol].Add(cond51[0]);
+					}
+				}
+				beforeOr[symbol] = new List<string>();
+				foreach (int condIdx in ConfirmOrs) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(condIdx);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+						if ((cond51[pIdx + 1] == "1") == isT) beforeOr[symbol].Add(cond51[0]);
+					}
+				}
+
+				for (int i = 0; i < KouhoAnds.Length; i++) {
+					if(beforeNotAndKouho[i] == null) beforeNotAndKouho[i] = new Dictionary<string, List<string>>();
+					beforeNotAndKouho[i][symbol] = new List<string>();
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(KouhoAnds[i]);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+						if ((cond51[pIdx + 1] == "1") != isT) beforeNotAndKouho[i][symbol].Add(cond51[0]);
+					}
+				}
+				for (int i = 0; i < KouhoOrs.Length; i++) {
+					if (beforeOrKouho[i] == null) beforeOrKouho[i] = new Dictionary<string, List<string>>();
+					beforeOrKouho[i][symbol] = new List<string>();
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(KouhoOrs[i]);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+						if (beforeOr[symbol].Contains(cond51[0])) continue;
+						if ((cond51[pIdx + 1] == "1") == isT) beforeOrKouho[i][symbol].Add(cond51[0]);
+					}
+				}
+			}
+
+
 
 
 			int[] benefitAll = new int[condNum()];
@@ -149,7 +248,6 @@ namespace CSharp_sample
 			int[] trueAll = new int[condNum()];
 
 			foreach (string symbol in CsvControll.GetCodeList()) {
-
 				// todo こいつらはstaticに持っておくか？
 				Dictionary<string, int> benefits = new Dictionary<string, int>();
 				Dictionary<string, int> havePeriods = new Dictionary<string, int>();
@@ -160,39 +258,68 @@ namespace CSharp_sample
 
 				for (int diffDayIdx = 0; diffDayIdx < diffDayList.Length; diffDayIdx++) {
 					for (int ratioIdx = 0; ratioIdx < ratioList.Length; ratioIdx++) {
-
-
 						List<string[]> cond51All = CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx);
 						for (int pIdx = 0; pIdx < periodCntList.GetLength(0); pIdx++) {
-							foreach(bool isT in new bool[2] { true,false}) {
-								int sumBenefit = 0;
-								int sumhavePeriod = 0;
+							foreach (bool isT in new bool[2] { true, false }) {
+								int condIdx = GetCondIdx(pIdx, ratioIdx, diffDayIdx, isT);
+								if (Array.IndexOf(NotCond, condIdx) >= 0) continue;
 								foreach (string[] cond51 in cond51All) {
+
+									// todo この辺でbeforeうんぬん
+
 									if (benefits.ContainsKey(cond51[0]) && (cond51[pIdx + 1] == "1") == isT) {
-										sumBenefit += benefits[cond51[0]];
-										sumhavePeriod += havePeriods[cond51[0]];
+										benefitAll[condIdx] += benefits[cond51[0]];
+										havePeriodAll[condIdx] += havePeriods[cond51[0]];
+										trueAll[condIdx]++;
 									}
 								}
-								// 加算？
-
 							}
 						}
 					}
 				}
-
-				break;
+				Common.DebugInfo("CheckCond51AllSymbol", symbol);
 			}
+
+
+			// 並び変えるか
+			Dictionary<int, double> benefitRes = new Dictionary<int, double>();
+			for (int i = 0; i < condNum(); i++) {
+				benefitRes[i] = benefitAll[i] / trueAll[i];
+			}
+
+			int max = 20;
+			string result = "";
+			string result2 = "";
+			foreach (KeyValuePair<int, double> benefitResA in benefitRes.OrderBy(c => c.Value)){
+				result += benefitResA.Key + ":" + benefitResA.Value + ",\n";
+				result2 += benefitResA.Key + ",";
+				max--;
+				if(max <= 0) break;
+			}
+			Common.DebugInfo("CheckCond51AllEnd1", result, result2);
+
+			result = "";
+			result2 = "";
+			max = 20;
+			foreach (KeyValuePair<int, double> benefitResB in benefitRes.OrderBy(c => -c.Value)) {
+				result += benefitResB.Key + ":" + benefitResB.Value + ",\n";
+				result2 += benefitResB.Key + ",";
+				max--;
+				if (max <= 0) break;
+			}
+			Common.DebugInfo("CheckCond51AllEnd2", result, result2);
+
 		}
 
-		private static int GetCondIdx(int pIdx, int ratioIdx, int diffDayIdx,  bool isT)
+		private static int GetCondIdx(int pIdx, int ratioIdx, int diffDayIdx, bool isT)
 		{
 			return pIdx * ratioList.Length * diffDayList.Length * 2 + ratioIdx * diffDayList.Length * 2 + diffDayIdx * 2 + (isT ? 1 : 0);
 		}
-		private static (int,int,int,bool) SplitCondIdx(int condIdx)
+		private static (int, int, int, bool) SplitCondIdx(int condIdx)
 		{
 			int isTIdx = condIdx % 2;
 			int diffDayIdx = (condIdx % (diffDayList.Length * 2) - isTIdx) / 2;
-			int ratioIdx = (condIdx % (ratioList.Length * diffDayList.Length * 2)  - diffDayIdx * 2 - isTIdx) / (diffDayList.Length * 2);
+			int ratioIdx = (condIdx % (ratioList.Length * diffDayList.Length * 2) - diffDayIdx * 2 - isTIdx) / (diffDayList.Length * 2);
 			int pIdx = (condIdx - ratioIdx * diffDayList.Length * 2 - diffDayIdx * 2 - isTIdx) / (ratioList.Length * diffDayList.Length * 2);
 			return (pIdx, ratioIdx, diffDayIdx, isTIdx == 1);
 		}
