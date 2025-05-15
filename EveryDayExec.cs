@@ -260,6 +260,7 @@ namespace CSharp_sample
 				if (!Common.Sp10(symbol)) continue;
 				double basePrice = Common.Sp10BuyPrice(symbol);
 				if (basePrice > 0) {
+					if (symbol == "6740") continue;
 					CodeDaily codeDaily = pair.Value;
 					codeDaily.SetIsBuy(Def.SpBuyBasePricew, setDate);
 					// todo 購入注文？

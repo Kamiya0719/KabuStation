@@ -34,6 +34,7 @@ namespace CSharp_sample
 				if (execType == "24") Condtions.SaveCond51All();
 				if (execType == "25") Condtions.SaveBenefitAll();
 				if (execType == "26") Condtions.CheckCond51All();
+				if (execType == "27") Condtions.DebugCheckCond51Score();
 			} catch (Exception e) {
 				CsvControll.ErrorLog("Exception", execType, e.Message, "");
 			}

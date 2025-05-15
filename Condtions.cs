@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace CSharp_sample
@@ -117,7 +115,8 @@ namespace CSharp_sample
 		}
 
 
-
+		private const bool IsAndCheck = false; // andチェックかorチェックか
+		private const int AllTrueCondIdx = 1;
 		private static readonly int[] NotCond = new int[]{
 			0,2,4,16,32,161,177,193,195,209,211,213,215,224,226,228,230,240,242,256,258,272,288,401,417,419,433,435,437,448,450,452,464,
 			466,480,496,512,593,609,625,641,643,657,659,661,663,672,674,688,801,817,833,835,849,851,865,867,869,881,883,885,887,896,898,
@@ -168,31 +167,23 @@ namespace CSharp_sample
 			8419,8421,8423,8425,8433,8435,8437,8439,8441,8449,8451,8453,8455,8457,8459,8465,8467,8469,8471,8473,8475,8481,8483,8485,8487,
 			8489,8491,8493,8497,8499,8501,8503,8505,8507,8509,
 		};
-		private static readonly int[] ConfirmAnds = new int[0] {
-
+		private static readonly int[] ConfirmAnds = new int[] {
+			//1682,8408,5958
 		};
-		private static readonly int[] ConfirmOrs = new int[0] {
-
+		private static readonly int[] ConfirmOrs = new int[] {
+			1683,8409,5959,1283
 		};
-		private static readonly int[] KouhoAnds = new int[0] {
-
+		private static readonly int[] KouhoAnds = new int[] {
 		};
-		private static readonly int[] KouhoOrs = new int[0] {
-
+		private static readonly int[] KouhoOrs = new int[8] {
+			6269,7351,7731,4459,4998,8251,6027,6219,
 		};
 		/** 51条件の全検証 */
 		public static void CheckCond51All()
 		{
+			bool isOrOkForce = IsAndCheck && ConfirmOrs.Length == 0 && KouhoOrs.Length == 0; // orチェックを強制でOKにしておく
 
-
-
-			// 事前チェック
-			// 確定And、確定Or、候補And、候補Orはここで保存
-
-
-
-			// 確定条件と候補条件について コード*日付分の情報を保存？	
-			// andは一個でもfalseならそいつはアウト symbol=>[日付1,...]でfalseを保存
+			// 確定条件と候補条件について コード*日付分の情報を保存 andは一個でもfalseならそいつはアウト symbol=>[日付1,...]でfalseを保存
 			Dictionary<string, List<string>> beforeNotAnd = new Dictionary<string, List<string>>();
 			// beforeNotAndがfalseのものはスルー orは一個でもtrueならそいつはOK
 			Dictionary<string, List<string>> beforeOr = new Dictionary<string, List<string>>();
@@ -200,7 +191,6 @@ namespace CSharp_sample
 			Dictionary<string, List<string>>[] beforeNotAndKouho = new Dictionary<string, List<string>>[KouhoAnds.Length];
 			// beforeNotAndがfalseのものはスルー beforeOrがtrueのものはスルー
 			Dictionary<string, List<string>>[] beforeOrKouho = new Dictionary<string, List<string>>[KouhoOrs.Length];
-
 
 			foreach (string symbol in CsvControll.GetCodeList()) {
 				beforeNotAnd[symbol] = new List<string>();
@@ -220,7 +210,7 @@ namespace CSharp_sample
 				}
 
 				for (int i = 0; i < KouhoAnds.Length; i++) {
-					if(beforeNotAndKouho[i] == null) beforeNotAndKouho[i] = new Dictionary<string, List<string>>();
+					if (beforeNotAndKouho[i] == null) beforeNotAndKouho[i] = new Dictionary<string, List<string>>();
 					beforeNotAndKouho[i][symbol] = new List<string>();
 					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(KouhoAnds[i]);
 					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
@@ -240,13 +230,12 @@ namespace CSharp_sample
 				}
 			}
 
+			int kouhoNum = KouhoAnds.Length > 0 ? KouhoAnds.Length : KouhoOrs.Length;
+			int[,] benefitAll = new int[kouhoNum, condNum()];
+			int[,] havePeriodAll = new int[kouhoNum, condNum()];
+			int[,] trueAll = new int[kouhoNum, condNum()];
 
-
-
-			int[] benefitAll = new int[condNum()];
-			int[] havePeriodAll = new int[condNum()];
-			int[] trueAll = new int[condNum()];
-
+			int test = 0;
 			foreach (string symbol in CsvControll.GetCodeList()) {
 				// todo こいつらはstaticに持っておくか？
 				Dictionary<string, int> benefits = new Dictionary<string, int>();
@@ -265,12 +254,30 @@ namespace CSharp_sample
 								if (Array.IndexOf(NotCond, condIdx) >= 0) continue;
 								foreach (string[] cond51 in cond51All) {
 
-									// todo この辺でbeforeうんぬん
+									if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+									if (IsAndCheck && (cond51[pIdx + 1] == "1") != isT) continue;
+									if (!benefits.ContainsKey(cond51[0])) continue;
+									bool isOrCheck = isOrOkForce || (!IsAndCheck && (cond51[pIdx + 1] == "1") == isT) || beforeOr[symbol].Contains(cond51[0]);
 
-									if (benefits.ContainsKey(cond51[0]) && (cond51[pIdx + 1] == "1") == isT) {
-										benefitAll[condIdx] += benefits[cond51[0]];
-										havePeriodAll[condIdx] += havePeriods[cond51[0]];
-										trueAll[condIdx]++;
+									if (KouhoAnds.Length > 0) {
+										if (!isOrCheck) continue;
+										for (int i = 0; i < KouhoAnds.Length; i++) {
+											if (beforeNotAndKouho[i][symbol].Contains(cond51[0])) continue;
+
+											benefitAll[i, condIdx] += benefits[cond51[0]];
+											havePeriodAll[i, condIdx] += havePeriods[cond51[0]];
+											trueAll[i, condIdx]++;
+										}
+									} else if (KouhoOrs.Length > 0) {
+										// 残るはORチェック
+										for (int i = 0; i < KouhoOrs.Length; i++) {
+											if (!isOrCheck && !beforeOrKouho[i][symbol].Contains(cond51[0])) continue;
+											benefitAll[i, condIdx] += benefits[cond51[0]];
+											havePeriodAll[i, condIdx] += havePeriods[cond51[0]];
+											trueAll[i, condIdx]++;
+										}
+									} else {
+
 									}
 								}
 							}
@@ -278,36 +285,52 @@ namespace CSharp_sample
 					}
 				}
 				Common.DebugInfo("CheckCond51AllSymbol", symbol);
+
+				//test++;
+				//if (test > 10) break;
 			}
 
 
 			// 並び変えるか
-			Dictionary<int, double> benefitRes = new Dictionary<int, double>();
-			for (int i = 0; i < condNum(); i++) {
-				benefitRes[i] = benefitAll[i] / trueAll[i];
+			for (int i = 0; i < kouhoNum; i++) {
+				Dictionary<int, double> benefitRes = new Dictionary<int, double>();
+				Dictionary<int, double> havePeriodRes = new Dictionary<int, double>();
+				for (int j = 0; j < condNum(); j++) {
+					if (trueAll[i, j] == 0) continue;
+					benefitRes[j] = (double)benefitAll[i, j] / (double)trueAll[i, j];
+					havePeriodRes[j] = (double)havePeriodAll[i, j] / (double)trueAll[i, j];
+				}
+
+				int max = 20;
+				string result = "";
+				string result2 = "";
+				double avBenefit = 0; double avTrue = 0;
+				foreach (KeyValuePair<int, double> benefitResA in benefitRes.OrderBy(c => c.Value)) {
+					result += "\nCond:" + benefitResA.Key + ", T:" + trueAll[i, benefitResA.Key] + ", Period:" + havePeriodRes[benefitResA.Key] + ", Benefit" + benefitResA.Value + ",";
+					result2 += benefitResA.Key + ",";
+					avBenefit += benefitResA.Value / 20;
+					avTrue += (double)trueAll[i, benefitResA.Key] / 20;
+					max--;
+					if (max <= 0) break;
+				}
+				Common.DebugInfo("LowScoreRank", i, result, "AvB:"+avBenefit + ", AvT:" + avTrue + ", " + result2);
+
+				result = "";
+				result2 = "";
+				max = 20;
+				 avBenefit = 0;  avTrue = 0;
+				foreach (KeyValuePair<int, double> benefitResB in benefitRes.OrderByDescending(c => c.Value)) {
+					result += "\nCond:" + benefitResB.Key + ", T:" + trueAll[i, benefitResB.Key] + ", Period:" + havePeriodRes[benefitResB.Key] + ", Benefit:" + benefitResB.Value + ",";
+					result2 += benefitResB.Key + ",";
+					avBenefit += benefitResB.Value / 20;
+					avTrue += (double)trueAll[i, benefitResB.Key] / 20;
+					max--;
+					if (max <= 0) break;
+				}
+				Common.DebugInfo("HighScoreRank", i, result, "AvB:" + avBenefit + ", AvT:" + avTrue + ", " + result2);
 			}
 
-			int max = 20;
-			string result = "";
-			string result2 = "";
-			foreach (KeyValuePair<int, double> benefitResA in benefitRes.OrderBy(c => c.Value)){
-				result += benefitResA.Key + ":" + benefitResA.Value + ",\n";
-				result2 += benefitResA.Key + ",";
-				max--;
-				if(max <= 0) break;
-			}
-			Common.DebugInfo("CheckCond51AllEnd1", result, result2);
 
-			result = "";
-			result2 = "";
-			max = 20;
-			foreach (KeyValuePair<int, double> benefitResB in benefitRes.OrderBy(c => -c.Value)) {
-				result += benefitResB.Key + ":" + benefitResB.Value + ",\n";
-				result2 += benefitResB.Key + ",";
-				max--;
-				if (max <= 0) break;
-			}
-			Common.DebugInfo("CheckCond51AllEnd2", result, result2);
 
 		}
 
@@ -327,6 +350,67 @@ namespace CSharp_sample
 		{
 			return periodCntList.GetLength(0) * ratioList.Length * diffDayList.Length * 2;
 		}
+
+		// ささっと全体のスコアを調べる
+		public static void DebugCheckCond51Score()
+		{
+			bool isAllScore = false; // andチェックorチェックを無視する
+
+			bool isOrOkForce = ConfirmOrs.Length == 0; // orチェックを強制でOKにしておく
+			Dictionary<string, List<string>> beforeNotAnd = new Dictionary<string, List<string>>();
+			Dictionary<string, List<string>> beforeOr = new Dictionary<string, List<string>>();
+			foreach (string symbol in CsvControll.GetCodeList()) {
+				beforeNotAnd[symbol] = new List<string>();
+				foreach (int condIdx in ConfirmAnds) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(condIdx);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if ((cond51[pIdx + 1] == "1") != isT) beforeNotAnd[symbol].Add(cond51[0]);
+					}
+				}
+				beforeOr[symbol] = new List<string>();
+				foreach (int condIdx in ConfirmOrs) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(condIdx);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+						if ((cond51[pIdx + 1] == "1") == isT) beforeOr[symbol].Add(cond51[0]);
+					}
+				}
+			}
+
+
+			int benefitAll = 0;
+			int havePeriodAll = 0;
+			int trueAll = 0;
+			foreach (string symbol in CsvControll.GetCodeList()) {
+				Dictionary<string, int> benefits = new Dictionary<string, int>();
+				Dictionary<string, int> havePeriods = new Dictionary<string, int>();
+				foreach (string[] benefitInfo in CsvControll.GetBenefitAll(symbol)) {
+					benefits[benefitInfo[0]] = Int32.Parse(benefitInfo[1]);
+					havePeriods[benefitInfo[0]] = Int32.Parse(benefitInfo[2]);
+				}
+				(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(AllTrueCondIdx);
+				foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+					if(!isAllScore) {
+						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+						if (!isOrOkForce && !beforeOr[symbol].Contains(cond51[0])) continue;
+					}
+
+					if (!benefits.ContainsKey(cond51[0])) continue;
+					benefitAll += benefits[cond51[0]];
+					havePeriodAll += havePeriods[cond51[0]];
+					trueAll++;
+				}
+			}
+			Common.DebugInfo("DebugCheckCond51", trueAll, (double)benefitAll/ trueAll, (double)havePeriodAll/ trueAll);
+		}
+
+
+
+
+
+
+
+
 
 		private const int Limit = 1600;
 		// 設定したconditionsにて、全コードが(120日目～2024/8/30)の期間にてそれぞれ購入可能かどうかを調べて保存
@@ -426,6 +510,7 @@ namespace CSharp_sample
 
 			return false;
 		}
+
 
 
 		// 利益平均と所持期間合計など計算

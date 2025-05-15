@@ -42,6 +42,7 @@ namespace CSharp_sample
 
 		public static int Sp10BuyPrice(string symbol)
 		{
+			if (symbol == "6740") return 16; //todo 売れたら
 			foreach (string[] info in CsvControll.GetSpInfo()) {
 				if (info[0] == symbol) return Int32.Parse(info[1]);
 			}
