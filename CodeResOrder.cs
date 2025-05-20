@@ -10,10 +10,11 @@ namespace CSharp_sample
 		/// 固定ステータス ///
 		public string ID; // 注文番号
 		public string Symbol; // 銘柄コード
-		public string Side; // 売買区分(1:売,2:買)
-		public string RecvTime; // 受注日時
+		private string Side; // 売買区分(1:売,2:買)
+		private string RecvTime; // 受注日時
 		public double OrderQty; // 発注数量※注文期限切れと失効の場合、OrderQtyはゼロになりません。※期限切れと失効の確認方法としては、DetailsのRecType（3: 期限切れ、7: 失効）にてご確認ください。
 		public double Price; // 値段(注文は整数でしかやらないからintでいいかな？)
+		private int CashMargin; // 取引区分(2:新規,3:返済)
 
 		/// デイリーステータス(前日にセット) ///
 		public int startCumQty; // 今日開始時点の約定数(startCumQty==CumQtyなら処理終了)
@@ -34,6 +35,7 @@ namespace CSharp_sample
 			Price = order.Price;
 			State = order.State;
 			CumQty = order.CumQty;
+			CashMargin = order.CashMargin;
 
 			if (isLastDay) {
 				startCumQty = (int)order.CumQty;
@@ -53,14 +55,16 @@ namespace CSharp_sample
 			startCumQty = Int32.Parse(csvInfo[6]);
 			State = Int32.Parse(csvInfo[7]);
 			CumQty = Double.Parse(csvInfo[8]);
+			CashMargin = csvInfo.Length >= 10 ? Int32.Parse(csvInfo[9]) : 0; // todo
 		}
 
 		public string[] GetSaveInfo()
 		{
-			return new string[9]{
+			return new string[10]{
 				ID, Symbol, Side, RecvTime,
 				OrderQty.ToString(), Price.ToString(),
 				startCumQty.ToString(), State.ToString(), CumQty.ToString(),
+				CashMargin.ToString(),
 			};
 		}
 
@@ -72,6 +76,10 @@ namespace CSharp_sample
 		}
 
 
+		// 売(返済売/新規空売り)
+		public bool IsSell(){ return Side == "1"; }
+		// 返済(返済売/返済空買い)
+		public bool IsReturn(){ return CashMargin == 3; }
 
 		public DateTime GetRecvTime()
 		{

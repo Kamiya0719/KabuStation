@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static CSharp_sample.Def;
 
 namespace CSharp_sample
 {
@@ -17,7 +18,7 @@ namespace CSharp_sample
 			int jScore = GetJapanScoreNow();
 			CsvControll.Log("GetJapanScoreNow", "", "", jScore.ToString());
 			if (jScore == Def.JScoreNotGet) return;
-			int timeIdx = GetTimeIdx(now);
+			TimeIdx timeIdx = GetTimeIdx(now);
 			bool isSpOnly = now.Hour <= 12;
 			// 1銘柄ごとの基礎購入値
 			int buyBasePrice = Int32.Parse(CsvControll.GetBuyBasePriceInfo()[0]);
@@ -26,7 +27,7 @@ namespace CSharp_sample
 			ResponseOrders[] orderRes = RequestBasic.RequestOrders();
 
 
-			// todo 詳細ランキング確認 ボードで確認かな
+			// 詳細ランキング確認 ボードで確認かな
 
 			Dictionary<string, Dictionary<string, string>> rankingDic = new Dictionary<string, Dictionary<string, string>>();
 			foreach (string[] tmpRank in CsvControll.GetRankingInfo()) {
@@ -51,6 +52,7 @@ namespace CSharp_sample
 				}
 			}
 			CsvControll.SaveRankingInfo(saveRankingInfo);
+
 
 			CsvControll.Log("Interval", "Orders", "", "");
 
@@ -124,7 +126,7 @@ namespace CSharp_sample
 
 				// 新規注文(買・売) 中で注文数0なら終了 基本今日中に終わらせるので期間は0
 				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, true, codeDaily.BuyOrderNeed(), codeDaily.BuyPrice(), 0);
-				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(true), 0);
+				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(timeIdx), 0);
 			}
 
 			SaveCodeResOrder();
@@ -165,16 +167,16 @@ namespace CSharp_sample
 		}
 
 		// 現在時刻に応じた値
-		private static int GetTimeIdx(DateTime now)
+		private static TimeIdx GetTimeIdx(DateTime now)
 		{
 			if (now.Hour == 15) {
-				if (now.Minute >= 25) return 1;
-				if (now.Minute >= 20) return 2;
-				if (now.Minute >= 15) return 3;
-				return 4;
+				if (now.Minute >= 25) return TimeIdx.T1525;
+				if (now.Minute >= 20) return TimeIdx.T1520;
+				if (now.Minute >= 15) return TimeIdx.T1515;
+				return TimeIdx.T1500;
 			}
-			if (now.Hour == 14 && now.Minute >= 20) return 5;
-			return 6;
+			if (now.Hour == 14 && now.Minute >= 20) return TimeIdx.T1420;
+			return TimeIdx.T0900;
 		}
 
 

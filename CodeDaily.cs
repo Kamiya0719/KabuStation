@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static CSharp_sample.Def;
 
 namespace CSharp_sample
 {
@@ -43,7 +44,7 @@ namespace CSharp_sample
 			this.TradingUnit = TradingUnit;
 			this.lastEndPrice = lastEndPrice;
 			this.fisDate = fisDate;
-			this.type = Common.Sp10(Symbol) ? Def.TypeSp : Def.TypePro;
+			this.type = Common.Sp10(Symbol) ? Def.TypeSp : Def.TypePro; // todo
 		}
 		// csvファイルデータをコンストラクタとする
 		public CodeDaily(string[] csvInfo)
@@ -182,7 +183,7 @@ namespace CSharp_sample
 			sellNowOrders = new List<CodeResOrder>();
 			foreach (CodeResOrder order in orders) {
 				if (order.Symbol != Symbol) continue; // これエラーやな
-				if (order.Side == "1") {
+				if (order.IsSell()) {
 					// 売
 					sellConfirm += (int)order.CumQty - order.startCumQty;
 					if (order.State == 1 || order.State == 2 || order.State == 3) {
@@ -223,7 +224,7 @@ namespace CSharp_sample
 
 		// #B4# 板情報を渡して売値あるいは買値を設定する
 		// todo #A#でも使う？
-		public void SetBoard(ResponseBoard board, int timeIdx)
+		public void SetBoard(ResponseBoard board, TimeIdx timeIdx)
 		{
 			int low = YobinePrice(board.LowPrice + yobine);
 			int high = YobinePrice(board.HighPrice - yobine);
@@ -233,7 +234,12 @@ namespace CSharp_sample
 				buyNeedNum = 0;
 			} else if (isBuy) {
 				if (type == Def.TypeSp) {
-					buyPrice = Common.Sp10BuyPrice(Symbol);
+					if (timeIdx == TimeIdx.T1525) {
+						isBuy = false;
+						buyPrice = 0;
+					} else{
+						buyPrice = Common.Sp10BuyPrice(Symbol);
+					}
 				} else {
 					// 購入注文必要 or 現在購入注文中
 					buyPrice = BoardPrice(board, timeIdx, low, high, true);
@@ -246,28 +252,28 @@ namespace CSharp_sample
 			if ((sellOrderNeed > 0 || sellNowOrders.Count > 0) && isLossSell) lossSellPrice = BoardPrice(board, timeIdx, high, low, false);
 		}
 		// maxは利益最大 minは利益最小
-		private int BoardPrice(ResponseBoard board, int timeIdx, int max, int min, bool isBuy)
+		private int BoardPrice(ResponseBoard board, TimeIdx timeIdx, int max, int min, bool isBuy)
 		{
 			// listは値段高い順(損な順)に並ぶ (買 => 0:売1,1:買1,...,9:買9,10:買10) 売りは逆かしら
 			int price = 0;
-			if (timeIdx == 6) {
+			if (timeIdx == TimeIdx.T0900) {
 				// ⑥12時50分なら安値近く or 高値近く でワンちゃんねらい 一応即売・即買値段を見てお得な方にする
 				price = Toku(isBuy, isBuy ? (int)board.Sell1.Price : (int)board.Buy1.Price, max);
-			} else if (timeIdx == 5) {
+			} else if (timeIdx == TimeIdx.T1420) {
 				// ⑤14時なら現実的な数値に  volume以内に入るもので利益最大のもの
 				price = MaxVolPrice(board, isBuy, Math.Max((int)(board.TradingVolume / 5), 30 * TradingUnit));
 				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
-			} else if (timeIdx == 4) {
+			} else if (timeIdx == TimeIdx.T1500) {
 				// ④14時30分に本命くらい  volume以内に入るもので利益最大のもの
 				price = MaxVolPrice(board, isBuy, Math.Max((int)(board.TradingVolume / 15), 30 * TradingUnit));
 				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
-			} else if (timeIdx == 3) {
+			} else if (timeIdx == TimeIdx.T1515) {
 				// ③14時45分なら1本目狙い でも近いものに大き目の差があったら
 				int maxVolPrice = MaxVolPrice(board, isBuy, 15 * TradingUnit);
 				price = isBuy ? (int)board.Buy1.Price : (int)board.Sell1.Price;
 				// 極端に差が大きい(0.8％以上かつ3yobine以上)
 				if (IsBigDiff(isBuy, price, maxVolPrice, 1.008)) price = maxVolPrice;
-			} else if (timeIdx == 2 || timeIdx == 1) {
+			} else if (timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1525) {
 				// ②14時50分なら1本目+1 でも近いものに大き目の差があったら
 				int maxVolPrice = MaxVolPrice(board, isBuy, 8 * TradingUnit);
 				price = isBuy ? (int)board.Buy1.Price + 2 * yobine : (int)board.Sell1.Price - 2 * yobine;
@@ -308,13 +314,13 @@ namespace CSharp_sample
 
 		// #B5# 注文中の中でキャンセルする必要があるやつ あったらキャンセルして今回注文はしない
 		// todo #A#でも使う？
-		public List<string> CancelOrderIds(int timeIdx)
+		public List<string> CancelOrderIds(TimeIdx timeIdx)
 		{
 			List<string> res = new List<string>();
 			int buyNowOrderNum = 0;
 			foreach (CodeResOrder order in buyNowOrders) {
-				if (buyPrice * Def.CancelDiff < order.Price || buyPrice > order.Price * Def.CancelDiff || (buyPrice != order.Price && timeIdx <= 3)) {
-					// 金額とのずれが大きければキャンセル timeIdx=1,2,3(14時45分以降)ならわずかな差も許さん
+				if (!isBuy || buyPrice * Def.CancelDiff < order.Price || buyPrice > order.Price * Def.CancelDiff || (buyPrice != order.Price && (timeIdx == TimeIdx.T1525|| timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1515))) {
+					// 金額とのずれが大きければキャンセル timeIdx=1,2,3(15時15分以降)ならわずかな差も許さん
 					res.Add(order.ID);
 				} else {
 					// 注文中の数
@@ -372,13 +378,17 @@ namespace CSharp_sample
 		public int BuyPrice() { return buyPrice; }
 		// #A4# #B6#
 		public int SellOrderNeed() { return sellOrderNeed; }
-		public int SellPrice(bool isMinites)
+		public int SellPrice(TimeIdx timeIdx)
 		{
-			if (isLossSell && isMinites) return lossSellPrice;
+			if (isLossSell && timeIdx != TimeIdx.T0000) return lossSellPrice;
 			if (type == Def.TypeSp) {
-				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + 1);
+				// 時間に応じて+1をなくすか
+				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + (timeIdx == TimeIdx.T1525 ? 0: 1));
+				// 前日設定値+1と買値+1が同値か片方の設定がないなら適当に
 				if (spPrice <= 5 || idealSellPrice <= 5 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
-				if(spPrice <= idealSellPrice - 4) return spPrice + 3;
+				// 前日設定値+4<=買値 なら 前日設定値+4
+				if (spPrice + 4 <= idealSellPrice) return spPrice + 3;
+				// そうでない(前日設定値+1<=買値+2 or 前日設定値+2>=買値+1)なら高い方-1
 				return Math.Max(spPrice, idealSellPrice) - 1;
 			}
 			if (idealSellPrice > 0) return idealSellPrice;

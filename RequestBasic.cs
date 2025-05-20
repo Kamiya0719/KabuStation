@@ -183,7 +183,7 @@ namespace CSharp_sample
 			}
 			return res;
 		}
-		/** 注文送信 */
+		/** 注文送信 todo 引数はCodeDailyにするか */
 		public static ResponseOrder RequestSendOrder(int symbol, int exchange, bool isBuy, int qty, int price, int expireDay)
 		{
 			if (qty <= 0) return null;

@@ -124,15 +124,15 @@ namespace CSharp_sample
 			SaveCsvDatas(FILE_TYPE.Code, CodeAddName(code), datas, isAddWrite);
 		}
 		// コードデータを取得(日付,始値,高値,安値,終値)
-		public static List<string[]> GetCodeInfo(string code)
+		public static List<string[]> GetCodeInfo(string symbol)
 		{
 			// 分割・合併を考慮して各種値段を現在基準へと変換する
 			Dictionary<string, Dictionary<DateTime, double>> splitDate = GetSplitDate();
 			List<string[]> res = new List<string[]>();
-			foreach (string[] info in GetCsvDatas(FILE_TYPE.Code, CodeAddName(code))) {
+			foreach (string[] info in GetCsvDatas(FILE_TYPE.Code, CodeAddName(symbol))) {
 				double ratio = 1.0;
-				if (splitDate.ContainsKey(code)) {
-					foreach (KeyValuePair<DateTime, double> pair in splitDate[code]) {
+				if (splitDate.ContainsKey(symbol)) {
+					foreach (KeyValuePair<DateTime, double> pair in splitDate[symbol]) {
 						if (Common.NewD2(DateTime.Parse(info[0]), pair.Key)) ratio /= pair.Value;
 					}
 				}
@@ -274,7 +274,7 @@ namespace CSharp_sample
 		{
 			return GetCsvDatas(FILE_TYPE.BenefitAll, symbol);
 		}
-		
+
 
 
 		// 翌日日経平均スコア仮閾値を保存
@@ -298,6 +298,17 @@ namespace CSharp_sample
 		}
 		// 詳細ランキング Old
 		public static List<string[]> GetRankingInfoOld(DateTime date) { return GetCsvDatas(FILE_TYPE.RankingInfoOld, date.ToString(DFILEFORM)); }
+		public static List<string> GetRankingOldList()
+		{
+			char[] delimiterChars = { '\\', '.' };
+			List<string> list = new List<string>();
+			foreach (string file in Directory.EnumerateFiles(FilePath + FileNames[FILE_TYPE.RankingInfoOld], "*", SearchOption.TopDirectoryOnly)) {
+				string[] words = file.Split(delimiterChars);
+				list.Add(words[words.Length - 2]);
+			}
+			return list;
+		}
+
 		// Sp系情報
 		public static void SaveSpInfo(List<string[]> datas, bool isAddWrite = false)
 		{

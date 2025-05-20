@@ -2,6 +2,17 @@ using System.Collections.Generic;
 
 namespace CSharp_sample
 {
+	public enum TimeIdx
+	{
+		T0000,
+		T1525,
+		T1520,
+		T1515,
+		T1500,
+		T1420,
+		T0900,
+	}
+
 	class Def
 	{
 		// 代表となる銘柄 最新まであることが必須 プロ500にいなければならない
@@ -9,7 +20,7 @@ namespace CSharp_sample
 
 		// トランプモード todo 理想売りはhalfにするかな 損切はオーバーアップ時のみ(全売) 購入はオーバーダウン時のみ？
 		public const bool TranpMode = false;
-		public const bool SubTranpMode = true;
+		public const bool SubTranpMode = false;
 		public const int JScoreOverUp = 10;
 		public const int JScoreOverDown = 20;
 		public const int JScoreNotGet = -10;
@@ -46,8 +57,9 @@ namespace CSharp_sample
 		};
 
 
-		public const int TypePro = 1;
-		public const int TypeSp = 2;
+		public const int TypePro = 1; // プロ500通常信用買い
+		public const int TypeSp = 2; // 低額株買い
+		public const int TypeKara = 3; // 空売り
 
 		// 最大購入額55万をとりあえず真の上限
 		public const double BuyMax = 1.1;
@@ -95,5 +107,18 @@ namespace CSharp_sample
 		};
 
 
+
+
+		/*
+		 			if (now.Hour == 15) {
+				if (now.Minute >= 25) return 1;
+				if (now.Minute >= 20) return 2;
+				if (now.Minute >= 15) return 3;
+				return 4;
+			}
+			if (now.Hour == 14 && now.Minute >= 20) return 5;
+			return 6;
+		 
+		 */
 	}
 }

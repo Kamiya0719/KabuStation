@@ -166,17 +166,25 @@ namespace CSharp_sample
 			8231,8233,8241,8243,8245,8247,8249,8257,8259,8261,8263,8265,8267,8273,8275,8277,8279,8281,8283,8288,8401,8403,8405,8407,8417,
 			8419,8421,8423,8425,8433,8435,8437,8439,8441,8449,8451,8453,8455,8457,8459,8465,8467,8469,8471,8473,8475,8481,8483,8485,8487,
 			8489,8491,8493,8497,8499,8501,8503,8505,8507,8509,
+			// 追加分
+			8443,645,6235,8025,8251,6269,8461,7351,7731,8285,1317,853,197,5593,8043,7593,
+			8511,6201,7835,1109,1491,2595,7559,1249,7143,5819,2195,4251,1543,2213,385,7281,6027,7385,439,627,2387,5993,3123,871,8495,8217,
+			6917,4459,5317,421,7801,7749,8061,5543,7611,8009,5143,8235,8269,5821,6045,7819,8287,8183,7767,1457,6047,6935,
+			1888,7387,2821,4425,1525,6255,4253,2855,2907,7837,4479,5595,6449,6883,3731,7091,5751,6691,5206,4165,1091,3523,
+			4025,3939,1785,3489,3575,3349,5369,2005,4027,5803,4233,889,199,6709,
+			895,1791,2911,6253,2909,4255,5597,2231,2681,4917,1787,3557,5057,4461,7317,1561,5785,647,1111,665,7299,7975,4691,2889,5823,3991,217,2683,3281,2457,
+
 		};
 		private static readonly int[] ConfirmAnds = new int[] {
 			//1682,8408,5958
 		};
 		private static readonly int[] ConfirmOrs = new int[] {
-			1683,8409,5959,1283
+			1683,8409,5959,1283,6219,4998,8477,4477,4657,8445,6271,8479,6203,8427,8027,7613,8429,4463,223,2805
 		};
 		private static readonly int[] KouhoAnds = new int[] {
 		};
-		private static readonly int[] KouhoOrs = new int[8] {
-			6269,7351,7731,4459,4998,8251,6027,6219,
+		private static readonly int[] KouhoOrs = new int[5] {
+			2239,1475,4375,2895,447,
 		};
 		/** 51条件の全検証 */
 		public static void CheckCond51All()
@@ -231,6 +239,7 @@ namespace CSharp_sample
 			}
 
 			int kouhoNum = KouhoAnds.Length > 0 ? KouhoAnds.Length : KouhoOrs.Length;
+			int[] kouhoList = KouhoAnds.Length > 0 ? KouhoAnds : KouhoOrs;
 			int[,] benefitAll = new int[kouhoNum, condNum()];
 			int[,] havePeriodAll = new int[kouhoNum, condNum()];
 			int[,] trueAll = new int[kouhoNum, condNum()];
@@ -251,7 +260,7 @@ namespace CSharp_sample
 						for (int pIdx = 0; pIdx < periodCntList.GetLength(0); pIdx++) {
 							foreach (bool isT in new bool[2] { true, false }) {
 								int condIdx = GetCondIdx(pIdx, ratioIdx, diffDayIdx, isT);
-								if (Array.IndexOf(NotCond, condIdx) >= 0) continue;
+								if (Array.IndexOf(NotCond, condIdx) >= 0 || Array.IndexOf(ConfirmOrs, condIdx) >= 0 || Array.IndexOf(KouhoOrs, condIdx) >= 0) continue;
 								foreach (string[] cond51 in cond51All) {
 
 									if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
@@ -287,11 +296,12 @@ namespace CSharp_sample
 				Common.DebugInfo("CheckCond51AllSymbol", symbol);
 
 				//test++;
-				//if (test > 10) break;
+				//if (test > 20) break;
 			}
 
 
 			// 並び変えるか
+			int maxNum = 30;
 			for (int i = 0; i < kouhoNum; i++) {
 				Dictionary<int, double> benefitRes = new Dictionary<int, double>();
 				Dictionary<int, double> havePeriodRes = new Dictionary<int, double>();
@@ -301,33 +311,63 @@ namespace CSharp_sample
 					havePeriodRes[j] = (double)havePeriodAll[i, j] / (double)trueAll[i, j];
 				}
 
-				int max = 20;
+				int max = maxNum;
 				string result = "";
 				string result2 = "";
 				double avBenefit = 0; double avTrue = 0;
+				double maxBenefit = 0;
 				foreach (KeyValuePair<int, double> benefitResA in benefitRes.OrderBy(c => c.Value)) {
-					result += "\nCond:" + benefitResA.Key + ", T:" + trueAll[i, benefitResA.Key] + ", Period:" + havePeriodRes[benefitResA.Key] + ", Benefit" + benefitResA.Value + ",";
-					result2 += benefitResA.Key + ",";
-					avBenefit += benefitResA.Value / 20;
-					avTrue += (double)trueAll[i, benefitResA.Key] / 20;
+					if (max > 0) {
+						result += "\nCond:" + benefitResA.Key + ", T:" + trueAll[i, benefitResA.Key] + ", Period:" + havePeriodRes[benefitResA.Key] + ", Benefit" + benefitResA.Value + ",";
+						result2 += benefitResA.Key + ",";
+						avBenefit += benefitResA.Value / maxNum;
+						avTrue += (double)trueAll[i, benefitResA.Key] / maxNum;
+
+						maxBenefit = Math.Min(maxBenefit, benefitResA.Value);
+					}
 					max--;
-					if (max <= 0) break;
 				}
-				Common.DebugInfo("LowScoreRank", i, result, "AvB:"+avBenefit + ", AvT:" + avTrue + ", " + result2);
+				Common.DebugInfo("LowScoreRank", kouhoList[i], result, "AvB:" + avBenefit + ", AvT:" + avTrue + ", " + result2);
 
 				result = "";
 				result2 = "";
-				max = 20;
-				 avBenefit = 0;  avTrue = 0;
-				foreach (KeyValuePair<int, double> benefitResB in benefitRes.OrderByDescending(c => c.Value)) {
-					result += "\nCond:" + benefitResB.Key + ", T:" + trueAll[i, benefitResB.Key] + ", Period:" + havePeriodRes[benefitResB.Key] + ", Benefit:" + benefitResB.Value + ",";
-					result2 += benefitResB.Key + ",";
-					avBenefit += benefitResB.Value / 20;
-					avTrue += (double)trueAll[i, benefitResB.Key] / 20;
+				max = 30;
+				foreach (KeyValuePair<int, double> benefitResA in benefitRes.OrderByDescending(c => c.Value <= maxBenefit * 0.96 ? trueAll[i, c.Key] : 0)) {
+					if (max > 0) {
+						result += "\nCond:" + benefitResA.Key + ", T:" + trueAll[i, benefitResA.Key] + ", Period:" + havePeriodRes[benefitResA.Key] + ", Benefit" + benefitResA.Value + ",";
+						result2 += benefitResA.Key + ",";
+					}
 					max--;
-					if (max <= 0) break;
 				}
-				Common.DebugInfo("HighScoreRank", i, result, "AvB:" + avBenefit + ", AvT:" + avTrue + ", " + result2);
+				Common.DebugInfo("LowScoreRank2", kouhoList[i], result, "AvB:" + avBenefit + ", AvT:" + avTrue + ", " + result2);
+				result = "";
+				result2 = "";
+				max = 30;
+				foreach (KeyValuePair<int, double> benefitResA in benefitRes.OrderBy(c => c.Value <= maxBenefit * 0.96 ? trueAll[i, c.Key] : 9999999)) {
+					if (max > 0) {
+						result += "\nCond:" + benefitResA.Key + ", T:" + trueAll[i, benefitResA.Key] + ", Period:" + havePeriodRes[benefitResA.Key] + ", Benefit" + benefitResA.Value + ",";
+						result2 += benefitResA.Key + ",";
+					}
+					max--;
+				}
+				Common.DebugInfo("LowScoreRank3", kouhoList[i], result, "AvB:" + avBenefit + ", AvT:" + avTrue + ", " + result2);
+
+
+				result = "";
+				result2 = "";
+				max = 30;
+				avBenefit = 0; avTrue = 0;
+				foreach (KeyValuePair<int, double> benefitResB in benefitRes.OrderByDescending(c => c.Value)) {
+					if (max > 0) {
+						result += "\nCond:" + benefitResB.Key + ", T:" + trueAll[i, benefitResB.Key] + ", Period:" + havePeriodRes[benefitResB.Key] + ", Benefit:" + benefitResB.Value + ",";
+						result2 += benefitResB.Key + ",";
+						avBenefit += benefitResB.Value / maxNum;
+						avTrue += (double)trueAll[i, benefitResB.Key] / maxNum;
+					}
+					max--;
+				}
+				//Common.DebugInfo("HighScoreRank", i, result, "AvB:" + avBenefit + ", AvT:" + avTrue + ", " + result2);
+				Common.DebugInfo("HighScoreRank", kouhoList[i], avBenefit, avTrue);
 			}
 
 
@@ -390,7 +430,7 @@ namespace CSharp_sample
 				}
 				(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(AllTrueCondIdx);
 				foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
-					if(!isAllScore) {
+					if (!isAllScore) {
 						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
 						if (!isOrOkForce && !beforeOr[symbol].Contains(cond51[0])) continue;
 					}
@@ -401,7 +441,7 @@ namespace CSharp_sample
 					trueAll++;
 				}
 			}
-			Common.DebugInfo("DebugCheckCond51", trueAll, (double)benefitAll/ trueAll, (double)havePeriodAll/ trueAll);
+			Common.DebugInfo("DebugCheckCond51", trueAll, (double)benefitAll / trueAll, (double)havePeriodAll / trueAll);
 		}
 
 

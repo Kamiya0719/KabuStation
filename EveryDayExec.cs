@@ -180,7 +180,7 @@ namespace CSharp_sample
 				int havePeriod = Common.GetDateIdx(setDate) - Common.GetDateIdx(buyDate);
 
 				int sellPeriod = 12; // 0なら今日のみ,1なら翌日まで的な
-				double sellPrice = resP.Price * 1.01;
+				double sellPrice = resP.Price * 1.01; // todo
 				foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(setDate, codeDaily.FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
 					if (havePeriod <= pair.Key) { sellPrice = resP.Price * pair.Value; sellPeriod = pair.Key - havePeriod; }
 				}
@@ -225,26 +225,25 @@ namespace CSharp_sample
 				string symbol = pair.Key;
 				CodeDaily codeDaily = MinitesExec.GetCodeDailys()[symbol];
 				// todo この時点ではsp系はまだbasepriceがない
-				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(false), expireList[symbol]);
+				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(TimeIdx.T0000), expireList[symbol]);
 			}
 		}
 
 		// 明日購入する銘柄の選定 プロ500で条件を満たしていればIsBuyをtrueにする todo setIsBuyがfalse(高額系)でもマージンを減らしちゃうな
 		private static void SetBuy(DateTime setDate)
 		{
+			// 通常プロ500新規買いの対象となるものを算出
 			List<string[]> conditions = CsvControll.GetConditions();
 			List<CodeDaily> buyList = new List<CodeDaily>();
 			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
 				if (Common.Pro500(pair.Key) && Condtions.IsCondOk(setDate, CsvControll.GetCodeInfo(pair.Key), conditions)) buyList.Add(pair.Value);
 			}
 
-			// 明日の基準購入費を決定する
+			// 通常プロ500新規買いの明日の基準購入費を決定する
 			int setBuyBasePrice = 0;
 			for (int buyBasePrice = 100000; buyBasePrice <= nowOneBuyMargin; buyBasePrice += 10000) {
 				double buyPriceSum = 0;
-				foreach (CodeDaily codeDaily in buyList) {
-					buyPriceSum += codeDaily.TommorowBuy(buyBasePrice, setDate);
-				}
+				foreach (CodeDaily codeDaily in buyList) buyPriceSum += codeDaily.TommorowBuy(buyBasePrice, setDate);
 				if (nowMargin <= buyPriceSum) break;
 				if (buyPriceSum > 0) setBuyBasePrice = buyBasePrice;
 			}
@@ -259,7 +258,7 @@ namespace CSharp_sample
 				string symbol = pair.Key;
 				if (!Common.Sp10(symbol)) continue;
 				double basePrice = Common.Sp10BuyPrice(symbol);
-				if (basePrice > 0) {
+				if (basePrice > 50) { // 50円以下はやめとこうかな
 					if (symbol == "6740") continue;
 					CodeDaily codeDaily = pair.Value;
 					codeDaily.SetIsBuy(Def.SpBuyBasePricew, setDate);
@@ -301,7 +300,7 @@ namespace CSharp_sample
 						"損切:"+pair.Value.IsLossSell().ToString(),
 						"評価額:"+(pair.Value.StartHave()*lastEndPrice).ToString(),
 						"所持数:"+pair.Value.StartHave().ToString(),
-						"理想売値:"+pair.Value.SellPrice(false).ToString(), // 理想売り値段
+						"理想売値:"+pair.Value.SellPrice(TimeIdx.T0000).ToString(), // 理想売り値段
 						"前日終値:" + lastEndPrice.ToString(),
 					});
 					haveSum += pair.Value.StartHave() * lastEndPrice;
@@ -326,7 +325,7 @@ namespace CSharp_sample
 				if (pair.Value.CumQty <= 0) continue;
 				DateTime date = pair.Value.GetRecvTime();
 				bool isSameD = Common.SameD(lastDate, date);
-				bool isSell = pair.Value.Side == "1";
+				bool isSell = pair.Value.IsSell();
 				double oldCumQty = oldCumQtys.ContainsKey(pair.Key) ? oldCumQtys[pair.Key] : 0;
 				if (isSell && pair.Value.CumQty > oldCumQty) {
 					// 昨日の約定数データと比較して今日分に絞る

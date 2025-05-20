@@ -46,8 +46,8 @@ namespace CSharp_sample
 		// 注文発注
 		public void SetOrder(bool isBuy, int qty, int price, int expireDay)
 		{
-			this.side = isBuy ? "2" : "1";
-			this.cashMargin = isBuy ? 2 : 3;
+			this.side = isBuy ? "2" : "1"; // 売買区分(1:売,2:買)
+			this.cashMargin = isBuy ? 2 : 3; // 信用区分(2:新規,3:返済) todo空売り
 			this.qty = qty;
 			this.frontOrderType = price == 0 ? 10 : 20;
 			this.price = price;
@@ -100,7 +100,7 @@ namespace CSharp_sample
 					Side = side, // 売買区分(1:売,2:買)
 					CashMargin = cashMargin, // 信用区分(2:新規,3:返済)
 					MarginTradeType = 1, // 信用取引区分(1:制度信用)
-					DelivType = side == "1" ? 2 : 0, // 受渡区分(0:指定なし,2:お預り金,3	:auマネーコネクト)
+					DelivType = cashMargin == 3 ? 2 : 0, // 受渡区分(0:指定なし,2:お預り金,3	:auマネーコネクト)
 					AccountType = 4, // 口座種別(2:一般,4	:特定)
 					Qty = qty, // 注文数量
 					ClosePositionOrder = 0, // 決済順序
@@ -276,7 +276,7 @@ namespace CSharp_sample
 		public double OrderQty; // 発注数量※注文期限切れと失効の場合、OrderQtyはゼロになりません。※期限切れと失効の確認方法としては、DetailsのRecType（3: 期限切れ、7: 失効）にてご確認ください。
 		public double CumQty; // 約定数量
 		public string Side; // 売買区分(1:売,2:買)
-		public int CashMargin; // 取引区分
+		public int CashMargin; // 取引区分(2:新規,3:返済)
 		public int AccountType; // 口座種別
 		public int DelivType; // 受渡区分
 		public int ExpireDay; // 注文有効期限yyyyMMdd形式
@@ -301,7 +301,7 @@ namespace CSharp_sample
 		public double Price; // 値段
 		public double LeavesQty; // 残数量（保有数量）
 		public double HoldQty; // 拘束数量（返済のために拘束されている数量）
-		public string Side; // 売買区分
+		public string Side; // 売買区分(1:売,2:買)
 		public double Expenses; // 諸経費※信用・先物・オプションの場合のみ
 		public double Commission; // 手数料※信用・先物・オプションの場合のみ
 		public double CommissionTax; // 手数料消費税※信用・先物・オプションの場合のみ

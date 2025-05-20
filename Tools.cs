@@ -675,7 +675,7 @@ namespace CSharp_sample
 				bool isSellValid = false;
 				//todo 今日有効であった売りは見られるかな？
 				foreach (CodeResOrder codeResOrder in codeResOrders[codeDaily.Symbol]) {
-					if (codeResOrder.Side == "1") {
+					if (codeResOrder.IsSell()) {
 						// 売
 						if (Common.NewD2Second(beforeLast, codeResOrder.GetRecvTime())) isTodaySell = true;
 						if (codeResOrder.State == 1 || codeResOrder.State == 3) isSellValid = true;
@@ -695,8 +695,212 @@ namespace CSharp_sample
 		}
 
 
+		/** ランキング関連 */
+		public static void CheckRanking()
+		{
 
-		
+			List<string> resAll = new List<string>();
+			Dictionary<int, int> lowestSum = new Dictionary<int, int>();
+			Dictionary<int, int> lowestTimeSum = new Dictionary<int, int>();
+			Dictionary<int, Dictionary<int, int>> diffSum = new Dictionary<int, Dictionary<int, int>>();
+
+			foreach (string dateString in CsvControll.GetRankingOldList()) {
+				DateTime date = Common.DateParse(Int32.Parse(dateString));
+				Dictionary<string, Dictionary<int, double>> infoAll = new Dictionary<string, Dictionary<int, double>>();
+				foreach (string[] rankingInfo in CsvControll.GetRankingInfoOld(date)) {
+					string symbol = rankingInfo[0];
+					DateTime time = DateTime.Parse(rankingInfo[1]);
+					if (!Common.SameD(time, date)) continue;
+					double ratio = Double.Parse(rankingInfo[2]);
+					if (!infoAll.ContainsKey(symbol)) infoAll[symbol] = new Dictionary<int, double>();
+					infoAll[symbol][Int32.Parse(time.ToString("HHmm"))] = ratio;
+				}
+
+				foreach (KeyValuePair<string, Dictionary<int, double>> pair in infoAll) {
+					string symbol = pair.Key;
+					int lowest = 0; int lowTime = 0;
+					foreach (KeyValuePair<int, double> pair2 in pair.Value) {
+						// 何を調べるべきか => その日の最大値と時間 %ごとの分類(その後の減少率上昇率)
+						int time = pair2.Key;
+						int ratio = (int)Math.Round(pair2.Value, MidpointRounding.AwayFromZero);
+						if (lowest > ratio) { lowest = ratio; lowTime = time; }
+					}
+					if (!lowestSum.ContainsKey(lowest)) lowestSum[lowest] = 0;
+					lowestSum[lowest]++;
+					if (!lowestTimeSum.ContainsKey(lowTime / 10)) lowestTimeSum[lowTime / 10] = 0;
+					lowestTimeSum[lowTime / 10]++;
+
+					int maxUp = lowest;
+					foreach (KeyValuePair<int, double> pair2 in pair.Value) {
+						int time = pair2.Key;
+						int ratio = (int)Math.Round(pair2.Value, MidpointRounding.AwayFromZero);
+						if (time > lowTime && maxUp < ratio) maxUp = ratio;
+					}
+					if (!diffSum.ContainsKey(lowest)) diffSum[lowest] = new Dictionary<int, int>();
+					if (!diffSum[lowest].ContainsKey(maxUp - lowest)) diffSum[lowest][maxUp - lowest] = 0;
+					diffSum[lowest][maxUp - lowest]++;
+				}
+
+
+
+			}
+
+
+			// 
+			foreach (KeyValuePair<int, int> pair in lowestSum.OrderBy(c => c.Key)) {
+				Common.DebugInfo("lowestSum", pair.Key, pair.Value);
+			}
+			foreach (KeyValuePair<int, int> pair in lowestTimeSum.OrderBy(c => c.Key)) {
+				Common.DebugInfo("lowestTimeSum", pair.Key, pair.Value);
+			}
+			foreach (KeyValuePair<int, Dictionary<int, int>> pair in diffSum.OrderBy(c => c.Key)) {
+				foreach (KeyValuePair<int, int> pair2 in pair.Value.OrderBy(c => c.Key)) {
+					Common.DebugInfo("diffSum", pair.Key, pair2.Key, pair2.Value);
+				}
+			}
+
+
+
+
+		}
+
+
+		/** ランキング利益チェック */
+		public static void CheckRankingBenfitAll()
+		{
+			// todo 各パラメータごとの情報開示も欲しいか？
+
+			double maxBenefit = 0;
+			double maxOkRate = 0;
+			int okSum = 0;
+			int buySum = 0;
+
+			Dictionary<DateTime, Dictionary<string, double>> stPList = GetStPList();
+			for (int i = 0; i < 6; i++) {
+				double buyRatio = -3 - i;
+				for (int j = 0; j < 5; j++) {
+					double sellDiff = 1 + j;
+					for (int t1 = 0; t1 < 10; t1++) {
+						int timeMin = 900 + t1 * 3;
+						for (int t2 = 0; t2 < 6; t2++) {
+							int timeMax = timeMin + 4 + t2 * 4;
+							(double benefit, int[] res) = CheckRankingBenfit(timeMin, timeMax, buyRatio, sellDiff, stPList);
+							Common.DebugInfo("CheckRankingBenfitAll", benefit, res[0], res[1], timeMin, timeMax, buyRatio, sellDiff);
+							if (res[1] > 15) maxBenefit = Math.Max(benefit / res[1], maxBenefit);
+							if (res[1] > 15) maxOkRate = Math.Max((double)res[0] / res[1], maxOkRate);
+						}
+					}
+					break;
+				}
+				break;
+			}
+			Common.DebugInfo("Max", maxBenefit, maxOkRate);
+		}
+		private static Dictionary<DateTime, Dictionary<string, double>> GetStPList()
+		{
+			Dictionary<DateTime, Dictionary<string, double>> stPList = new Dictionary<DateTime, Dictionary<string, double>>();
+			Dictionary<string, List<DateTime>> list = new Dictionary<string, List<DateTime>>();
+			foreach (string dateString in CsvControll.GetRankingOldList()) {
+				DateTime date = Common.DateParse(Int32.Parse(dateString));
+				stPList[date] = new Dictionary<string, double>();
+				List<string> symbols = new List<string>();
+				foreach (string[] rankingInfo in CsvControll.GetRankingInfoOld(date)) {
+					if (!symbols.Contains(rankingInfo[0])) symbols.Add(rankingInfo[0]);
+				}
+				foreach (string symbol in symbols) {
+					if (!list.ContainsKey(symbol)) list[symbol] = new List<DateTime>();
+					list[symbol].Add(date);
+				}
+			}
+			foreach (KeyValuePair<string, List<DateTime>> pair in list) {
+				string symbol = pair.Key;
+				List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
+				for (int i = codeInfo.Count - 1; i >= 0; i--) {
+					foreach (DateTime date in pair.Value) {
+						if (Common.SameD(DateTime.Parse(codeInfo[i][0]), date)) {
+							stPList[date][symbol] = ((Double.Parse(codeInfo[i][1]) / Double.Parse(codeInfo[i - 1][4])) - 1) * 100;
+							break;
+						}
+					}
+				}
+			}
+			return stPList;
+		}
+
+		// この間の時間なら購入。これ以下なら購入。買い値にこの利益をのせて売る
+		private static (double, int[]) CheckRankingBenfit(int timeMin, int timeMax, double buyRatio, double sellDiff, Dictionary<DateTime, Dictionary<string, double>> stPList)
+		{
+			// 追加パラメータとしてダウンし始めているかとかかな	その日の現状の最大値より1下がったら買うとか
+			double downRatio = 0.5;
+			int timeDiff = 10; // 5分で3％は上がりすぎという考え
+			int upTimeDiff = 6; // そこから4分以内に0.5％下がったら
+
+			double benefitAll = 0;
+			int[] res = new int[2];
+			foreach (string dateString in CsvControll.GetRankingOldList()) {
+				DateTime date = Common.DateParse(Int32.Parse(dateString));
+				Dictionary<string, Dictionary<int, double>> infoAll = new Dictionary<string, Dictionary<int, double>>();
+				foreach (string[] rankingInfo in CsvControll.GetRankingInfoOld(date)) {
+					string symbol = rankingInfo[0];
+					DateTime time = DateTime.Parse(rankingInfo[1]);
+					if (!Common.SameD(time, date)) continue;
+					double ratio = Double.Parse(rankingInfo[2]);
+					if (!infoAll.ContainsKey(symbol)) infoAll[symbol] = new Dictionary<int, double>();
+					infoAll[symbol][Int32.Parse(time.ToString("HHmm"))] = ratio;
+				}
+
+				foreach (KeyValuePair<string, Dictionary<int, double>> pair in infoAll) {
+					string symbol = pair.Key;
+					double buyPrice = -100;
+					int lastTime = 900;
+					double lastPrice = 0;
+					double nowLowest = 0;
+
+					Dictionary<int, double> list = pair.Value;
+					if(stPList[date].ContainsKey(symbol)) list[0900] = stPList[date][symbol];
+
+					// 時間差
+					int upTime = 0;
+					foreach (KeyValuePair<int, double> pair2 in list.OrderBy(c => c.Key)) {
+						int time = pair2.Key;
+						double ratio = pair2.Value;
+												
+						for (int t = time - 1; t >= time - timeDiff; t--) {
+							if (list.ContainsKey(t) && ratio >= list[t] + 2) {
+								upTime = time;
+								//Common.DebugInfo("uptime", symbol, t, upTime, time);
+								break;
+							}
+						}
+						
+
+						nowLowest = Math.Min(nowLowest, ratio);
+						// 購入
+						if (upTime + upTimeDiff >= time && buyPrice == -100 && timeMin <= time && timeMax >= time && buyRatio >= ratio && nowLowest + downRatio <= ratio) {
+							buyPrice = ratio;
+							res[1]++;
+						}
+						if (buyPrice != -100 && buyPrice + sellDiff <= ratio) {
+							// 理想売却
+							benefitAll += sellDiff;
+							buyPrice = -100;
+							res[0]++;
+						}
+
+						lastTime = time;
+						lastPrice = ratio;
+					}
+					// 売却失敗
+					if (buyPrice != -100) {
+						benefitAll += lastPrice - buyPrice;
+					}
+				}
+			}
+
+			return (benefitAll, res);
+		}
+
+
 
 
 
