@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using static CSharp_sample.Def;
 
 namespace CSharp_sample
 {
@@ -32,6 +31,7 @@ namespace CSharp_sample
 
 
 		/// 保存なし一時メンバ ///
+		List<CodeResOrder> codeResOrders = new List<CodeResOrder>();
 		private List<CodeResOrder> buyNowOrders = new List<CodeResOrder>(); // 現在注文中購入注文ID
 		private List<CodeResOrder> sellNowOrders = new List<CodeResOrder>(); // 現在注文中購入注文ID
 
@@ -103,16 +103,25 @@ namespace CSharp_sample
 		}
 
 		// #A3# EveryDayにて理想売の数と値段を設定・キャンセル対象の返却
-		public List<string> SetIdealSell(List<ResponseOrders> sellNowOrders)
+		public List<string> SetIdealSell(Dictionary<string, CodeResOrder> codeResOrdersAll)
 		{
+			// todo これはもっと前にやるかな
+			foreach (KeyValuePair<string, CodeResOrder> pair in codeResOrdersAll) {
+				CodeResOrder order = pair.Value;
+				if (order.Symbol == Symbol) codeResOrders.Add(order);
+			}
+
+
 			sellOrderNeed = startHave;
 			List<string> res = new List<string>();
-			foreach (ResponseOrders order in sellNowOrders) {
-				if (order.Price == idealSellPrice && order.OrderQty == startHave) {
-					// 理想売り注文要件を完全に満たしていればsellOrderNeedを0にする それ以外キャンセル
-					sellOrderNeed = 0;
-				} else {
-					res.Add(order.ID);
+			foreach (CodeResOrder order in codeResOrders) {
+				if (order.IsValid() && order.IsSell()) {
+					if (order.Price == idealSellPrice && order.OrderQty == startHave) {
+						// 理想売り注文要件を完全に満たしていればsellOrderNeedを0にする それ以外キャンセル
+						sellOrderNeed = 0;
+					} else {
+						res.Add(order.ID);
+					}
 				}
 			}
 			return res;
@@ -186,7 +195,7 @@ namespace CSharp_sample
 				if (order.IsSell()) {
 					// 売
 					sellConfirm += (int)order.CumQty - order.startCumQty;
-					if (order.State == 1 || order.State == 2 || order.State == 3) {
+					if (order.IsValid()) {
 						sellNowOrder += (int)(order.OrderQty - order.CumQty);
 						sellNowOrders.Add(order);
 					}
@@ -194,7 +203,7 @@ namespace CSharp_sample
 					// 買
 					buyConfirm += (int)order.CumQty - order.startCumQty;
 					if (buyConfirm > 0) isTodayBuy = true;
-					if (order.State == 1 || order.State == 2 || order.State == 3) buyNowOrders.Add(order);
+					if (order.IsValid()) buyNowOrders.Add(order);
 				}
 			}
 
@@ -237,7 +246,7 @@ namespace CSharp_sample
 					if (timeIdx == TimeIdx.T1525) {
 						isBuy = false;
 						buyPrice = 0;
-					} else{
+					} else {
 						buyPrice = Common.Sp10BuyPrice(Symbol);
 					}
 				} else {
@@ -319,7 +328,7 @@ namespace CSharp_sample
 			List<string> res = new List<string>();
 			int buyNowOrderNum = 0;
 			foreach (CodeResOrder order in buyNowOrders) {
-				if (!isBuy || buyPrice * Def.CancelDiff < order.Price || buyPrice > order.Price * Def.CancelDiff || (buyPrice != order.Price && (timeIdx == TimeIdx.T1525|| timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1515))) {
+				if (!isBuy || buyPrice * Def.CancelDiff < order.Price || buyPrice > order.Price * Def.CancelDiff || (buyPrice != order.Price && (timeIdx == TimeIdx.T1525 || timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1515))) {
 					// 金額とのずれが大きければキャンセル timeIdx=1,2,3(15時15分以降)ならわずかな差も許さん
 					res.Add(order.ID);
 				} else {
@@ -383,7 +392,7 @@ namespace CSharp_sample
 			if (isLossSell && timeIdx != TimeIdx.T0000) return lossSellPrice;
 			if (type == Def.TypeSp) {
 				// 時間に応じて+1をなくすか
-				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + (timeIdx == TimeIdx.T1525 ? 0: 1));
+				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + (timeIdx == TimeIdx.T1525 ? 0 : 1));
 				// 前日設定値+1と買値+1が同値か片方の設定がないなら適当に
 				if (spPrice <= 5 || idealSellPrice <= 5 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
 				// 前日設定値+4<=買値 なら 前日設定値+4

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using static CSharp_sample.Def;
 
 namespace CSharp_sample
 {
@@ -28,30 +27,31 @@ namespace CSharp_sample
 
 
 			// 詳細ランキング確認 ボードで確認かな
-
-			Dictionary<string, Dictionary<string, string>> rankingDic = new Dictionary<string, Dictionary<string, string>>();
-			foreach (string[] tmpRank in CsvControll.GetRankingInfo()) {
-				if (!rankingDic.ContainsKey(tmpRank[0])) rankingDic[tmpRank[0]] = new Dictionary<string, string>();
-				rankingDic[tmpRank[0]][tmpRank[1]] = tmpRank[2];
-			}
-			foreach (RankingInfo rankingInfo in RequestBasic.RequestRanking()) {
-				string symbol = rankingInfo.Symbol;
-				if (!Common.Pro500(symbol)) continue;
-				if (!rankingDic.ContainsKey(symbol)) rankingDic[symbol] = new Dictionary<string, string>();
-				DateTime date = DateTime.Parse(rankingInfo.CurrentPriceTime);
-				rankingDic[symbol][date.ToString("yyyy/MM/dd HH:mm")] = rankingInfo.ChangePercentage.ToString();
-			}
-			List<string[]> saveRankingInfo = new List<string[]>();
-			foreach (string symbol in rankingDic.Keys) {
-				ResponseBoard boardRes = RequestBasic.RequestBoard(Int32.Parse(symbol), 1);
-				if (boardRes.CurrentPriceTime == null) continue;
-				DateTime date = DateTime.Parse(boardRes.CurrentPriceTime);
-				rankingDic[symbol][date.ToString("yyyy/MM/dd HH:mm")] = boardRes.ChangePreviousClosePer.ToString();
-				foreach (KeyValuePair<string, string> pair in rankingDic[symbol]) {
-					saveRankingInfo.Add(new string[3] { symbol, pair.Key, pair.Value });
+			if (true) {
+				Dictionary<string, Dictionary<string, string>> rankingDic = new Dictionary<string, Dictionary<string, string>>();
+				foreach (string[] tmpRank in CsvControll.GetRankingInfo()) {
+					if (!rankingDic.ContainsKey(tmpRank[0])) rankingDic[tmpRank[0]] = new Dictionary<string, string>();
+					rankingDic[tmpRank[0]][tmpRank[1]] = tmpRank[2];
 				}
+				foreach (RankingInfo rankingInfo in RequestBasic.RequestRanking()) {
+					string symbol = rankingInfo.Symbol;
+					if (!Common.Pro500(symbol)) continue;
+					if (!rankingDic.ContainsKey(symbol)) rankingDic[symbol] = new Dictionary<string, string>();
+					DateTime date = DateTime.Parse(rankingInfo.CurrentPriceTime);
+					rankingDic[symbol][date.ToString("yyyy/MM/dd HH:mm")] = rankingInfo.ChangePercentage.ToString();
+				}
+				List<string[]> saveRankingInfo = new List<string[]>();
+				foreach (string symbol in rankingDic.Keys) {
+					ResponseBoard boardRes = RequestBasic.RequestBoard(Int32.Parse(symbol), 1);
+					if (boardRes.CurrentPriceTime == null) continue;
+					DateTime date = DateTime.Parse(boardRes.CurrentPriceTime);
+					rankingDic[symbol][date.ToString("yyyy/MM/dd HH:mm")] = boardRes.ChangePreviousClosePer.ToString();
+					foreach (KeyValuePair<string, string> pair in rankingDic[symbol]) {
+						saveRankingInfo.Add(new string[3] { symbol, pair.Key, pair.Value });
+					}
+				}
+				CsvControll.SaveRankingInfo(saveRankingInfo);
 			}
-			CsvControll.SaveRankingInfo(saveRankingInfo);
 
 
 			CsvControll.Log("Interval", "Orders", "", "");
@@ -237,6 +237,19 @@ namespace CSharp_sample
 
 		// 注文照会情報 使いまわしそうなので一時保存
 		private static Dictionary<string, CodeResOrder> codeResOrders = new Dictionary<string, CodeResOrder>();
+		public static void SetResponseOrders(ResponseOrders[] ordersRes, bool isLastDay)
+		{
+			if (isLastDay) codeResOrders = new Dictionary<string, CodeResOrder>();
+			foreach (ResponseOrders order in ordersRes) {
+				if (!isLastDay && codeResOrders.ContainsKey(order.ID)) {
+					// 既存アップデート
+					codeResOrders[order.ID].UpdateData(order);
+				} else {
+					// 新規追加
+					codeResOrders[order.ID] = new CodeResOrder(order, isLastDay);
+				}
+			}
+		}
 		public static Dictionary<string, CodeResOrder> GetCodeResOrders()
 		{
 			// 既に作ってあったらそれ返して終了 まだなければファイルから持ってくる

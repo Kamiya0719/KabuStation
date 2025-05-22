@@ -462,7 +462,7 @@ namespace CSharp_sample
 		public static void BuyCheck()
 		{
 			for (int i = 0; i < 10; i++) {
-				DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Parse("2025/04/30")) - i);
+				DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Parse("2025/05/22")) - i);
 				List<string[]> conditions = CsvControll.GetConditions();
 				foreach (string symbol in CsvControll.GetCodeList()) {
 					if (Common.Pro500(symbol) && Condtions.IsCondOk(setDate, CsvControll.GetCodeInfo(symbol), conditions)) {
@@ -678,7 +678,7 @@ namespace CSharp_sample
 					if (codeResOrder.IsSell()) {
 						// 売
 						if (Common.NewD2Second(beforeLast, codeResOrder.GetRecvTime())) isTodaySell = true;
-						if (codeResOrder.State == 1 || codeResOrder.State == 3) isSellValid = true;
+						if (codeResOrder.IsValid()) isSellValid = true;
 					} else {
 						// 買
 						if (Common.NewD2Second(beforeLast, codeResOrder.GetRecvTime())) isTodayBuy = true;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CSharp_sample
 {
@@ -173,42 +174,52 @@ namespace CSharp_sample
 			1888,7387,2821,4425,1525,6255,4253,2855,2907,7837,4479,5595,6449,6883,3731,7091,5751,6691,5206,4165,1091,3523,
 			4025,3939,1785,3489,3575,3349,5369,2005,4027,5803,4233,889,199,6709,
 			895,1791,2911,6253,2909,4255,5597,2231,2681,4917,1787,3557,5057,4461,7317,1561,5785,647,1111,665,7299,7975,4691,2889,5823,3991,217,2683,3281,2457,
-
+			629,1751,5265,1319,3315,7109,2353,6029,2439,891,1337,3351,837,1789,2421,785,3801,3783,1717,179,3957,2687,7161,4183,7335,1987,5012,1301,5577,1563,
+			2785,4353,6145,8385,8387,8389,6147,181,1093,4029,2613,5109,3830,3622,4883,671,4536,5371,5414,2007,7785,403,4919,2690,1567,1769,441,4849,855,2145,
+			4355,7670,423,819,304,1800,3749,2685,611,5335,2459,6483,7577,2922,7543,6011,7698,1057,7957,6330,667,2179,6568,3428,8045,3125,4082,676,3592,4938,
+			1775,2895,447,1343,8219,2891,219,1339,6237,2233,3803,5373,4235,3577,893,2463,2647,873,4443,5805,2665,5145,7595,5283,1565,2215,3333,3805,2461,7163,
+			879,2823,2839,4375,1527,1113,1545,649,1735,443,201,3559,3697,1771,1989,1095,2873,5075,631,5127,2235,3507,4009,2423,2197,7525,7369,2893,1303,669,
+			6149,6185,5977,8391,8201,1341,221,5491,3579,5509,8253,6031,577,4272,1509,1321,3127,8100,5527,2996,6849,6711,4237,4693,5301,2982,2405,6901,6732,2441,
+			7993,2237,3581,4217,5147,3353,4031,6675,244,3541,405,5579,2371,7000,4506,3107,6762,4802,1378,445,7127,5666,18,2009,3860,1075,704,4409,1773,1115,
 		};
 		private static readonly int[] ConfirmAnds = new int[] {
-			//1682,8408,5958
+
 		};
 		private static readonly int[] ConfirmOrs = new int[] {
-			1683,8409,5959,1283,6219,4998,8477,4477,4657,8445,6271,8479,6203,8427,8027,7613,8429,4463,223,2805
+			1683,8409,5959,1283,6219,4998,8477,4477,4657,8445,6271,8479,6203,8427,8027,7613,8429,4463,223,2805,1475,1665,2787,207,2807,4357,6169,6187
 		};
 		private static readonly int[] KouhoAnds = new int[] {
 		};
-		private static readonly int[] KouhoOrs = new int[5] {
-			2239,1475,4375,2895,447,
+		private static readonly int[] KouhoOrs = new int[4] {
+		4431,
+8447,
+6223,
+863,
+
 		};
 		/** 51条件の全検証 */
 		public static void CheckCond51All()
 		{
+			DateTime now = DateTime.Now;
 			bool isOrOkForce = IsAndCheck && ConfirmOrs.Length == 0 && KouhoOrs.Length == 0; // orチェックを強制でOKにしておく
 
 			// 確定条件と候補条件について コード*日付分の情報を保存 andは一個でもfalseならそいつはアウト symbol=>[日付1,...]でfalseを保存
-			Dictionary<string, List<string>> beforeNotAnd = new Dictionary<string, List<string>>();
+			Dictionary<string, HashSet<string>> beforeNotAnd = new Dictionary<string, HashSet<string>>();
 			// beforeNotAndがfalseのものはスルー orは一個でもtrueならそいつはOK
-			Dictionary<string, List<string>> beforeOr = new Dictionary<string, List<string>>();
+			Dictionary<string, HashSet<string>> beforeOr = new Dictionary<string, HashSet<string>>();
 			// beforeNotAndがfalseのものはスルー
-			Dictionary<string, List<string>>[] beforeNotAndKouho = new Dictionary<string, List<string>>[KouhoAnds.Length];
+			Dictionary<string, HashSet<string>>[] beforeNotAndKouho = new Dictionary<string, HashSet<string>>[KouhoAnds.Length];
 			// beforeNotAndがfalseのものはスルー beforeOrがtrueのものはスルー
-			Dictionary<string, List<string>>[] beforeOrKouho = new Dictionary<string, List<string>>[KouhoOrs.Length];
-
+			Dictionary<string, HashSet<string>>[] beforeOrKouho = new Dictionary<string, HashSet<string>>[KouhoOrs.Length];
 			foreach (string symbol in CsvControll.GetCodeList()) {
-				beforeNotAnd[symbol] = new List<string>();
+				beforeNotAnd[symbol] = new HashSet<string>();
 				foreach (int condIdx in ConfirmAnds) {
 					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(condIdx);
 					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
 						if ((cond51[pIdx + 1] == "1") != isT) beforeNotAnd[symbol].Add(cond51[0]);
 					}
 				}
-				beforeOr[symbol] = new List<string>();
+				beforeOr[symbol] = new HashSet<string>();
 				foreach (int condIdx in ConfirmOrs) {
 					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(condIdx);
 					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
@@ -218,8 +229,8 @@ namespace CSharp_sample
 				}
 
 				for (int i = 0; i < KouhoAnds.Length; i++) {
-					if (beforeNotAndKouho[i] == null) beforeNotAndKouho[i] = new Dictionary<string, List<string>>();
-					beforeNotAndKouho[i][symbol] = new List<string>();
+					if (beforeNotAndKouho[i] == null) beforeNotAndKouho[i] = new Dictionary<string, HashSet<string>>();
+					beforeNotAndKouho[i][symbol] = new HashSet<string>();
 					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(KouhoAnds[i]);
 					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
 						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
@@ -227,8 +238,8 @@ namespace CSharp_sample
 					}
 				}
 				for (int i = 0; i < KouhoOrs.Length; i++) {
-					if (beforeOrKouho[i] == null) beforeOrKouho[i] = new Dictionary<string, List<string>>();
-					beforeOrKouho[i][symbol] = new List<string>();
+					if (beforeOrKouho[i] == null) beforeOrKouho[i] = new Dictionary<string, HashSet<string>>();
+					beforeOrKouho[i][symbol] = new HashSet<string>();
 					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(KouhoOrs[i]);
 					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
 						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
@@ -240,12 +251,40 @@ namespace CSharp_sample
 
 			int kouhoNum = KouhoAnds.Length > 0 ? KouhoAnds.Length : KouhoOrs.Length;
 			int[] kouhoList = KouhoAnds.Length > 0 ? KouhoAnds : KouhoOrs;
+
+
 			int[,] benefitAll = new int[kouhoNum, condNum()];
 			int[,] havePeriodAll = new int[kouhoNum, condNum()];
 			int[,] trueAll = new int[kouhoNum, condNum()];
 
-			int test = 0;
-			foreach (string symbol in CsvControll.GetCodeList()) {
+			List<string> codeList = CsvControll.GetCodeList();
+
+			if (false) {
+				codeList = new List<string>();
+				int aaa = 0;
+				foreach (string code in CsvControll.GetCodeList()) {
+					codeList.Add(code); aaa++;
+					if (aaa >= 30) break;
+				}
+			}
+
+
+			foreach (string symbol in codeList) {
+
+			/*
+			int[,,] benefitAllPs = new int[kouhoNum, condNum(), codeList.Count];
+			int[,,] havePeriodAllPs = new int[kouhoNum, condNum(), codeList.Count];
+			int[,,] trueAllPs = new int[kouhoNum, condNum(), codeList.Count];
+			ParallelOptions parallelOptions = new ParallelOptions();
+			parallelOptions.MaxDegreeOfParallelism = 2;
+			Parallel.For(0, codeList.Count, parallelOptions, p => {
+				string symbol = codeList[p];
+				int[,] benefitAllP = new int[kouhoNum, condNum()];
+				int[,] havePeriodAllP = new int[kouhoNum, condNum()];
+				int[,] trueAllP = new int[kouhoNum, condNum()];
+
+				*/
+
 				// todo こいつらはstaticに持っておくか？
 				Dictionary<string, int> benefits = new Dictionary<string, int>();
 				Dictionary<string, int> havePeriods = new Dictionary<string, int>();
@@ -293,11 +332,34 @@ namespace CSharp_sample
 						}
 					}
 				}
+
 				Common.DebugInfo("CheckCond51AllSymbol", symbol);
 
-				//test++;
-				//if (test > 20) break;
+				/*
+				for (int i = 0; i < kouhoNum; i++) {
+					for (int j = 0; j < condNum(); j++) {
+						benefitAllPs[i, j, p] = benefitAllP[i, j];
+						havePeriodAllPs[i, j, p] = havePeriodAllP[i, j];
+						trueAllPs[i, j, p] = trueAllP[i, j];
+					}
+				}
+
+				Console.WriteLine("CheckCond51AllSymbol:" + symbol + " End ");
+			});
+
+			for (int i = 0; i < kouhoNum; i++) {
+				for (int j = 0; j < condNum(); j++) {
+					for (int p = 0; p < codeList.Count; p++) {
+						benefitAll[i, j] += benefitAllPs[i, j, p];
+						havePeriodAll[i, j] += havePeriodAllPs[i, j, p];
+						trueAll[i, j] += trueAllPs[i, j, p];
+					}
+				}
 			}
+			*/
+
+			}
+
 
 
 			// 並び変えるか
@@ -371,7 +433,7 @@ namespace CSharp_sample
 			}
 
 
-
+			Common.DebugInfo("End", (DateTime.Now - now));
 		}
 
 		private static int GetCondIdx(int pIdx, int ratioIdx, int diffDayIdx, bool isT)
@@ -445,6 +507,14 @@ namespace CSharp_sample
 		}
 
 
+		/*
+		public static void Aaa()
+		{
+			Parallel.For(startIndex, endIndex, i => {
+				// カウンター変数iを使ったループ内の処理
+			});
+		}
+		*/
 
 
 

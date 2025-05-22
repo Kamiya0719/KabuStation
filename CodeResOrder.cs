@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Net.Http;
+﻿using System;
 
 namespace CSharp_sample
 {
@@ -21,7 +19,7 @@ namespace CSharp_sample
 
 		/// 変動ステータス ///
 		/* 1:待機（発注待機）, 2:処理中（発注送信中）,3:処理済（発注済・訂正済）,4:訂正取消送信中, 5:終了（発注エラー・取消済・全約定・失効・期限切れ）*/
-		public int State; // 状態※OrderStateと同一である
+		private int State; // 状態※OrderStateと同一である
 		public double CumQty; // 約定数量
 
 		// 注文データをコンストラクタとする(前日セット or 新規追加)
@@ -75,16 +73,15 @@ namespace CSharp_sample
 			CumQty = order.CumQty;
 		}
 
+		// 現在有効な(終了してない)オーダー
+		public bool IsValid() { return State == 1 || State == 2 || State == 3; }
 
 		// 売(返済売/新規空売り)
-		public bool IsSell(){ return Side == "1"; }
+		public bool IsSell() { return Side == "1"; }
 		// 返済(返済売/返済空買い)
-		public bool IsReturn(){ return CashMargin == 3; }
+		public bool IsReturn() { return CashMargin == 3; }
 
-		public DateTime GetRecvTime()
-		{
-			return DateTime.Parse(RecvTime);
-		}
+		public DateTime GetRecvTime() { return DateTime.Parse(RecvTime); }
 	}
 
 

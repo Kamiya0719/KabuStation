@@ -15,7 +15,8 @@ namespace CSharp_sample
 				idx++;
 			}
 			Console.WriteLine(message + " #End#");
-			CsvControll.SaveDebugInfo(new List<string[]>() { new string[1] { message } }, true);
+			// todo
+			CsvControll.SaveDebugInfo(new List<string[]>() { new string[1] { message } }, false);
 		}
 		private static string FormatObject(object o)
 		{

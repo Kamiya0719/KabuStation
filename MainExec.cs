@@ -40,6 +40,7 @@ namespace CSharp_sample
 
 
 			} catch (Exception e) {
+				Console.WriteLine(e);
 				CsvControll.ErrorLog("Exception", execType, e.Message, "");
 			}
 		}

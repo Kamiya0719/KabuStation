@@ -7,7 +7,6 @@ namespace CSharp_sample
 	class EveryDayExec
 	{
 		private static ResponsePositions[] posRes;
-		private static ResponseOrders[] ordersRes;
 		private static Dictionary<string, double> lastLastEndPrices = new Dictionary<string, double>();
 		private static double nowMargin = 0;
 		private static double nowOneBuyMargin = 0;
@@ -23,7 +22,7 @@ namespace CSharp_sample
 			DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Today) + add);
 
 			posRes = RequestBasic.RequestPositions();
-			ordersRes = RequestBasic.RequestOrders();
+			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
 
 			CsvControll.Log("Interval", "PosAndOrders", "", "");
 
@@ -58,8 +57,8 @@ namespace CSharp_sample
 			CsvControll.Log("Interval", "SetBuy", "", "");
 
 			// 注文一覧情報作成(売注文が終わった後である必要がある)
-			ordersRes = RequestBasic.RequestOrders();
-			foreach (ResponseOrders order in ordersRes) MinitesExec.GetCodeResOrders()[order.ID] = new CodeResOrder(order, true);
+			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
+
 			MinitesExec.SaveCodeDaily(true);
 			MinitesExec.SaveCodeResOrder();
 
@@ -167,7 +166,7 @@ namespace CSharp_sample
 
 			Dictionary<string, int> expireList = new Dictionary<string, int>();
 			Dictionary<string, List<ResponsePositions>> poss = new Dictionary<string, List<ResponsePositions>>();
-			Dictionary<string, List<ResponseOrders>> sellNowOrders = new Dictionary<string, List<ResponseOrders>>();
+			//Dictionary<string, List<ResponseOrders>> sellNowOrders = new Dictionary<string, List<ResponseOrders>>();
 			foreach (ResponsePositions resP in posRes) {
 				if (resP.LeavesQty <= 0) continue;
 
@@ -196,14 +195,14 @@ namespace CSharp_sample
 				// 所持銘柄を銘柄単位でまとめる
 				if (!poss.ContainsKey(symbol)) {
 					poss[symbol] = new List<ResponsePositions>();
-					sellNowOrders[symbol] = new List<ResponseOrders>();
+					//sellNowOrders[symbol] = new List<ResponseOrders>();
 				}
 				poss[symbol].Add(resP);
 			}
 
-			foreach (ResponseOrders order in ordersRes) {
-				if ((order.State == 1 || order.State == 2 || order.State == 3) && order.Side == "1") sellNowOrders[order.Symbol].Add(order);
-			}
+			//foreach (ResponseOrders order in ordersRes) {
+			//	if ((order.State == 1 || order.State == 2 || order.State == 3) && order.Side == "1") sellNowOrders[order.Symbol].Add(order);
+			//}
 
 
 			// 所持株について損切フラグをたてる + 注文中なら売却必要数を0 or キャンセル対象を選出
@@ -212,7 +211,8 @@ namespace CSharp_sample
 				CodeDaily codeDaily = MinitesExec.GetCodeDailys()[symbol];
 				codeDaily.SetIsLossSell(pair.Value, jScore, setDate, lastLastEndPrices[symbol]);
 				// 理想売りに関する設定およびキャンセル対象の取得
-				foreach (string orderId in codeDaily.SetIdealSell(sellNowOrders[symbol])) {
+				foreach (string orderId in codeDaily.SetIdealSell(MinitesExec.GetCodeResOrders())) {
+					//foreach (string orderId in codeDaily.SetIdealSell(sellNowOrders[symbol])) {
 					RequestBasic.RequestCancelOrder(orderId);
 				}
 			}
