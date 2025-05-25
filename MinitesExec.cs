@@ -6,7 +6,7 @@ namespace CSharp_sample
 	class MinitesExec
 	{
 
-		private static void ExecBasic()
+		public static void ExecBasic()
 		{
 			CsvControll.Log("Interval", "MinitesExecStart", "", "");
 
@@ -59,7 +59,7 @@ namespace CSharp_sample
 				string symbol = pair.Key;
 				CodeDaily codeDaily = pair.Value;
 
-				if (codeDaily.IsSp() && now.Hour <= 12) continue; // 13時前ならSPのみ
+				if (!codeDaily.IsSp() && now.Hour <= 12) continue; // 13時前ならSPのみ
 
 				codeDaily.SetData(posRes, GetCodeResOrders(), now, jScore, false);
 				codeDaily.SetBuyBasePrice(buyBasePrice);
