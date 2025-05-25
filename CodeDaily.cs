@@ -31,9 +31,13 @@ namespace CSharp_sample
 
 
 		/// 保存なし一時メンバ ///
-		List<CodeResOrder> codeResOrders = new List<CodeResOrder>();
-		private List<CodeResOrder> buyNowOrders = new List<CodeResOrder>(); // 現在注文中購入注文ID
-		private List<CodeResOrder> sellNowOrders = new List<CodeResOrder>(); // 現在注文中購入注文ID
+		HashSet<ResponsePositions> posList = new HashSet<ResponsePositions>();
+		private HashSet<CodeResOrder> buyOrders = new HashSet<CodeResOrder>(); // 現在注文中購入注文ID
+		private HashSet<CodeResOrder> sellOrders = new HashSet<CodeResOrder>(); // 現在注文中購入注文ID
+		private HashSet<string> cancelIds = new HashSet<string>();
+		private ResponseBoard board;
+		private bool isProcess = false;
+		DateTime now; int jScore; int buyBasePrice = 0; bool isLastDay; TimeIdx timeIdx; int expireDay = 0; double lastLastPrice;
 
 		// 1から新規作成
 		public CodeDaily(string Symbol, int Exchange, int yobine, int TradingUnit, double lastEndPrice, int fisDate)
@@ -81,69 +85,102 @@ namespace CSharp_sample
 			};
 		}
 
-
-		/**
-		 * EveryDayExecで行う
-		 */
-
-		// #A1# 前日所持銘柄についての情報セット
-		public void SetBeforePoss(int qty, double setSellPrice, int havePeriod)
+		/** 一時メンバをセットする 基本的に必ず行う */
+		public void SetData(ResponsePositions[] posRes, Dictionary<string, CodeResOrder> codeResOrdersAll,
+			DateTime now, int jScore, bool isLastDay, double lastLastPrice = 0)
 		{
-			startHave += qty;
-			setSellPrice = YobinePrice(setSellPrice);
-			if (idealSellPrice == 0 || idealSellPrice > setSellPrice) idealSellPrice = (int)setSellPrice; // 基本複数値段なら安い方
-			if (havePeriod >= 42) isLossSell = true;
-		}
-
-		// 予想購入費用
-		public double TommorowBuy(int buyBasePrice, DateTime date)
-		{
-			double buy = lastEndPrice * BuyNeedNum(buyBasePrice, date);
-			return buy >= Def.BuyLowestPrice ? buy : 0;
-		}
-
-		// #A3# EveryDayにて理想売の数と値段を設定・キャンセル対象の返却
-		public List<string> SetIdealSell(Dictionary<string, CodeResOrder> codeResOrdersAll)
-		{
-			// todo これはもっと前にやるかな
 			foreach (KeyValuePair<string, CodeResOrder> pair in codeResOrdersAll) {
 				CodeResOrder order = pair.Value;
-				if (order.Symbol == Symbol) codeResOrders.Add(order);
+				if (order.Symbol != Symbol) continue;
+				if (!isLastDay && order.IsProcess()) isProcess = true;
+				if (order.IsSell()) {
+					buyOrders.Add(order);
+				} else {
+					sellOrders.Add(order);
+				}
 			}
+			foreach (ResponsePositions pos in posRes) {
+				if (pos.Symbol == Symbol) posList.Add(pos);
+			}
+			// jscoreはEveryでは暫定かな
+			this.now = now; this.jScore = jScore; this.isLastDay = isLastDay; this.lastLastPrice = lastLastPrice;
+			timeIdx = isLastDay ? TimeIdx.T0000 : MinitesExec.GetTimeIdx(now);
+		}
+		public void SetBuyBasePrice(int buyBasePrice) { this.buyBasePrice = buyBasePrice; }
+		// todo これだと終わったorderも対象やな
+		public bool IsBoardCheck() { return !isProcess && (isBuy || posList.Count > 0 || buyOrders.Count > 0 || sellOrders.Count > 0); }
+		public void SetBoard(ResponseBoard board) { this.board = board; }
 
 
+		public void SetInfo()
+		{
+			if (isLastDay) SetPosListInfo();
+			if (isLastDay) SetIdealSell();
+			if (isLastDay) SetIsBuy();
+			SetIsLossSell();
+			if (!isLastDay) SetOrders();
+			if (!isLastDay) SetBoardInfo();
+			if (!isLastDay) SetCancelIds();
+		}
+		public HashSet<string> GetCancelIds() { return cancelIds; }
+
+		/** 所持情報を使って、初期所持数/理想売り価格/42損切/注文有効期間 をセット Everyオンリー */
+		private void SetPosListInfo()
+		{
+			startHave = 0;
+			expireDay = 0;
+			foreach (ResponsePositions pos in posList) {
+				startHave += (int)pos.LeavesQty;
+
+				// 約定日（建玉日）
+				DateTime buyDate = DateTime.ParseExact(pos.ExecutionDay.ToString(), CsvControll.DFILEFORM, null);
+				// 購入日翌日だと1になるな
+				int havePeriod = Common.GetDateIdx(now) - Common.GetDateIdx(buyDate);
+
+				int sellPeriod = 12; // 0なら今日のみ,1なら翌日まで的な
+				double sellPrice = pos.Price * 1.01; // todo
+				foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(now, FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
+					if (havePeriod <= pair.Key) { sellPrice = pos.Price * pair.Value; sellPeriod = pair.Key - havePeriod; }
+				}
+				if (type == Def.TypeSp) sellPrice = pos.Price + 1;
+
+				// 所持銘柄の数を加算 理想売のベーススコア保存 42以上たっていたら終値売却フラグも保存
+				sellPrice = YobinePrice(sellPrice);
+				if (idealSellPrice == 0 || idealSellPrice > sellPrice) idealSellPrice = (int)sellPrice; // 基本複数値段なら安い方
+				if (havePeriod >= 42) isLossSell = true;
+
+				// 注文有効期限(yyyyMMdd形式。本日なら0) 複数あるなら小さい方優先
+				int tmpExpireDay = sellPeriod > 0 ? Int32.Parse(Common.GetDateByIdx(Common.GetDateIdx(now) + sellPeriod).ToString(CsvControll.DFILEFORM)) : 0;
+				if (expireDay == 0 || expireDay > tmpExpireDay) expireDay = tmpExpireDay;
+			}
+		}
+
+		/** 理想売り注文をする必要がある数とキャンセルが必要なものを算出 Everyオンリー todo minitesのと合体でいいような */
+		private void SetIdealSell()
+		{
 			sellOrderNeed = startHave;
-			List<string> res = new List<string>();
-			foreach (CodeResOrder order in codeResOrders) {
-				if (order.IsValid() && order.IsSell()) {
+			foreach (CodeResOrder order in sellOrders) {
+				if (order.IsValid()) {
 					if (order.Price == idealSellPrice && order.OrderQty == startHave) {
 						// 理想売り注文要件を完全に満たしていればsellOrderNeedを0にする それ以外キャンセル
 						sellOrderNeed = 0;
 					} else {
-						res.Add(order.ID);
+						cancelIds.Add(order.ID);
 					}
 				}
 			}
-			return res;
 		}
-
-		// #A5# 今日購入する銘柄かどうかの設定 プロ500+条件を満たす+残高 + 55万以下+10万以上
-		public void SetIsBuy(int buyBasePrice, DateTime date)
+		/** 購入対象となるか Everyオンリー */
+		private void SetIsBuy()
 		{
 			if (type == Def.TypeSp) {
-				isBuy = true;
+				isBuy = buyBasePrice > 0;
 			} else {
-				isBuy = TommorowBuy(buyBasePrice, date) > 0;
+				isBuy = TommorowBuy() > 0; // プロ500でもSPと同じでもいいといえばいい
 			}
 		}
-
-
-		/**
-		 * 両方MinitesExecで行う
-		 */
-
-		// #A2# #B1# positionsの損益率および日経平均スコアから、損切するか決め終値売却フラグを立てる これは先かな？
-		public void SetIsLossSell(List<ResponsePositions> positions, int jScore, DateTime date, double lastLastEndPrice = 9999)
+		/** 損切となるか算出 両方 */
+		private void SetIsLossSell()
 		{
 			if (jScore == Def.JScoreOverUp) { isLossSell = true; return; }
 			//if (Def.TranpMode) { isLossSell = false; return; }
@@ -154,57 +191,35 @@ namespace CSharp_sample
 			}
 
 			if (isLossSell) return;
-
-			// todo sp系は損切はなし？やるならEveryのほうかな
-			if (type == Def.TypeSp) {
-
-				return;
-			}
+			if (type == Def.TypeSp) return; // todo sp系は損切はなし？やるならEveryのほうかな
 
 			isLossSell = true;
-			bool isHalfLoss = Common.IsLossCutDate(date, FisDate());
-			foreach (ResponsePositions position in positions) {
+			bool isHalfLoss = Common.IsLossCutDate(now, FisDate());
+			foreach (ResponsePositions pos in posList) {
 				// 当日買ったやつについては損切なし EveryDayのほうではdateは翌営業日なので当日であることはありえない
-				if (Common.SameD(Common.DateParse(position.ExecutionDay), date)) { isLossSell = false; break; }
-				double beforeBenefit = position.CurrentPrice / (lastLastEndPrice == 9999 ? lastEndPrice : lastLastEndPrice) - 1;
+				if (Common.SameD(Common.DateParse(pos.ExecutionDay), now)) { isLossSell = false; break; }
+				double beforeBenefit = pos.CurrentPrice / (isLastDay ? lastLastPrice : lastEndPrice) - 1;
 				// 損失が6％未満かつ前日からの上昇が-3.5％より大きい これが一個でもあればfalseで損切しない todo これ安値？
-				if (position.ProfitLossRate < (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 0])
+				if (pos.ProfitLossRate < (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 0])
 					&& beforeBenefit > -0.01 * (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 1])
 				) {
 					isLossSell = false; break;
 				}
 			}
 		}
-
-
-		/**
-		 * MinitesExecで行う
-		 */
-
-		// #B2# 5分おきとかに取得する注文照会一覧を渡す(3,5のみとする) 旧データとIDごとに比較してどうのこうの
-		// todo #A#でも使う？
-		public void SetOrders(List<CodeResOrder> orders, int jScore, int buyBasePrice, DateTime date)
+		/** 注文の状態によって購入するかだったり購入必要数だったり売却必要数だったりを算出 Minitesのみ todo もうちょい後でもいいかも */
+		private void SetOrders()
 		{
-			int buyConfirm = 0; // 今日確定分
 			int sellConfirm = 0; // 今日確定分
 			int sellNowOrder = 0; // 現在注文中
-			buyNowOrders = new List<CodeResOrder>();
-			sellNowOrders = new List<CodeResOrder>();
-			foreach (CodeResOrder order in orders) {
-				if (order.Symbol != Symbol) continue; // これエラーやな
-				if (order.IsSell()) {
-					// 売
-					sellConfirm += (int)order.CumQty - order.startCumQty;
-					if (order.IsValid()) {
-						sellNowOrder += (int)(order.OrderQty - order.CumQty);
-						sellNowOrders.Add(order);
-					}
-				} else {
-					// 買
-					buyConfirm += (int)order.CumQty - order.startCumQty;
-					if (buyConfirm > 0) isTodayBuy = true;
-					if (order.IsValid()) buyNowOrders.Add(order);
-				}
+			foreach (CodeResOrder order in sellOrders) {
+				sellConfirm += (int)order.CumQty - order.startCumQty;
+				if (order.IsValid()) sellNowOrder += (int)(order.OrderQty - order.CumQty);
+			}
+			int buyConfirm = 0; // 今日確定分
+			foreach (CodeResOrder order in buyOrders) {
+				buyConfirm += (int)order.CumQty - order.startCumQty;
+				if (!isLastDay && buyConfirm > 0) isTodayBuy = true;
 			}
 
 			// 損切フラグが立っているなら購入は行わない
@@ -212,28 +227,23 @@ namespace CSharp_sample
 				isBuy = false;
 			} else if (isBuy) {
 				// 必要購入数 = JScoreに応じた所持必要数(50万相当-0) - 初期所持数 - 購入確定数 + 当日売却確定数
-				buyNeedNum = BuyNeedNum(buyBasePrice, date, jScore) - buyConfirm;
+				buyNeedNum = BuyNeedNum() - buyConfirm;
 				if (type == Def.TypeSp) buyNeedNum += sellConfirm;
 			}
 			if (buyNeedNum <= 0 || !isBuy) buyNeedNum = 0;
 			// 理想売→購入中のものがあるなら何もしない/全部終わったら注文 損切売→0の状態から全売り/値段が変化でキャンセル&全売り
 			sellOrderNeed = startHave + buyConfirm - sellConfirm - sellNowOrder;
-			if (type != Def.TypeSp && buyNowOrders.Count > 0) sellOrderNeed = 0;
+			// todo これだと終わったやつが含まれる
+			if (type != Def.TypeSp && buyOrders.Count > 0) sellOrderNeed = 0;
 
 			// todo あってる？理想売中は購入無し ただし現在購入中なら理想売はしない
 			//if (sellOrderNeed > 0) buyNeedNum = 0;
 		}
 
 
-		// #B3# 今回板情報(すなわち板・時間に対しての値段)取得する必要があるもの これがfalseなら売り買いしない
-		public bool IsBoardCheck()
-		{
-			return isBuy || buyNowOrders.Count > 0 || sellNowOrders.Count > 0 || sellOrderNeed > 0;
-		}
-
 		// #B4# 板情報を渡して売値あるいは買値を設定する
-		// todo #A#でも使う？
-		public void SetBoard(ResponseBoard board, TimeIdx timeIdx)
+		// todo #A#でも使う？いやいらんやろ boardはメンバとしてもたせるかな そうすれば後でできる
+		private void SetBoardInfo()
 		{
 			int low = YobinePrice(board.LowPrice + yobine);
 			int high = YobinePrice(board.HighPrice - yobine);
@@ -251,17 +261,17 @@ namespace CSharp_sample
 					}
 				} else {
 					// 購入注文必要 or 現在購入注文中
-					buyPrice = BoardPrice(board, timeIdx, low, high, true);
+					buyPrice = BoardPrice(low, high, true);
 					// 前日比4％越えになっている場合は流石に買うのは控えるため3％で茶を濁す
 					if (buyPrice >= lastEndPrice * 1.04) buyPrice = YobinePrice(lastEndPrice * 1.03);
 				}
 			}
 
 			// 売却注文必要(新規・キャンセル後) or 現在売却注文中で終値売却フラグが立っている
-			if ((sellOrderNeed > 0 || sellNowOrders.Count > 0) && isLossSell) lossSellPrice = BoardPrice(board, timeIdx, high, low, false);
+			if (posList.Count > 0 && isLossSell) lossSellPrice = BoardPrice(high, low, false);
 		}
 		// maxは利益最大 minは利益最小
-		private int BoardPrice(ResponseBoard board, TimeIdx timeIdx, int max, int min, bool isBuy)
+		private int BoardPrice(int max, int min, bool isBuy)
 		{
 			// listは値段高い順(損な順)に並ぶ (買 => 0:売1,1:買1,...,9:買9,10:買10) 売りは逆かしら
 			int price = 0;
@@ -270,21 +280,21 @@ namespace CSharp_sample
 				price = Toku(isBuy, isBuy ? (int)board.Sell1.Price : (int)board.Buy1.Price, max);
 			} else if (timeIdx == TimeIdx.T1420) {
 				// ⑤14時なら現実的な数値に  volume以内に入るもので利益最大のもの
-				price = MaxVolPrice(board, isBuy, Math.Max((int)(board.TradingVolume / 5), 30 * TradingUnit));
+				price = MaxVolPrice(isBuy, Math.Max((int)(board.TradingVolume / 5), 30 * TradingUnit));
 				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
 			} else if (timeIdx == TimeIdx.T1500) {
 				// ④14時30分に本命くらい  volume以内に入るもので利益最大のもの
-				price = MaxVolPrice(board, isBuy, Math.Max((int)(board.TradingVolume / 15), 30 * TradingUnit));
+				price = MaxVolPrice(isBuy, Math.Max((int)(board.TradingVolume / 15), 30 * TradingUnit));
 				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
 			} else if (timeIdx == TimeIdx.T1515) {
 				// ③14時45分なら1本目狙い でも近いものに大き目の差があったら
-				int maxVolPrice = MaxVolPrice(board, isBuy, 15 * TradingUnit);
+				int maxVolPrice = MaxVolPrice(isBuy, 15 * TradingUnit);
 				price = isBuy ? (int)board.Buy1.Price : (int)board.Sell1.Price;
 				// 極端に差が大きい(0.8％以上かつ3yobine以上)
 				if (IsBigDiff(isBuy, price, maxVolPrice, 1.008)) price = maxVolPrice;
 			} else if (timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1525) {
 				// ②14時50分なら1本目+1 でも近いものに大き目の差があったら
-				int maxVolPrice = MaxVolPrice(board, isBuy, 8 * TradingUnit);
+				int maxVolPrice = MaxVolPrice(isBuy, 8 * TradingUnit);
 				price = isBuy ? (int)board.Buy1.Price + 2 * yobine : (int)board.Sell1.Price - 2 * yobine;
 				// 極端に差が大きい(1％以上かつ4yobine以上)
 				if (IsBigDiff(isBuy, price, maxVolPrice, 1.01)) price = maxVolPrice;
@@ -297,7 +307,7 @@ namespace CSharp_sample
 			return isBuy ? Math.Min(a, b) : Math.Max(a, b);
 		}
 		// 買1-10 or 売1-10 のうちvolumeの範囲内で最も得なものを算出
-		private int MaxVolPrice(ResponseBoard board, bool isBuy, int volume)
+		private int MaxVolPrice(bool isBuy, int volume)
 		{
 			SellBuy[] list = isBuy ? new SellBuy[10]{
 				board.Buy1,board.Buy2,board.Buy3,board.Buy4,board.Buy5,board.Buy6,board.Buy7,board.Buy8,board.Buy9,board.Buy10,
@@ -323,14 +333,14 @@ namespace CSharp_sample
 
 		// #B5# 注文中の中でキャンセルする必要があるやつ あったらキャンセルして今回注文はしない
 		// todo #A#でも使う？
-		public List<string> CancelOrderIds(TimeIdx timeIdx)
+		private void SetCancelIds()
 		{
-			List<string> res = new List<string>();
 			int buyNowOrderNum = 0;
-			foreach (CodeResOrder order in buyNowOrders) {
+			foreach (CodeResOrder order in buyOrders) {
+				if (!order.IsValid()) continue;
 				if (!isBuy || buyPrice * Def.CancelDiff < order.Price || buyPrice > order.Price * Def.CancelDiff || (buyPrice != order.Price && (timeIdx == TimeIdx.T1525 || timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1515))) {
 					// 金額とのずれが大きければキャンセル timeIdx=1,2,3(15時15分以降)ならわずかな差も許さん
-					res.Add(order.ID);
+					cancelIds.Add(order.ID);
 				} else {
 					// 注文中の数
 					buyNowOrderNum += (int)(order.OrderQty - order.CumQty);
@@ -338,37 +348,42 @@ namespace CSharp_sample
 			}
 			// 注文数との差が大きければキャンセル(基本JScoreの増加にともなう減少)
 			if (buyNeedNum * Def.CancelDiffNum < buyNowOrderNum || buyNeedNum > buyNowOrderNum * Def.CancelDiffNum) {
-				foreach (CodeResOrder order in buyNowOrders) {
-					if (!res.Contains(order.ID)) res.Add(order.ID);
+				foreach (CodeResOrder order in buyOrders) {
+					if (order.IsValid()) cancelIds.Add(order.ID);
 				}
 			}
 
 			// 理想売では起こらない？ 金額差が大きければキャンセル
 			if (isLossSell) {
-				foreach (CodeResOrder order in sellNowOrders) {
-					if (lossSellPrice * Def.CancelDiff < order.Price || lossSellPrice > order.Price * Def.CancelDiff) {
-						res.Add(order.ID);
-					}
+				foreach (CodeResOrder order in sellOrders) {
+					if (!order.IsValid()) continue;
+					if (lossSellPrice * Def.CancelDiff < order.Price || lossSellPrice > order.Price * Def.CancelDiff) cancelIds.Add(order.ID);
 				}
 			}
-			return res;
 		}
 
 
 		/**
 		 * 汎用
 		 */
+		// 予想購入費用
+		public double TommorowBuy()
+		{
+			double buy = lastEndPrice * BuyNeedNum();
+			return buy >= Def.BuyLowestPrice ? buy : 0;
+		}
 
 		// 必要購入数を計算する 当日のjscoreによって割合を変えたりする 日付(3月や決算日など)でも変える
-		private int BuyNeedNum(int buyBasePrice, DateTime date, int jScore = 0)
+		private int BuyNeedNum()
 		{
-			if (jScore == Def.JScoreOverUp) return 0;
-			if (jScore == Def.JScoreOverDown) {
+			// Everyではみなし
+			int tmpJScore = isLastDay ? 0 : jScore;
+			if (tmpJScore == Def.JScoreOverUp) return 0;
+			if (tmpJScore == Def.JScoreOverDown) {
 				// todo オーバーダウンでは指定通りの購入が基本かな？
-				jScore = 0;
+				tmpJScore = 0;
 			}
-			if (type == Def.TypeSp) buyBasePrice = Def.SpBuyBasePricew;
-			return unitNum(buyBasePrice * Def.BuyJScoreRatio[jScore] * Common.DateBuyRatioOne(date, FisDate()) / lastEndPrice) - startHave;
+			return unitNum(buyBasePrice * Def.BuyJScoreRatio[tmpJScore] * Common.DateBuyRatioOne(now, FisDate()) / lastEndPrice) - startHave;
 		}
 
 
@@ -381,13 +396,13 @@ namespace CSharp_sample
 		{
 			if (!isBuy) return 0;
 			int num = buyNeedNum;
-			foreach (CodeResOrder order in buyNowOrders) num -= (int)(order.OrderQty - order.CumQty);
+			foreach (CodeResOrder order in buyOrders) num -= (int)(order.OrderQty - order.CumQty);
 			return num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
 		}
 		public int BuyPrice() { return buyPrice; }
 		// #A4# #B6#
 		public int SellOrderNeed() { return sellOrderNeed; }
-		public int SellPrice(TimeIdx timeIdx)
+		public int SellPrice()
 		{
 			if (isLossSell && timeIdx != TimeIdx.T0000) return lossSellPrice;
 			if (type == Def.TypeSp) {
@@ -414,7 +429,7 @@ namespace CSharp_sample
 		public bool IsLossSell() { return isLossSell; }
 		public DateTime FisDate() { return Common.DateParse(fisDate); }
 		public bool IsSp() { return type == Def.TypeSp; }
-
+		public int ExpireDay() { return expireDay; }
 
 		// 呼び値(値段最低単位)に応じて1,5,10,50...単位に変換
 		private int YobinePrice(double price) { return yobine * (int)Math.Ceiling(price / yobine); }

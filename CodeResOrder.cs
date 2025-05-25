@@ -75,6 +75,8 @@ namespace CSharp_sample
 
 		// 現在有効な(終了してない)オーダー
 		public bool IsValid() { return State == 1 || State == 2 || State == 3; }
+		// 現在処理中
+		public bool IsProcess() { return State == 2 || State == 4; }
 
 		// 売(返済売/新規空売り)
 		public bool IsSell() { return Side == "1"; }

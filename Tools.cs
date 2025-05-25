@@ -669,7 +669,8 @@ namespace CSharp_sample
 				bool isLossSell = codeDaily.IsLossSell();
 				bool isSp = codeDaily.IsSp();
 				// 今日開始時点で買うはずのやつ 存在してれば前日16時以降に注文しているはず
-				double todayBuy = codeDaily.TommorowBuy(basePrice, now);
+				codeDaily.SetBuyBasePrice(basePrice);
+				double todayBuy = codeDaily.TommorowBuy();
 				bool isTodayBuy = false;
 				bool isTodaySell = false;
 				bool isSellValid = false;

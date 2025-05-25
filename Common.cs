@@ -6,6 +6,7 @@ namespace CSharp_sample
 	class Common
 	{
 
+		private static bool IsFirst = true;
 		public static void DebugInfo(string tag, params object[] messages)
 		{
 			string message = tag + " ";
@@ -15,8 +16,9 @@ namespace CSharp_sample
 				idx++;
 			}
 			Console.WriteLine(message + " #End#");
-			// todo
-			CsvControll.SaveDebugInfo(new List<string[]>() { new string[1] { message } }, false);
+			
+			CsvControll.SaveDebugInfo(new List<string[]>() { new string[1] { message } }, !IsFirst);
+			IsFirst = false;
 		}
 		private static string FormatObject(object o)
 		{

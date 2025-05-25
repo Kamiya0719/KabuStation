@@ -23,12 +23,10 @@ namespace CSharp_sample
 
 			posRes = RequestBasic.RequestPositions();
 			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
-
-			CsvControll.Log("Interval", "PosAndOrders", "", "");
+			CsvControll.Log("Interval", "SetResponseOrders", "", "");
 
 			// 各データの初期化 その日使ったデータ保存しておく
 			MinitesExec.InitInfo(Common.GetDateByIdx(Common.GetDateIdx(setDate) - 1));
-
 			CsvControll.Log("Interval", "InitInfo", "", "");
 
 			// 余力
@@ -36,25 +34,19 @@ namespace CSharp_sample
 
 			// 前日(というか当日15時のデータ)分のコード情報を全取得して保存(日経平均含む)
 			SetEveryDay(setDate);
-
 			CsvControll.Log("Interval", "SetEveryDay", "", "");
 
 			// 今日の分の日経平均スコアセーブ
 			Condtions.SaveJapanBaseScoreOneDay(setDate);
 			// 翌日の日経平均スコアをシミュレーションして閾値を保存
 			Condtions.SaveTrueJScoreIkichis(setDate);
-
 			CsvControll.Log("Interval", "SaveTrueJScoreIkichis", "", "");
 
-			// 所持銘柄の売却注文
+			SetCodeDailyData(setDate);
+			CsvControll.Log("Interval", "SetCodeDailyData", "", "");
+
 			SetSell(setDate);
-
 			CsvControll.Log("Interval", "SetSell", "", "");
-
-			// 明日購入する銘柄の選定 どっかに保存しておく
-			SetBuy(setDate);
-
-			CsvControll.Log("Interval", "SetBuy", "", "");
 
 			// 注文一覧情報作成(売注文が終わった後である必要がある)
 			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
@@ -155,83 +147,15 @@ namespace CSharp_sample
 			}
 		}
 
-
-		// 所持銘柄全部について売却注文を行っておく
-		// 既に注文済みでかつ同じ値だった場合のみ放置？
-		private static void SetSell(DateTime setDate)
+		/** a */
+		private static void SetCodeDailyData(DateTime setDate)
 		{
-			//bool isHalf = Common.IsHalf(setDate);
-			// 日経平均スコア取得
+			// ここでループするのはプロ500とSpと所持中のもの
 			int jScore = CsvControll.GetTrueJScore(setDate);
-
-			Dictionary<string, int> expireList = new Dictionary<string, int>();
-			Dictionary<string, List<ResponsePositions>> poss = new Dictionary<string, List<ResponsePositions>>();
-			//Dictionary<string, List<ResponseOrders>> sellNowOrders = new Dictionary<string, List<ResponseOrders>>();
-			foreach (ResponsePositions resP in posRes) {
-				if (resP.LeavesQty <= 0) continue;
-
-				string symbol = resP.Symbol;
-				CodeDaily codeDaily = MinitesExec.GetCodeDailys()[symbol];
-
-				// 約定日（建玉日）
-				DateTime buyDate = DateTime.ParseExact(resP.ExecutionDay.ToString(), CsvControll.DFILEFORM, null);
-				// 購入日翌日だと1になるな
-				int havePeriod = Common.GetDateIdx(setDate) - Common.GetDateIdx(buyDate);
-
-				int sellPeriod = 12; // 0なら今日のみ,1なら翌日まで的な
-				double sellPrice = resP.Price * 1.01; // todo
-				foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(setDate, codeDaily.FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
-					if (havePeriod <= pair.Key) { sellPrice = resP.Price * pair.Value; sellPeriod = pair.Key - havePeriod; }
-				}
-				if (Common.Sp10(symbol)) sellPrice = resP.Price + 1;
-
-				// 所持銘柄の数を加算 理想売のベーススコア保存 42以上たっていたら終値売却フラグも保存
-				codeDaily.SetBeforePoss((int)resP.LeavesQty, sellPrice, havePeriod);
-
-				// 注文有効期限(yyyyMMdd形式。本日なら0) 複数あるなら小さい方優先
-				int expireDay = sellPeriod > 0 ? Int32.Parse(Common.GetDateByIdx(Common.GetDateIdx(setDate) + sellPeriod).ToString(CsvControll.DFILEFORM)) : 0;
-				if (!expireList.ContainsKey(symbol) || expireList[symbol] > expireDay) expireList[symbol] = expireDay;
-
-				// 所持銘柄を銘柄単位でまとめる
-				if (!poss.ContainsKey(symbol)) {
-					poss[symbol] = new List<ResponsePositions>();
-					//sellNowOrders[symbol] = new List<ResponseOrders>();
-				}
-				poss[symbol].Add(resP);
+			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
+				pair.Value.SetData(posRes, MinitesExec.GetCodeResOrders(), setDate, jScore, true, lastLastEndPrices[pair.Key]);
 			}
 
-			//foreach (ResponseOrders order in ordersRes) {
-			//	if ((order.State == 1 || order.State == 2 || order.State == 3) && order.Side == "1") sellNowOrders[order.Symbol].Add(order);
-			//}
-
-
-			// 所持株について損切フラグをたてる + 注文中なら売却必要数を0 or キャンセル対象を選出
-			foreach (KeyValuePair<string, List<ResponsePositions>> pair in poss) {
-				string symbol = pair.Key;
-				CodeDaily codeDaily = MinitesExec.GetCodeDailys()[symbol];
-				codeDaily.SetIsLossSell(pair.Value, jScore, setDate, lastLastEndPrices[symbol]);
-				// 理想売りに関する設定およびキャンセル対象の取得
-				foreach (string orderId in codeDaily.SetIdealSell(MinitesExec.GetCodeResOrders())) {
-					//foreach (string orderId in codeDaily.SetIdealSell(sellNowOrders[symbol])) {
-					RequestBasic.RequestCancelOrder(orderId);
-				}
-			}
-
-			// キャンセル完了待ち スリープ
-			Thread.Sleep(10000);
-
-			// 理想売り
-			foreach (KeyValuePair<string, List<ResponsePositions>> pair in poss) {
-				string symbol = pair.Key;
-				CodeDaily codeDaily = MinitesExec.GetCodeDailys()[symbol];
-				// todo この時点ではsp系はまだbasepriceがない
-				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(TimeIdx.T0000), expireList[symbol]);
-			}
-		}
-
-		// 明日購入する銘柄の選定 プロ500で条件を満たしていればIsBuyをtrueにする todo setIsBuyがfalse(高額系)でもマージンを減らしちゃうな
-		private static void SetBuy(DateTime setDate)
-		{
 			// 通常プロ500新規買いの対象となるものを算出
 			List<string[]> conditions = CsvControll.GetConditions();
 			List<CodeDaily> buyList = new List<CodeDaily>();
@@ -243,29 +167,40 @@ namespace CSharp_sample
 			int setBuyBasePrice = 0;
 			for (int buyBasePrice = 100000; buyBasePrice <= nowOneBuyMargin; buyBasePrice += 10000) {
 				double buyPriceSum = 0;
-				foreach (CodeDaily codeDaily in buyList) buyPriceSum += codeDaily.TommorowBuy(buyBasePrice, setDate);
+				foreach (CodeDaily codeDaily in buyList) {
+					codeDaily.SetBuyBasePrice(buyBasePrice);
+					buyPriceSum += codeDaily.TommorowBuy();
+				}
 				if (nowMargin <= buyPriceSum) break;
 				if (buyPriceSum > 0) setBuyBasePrice = buyBasePrice;
 			}
-			if (setBuyBasePrice > 0) {
-				foreach (CodeDaily codeDaily in buyList) codeDaily.SetIsBuy(setBuyBasePrice, setDate);
-				CsvControll.SaveBuyBasePriceInfo(new string[1] { setBuyBasePrice.ToString() });
-			}
+			foreach (CodeDaily codeDaily in buyList) codeDaily.SetBuyBasePrice(setBuyBasePrice);
+			CsvControll.SaveBuyBasePriceInfo(new string[1] { setBuyBasePrice.ToString() });
+
 			CsvControll.Log("SetBuy", buyList.Count.ToString(), nowMargin.ToString(), setBuyBasePrice.ToString());
 
 			// SP系の処理
 			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
 				string symbol = pair.Key;
-				if (!Common.Sp10(symbol)) continue;
-				double basePrice = Common.Sp10BuyPrice(symbol);
-				if (basePrice > 50) { // 50円以下はやめとこうかな
-					if (symbol == "6740") continue;
-					CodeDaily codeDaily = pair.Value;
-					codeDaily.SetIsBuy(Def.SpBuyBasePricew, setDate);
-					// todo 購入注文？
-					//RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, true, buyOrderNeed, basePrice, 0);
-				}
+				if (Common.Sp10(symbol) && Common.Sp10BuyPrice(symbol) > 50) pair.Value.SetBuyBasePrice(Def.SpBuyBasePricew);
 			}
+
+			// データをセット
+			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) pair.Value.SetInfo();
+		}
+
+		// 所持銘柄全部について売却注文を行っておく
+		private static void SetSell(DateTime setDate)
+		{
+			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
+				foreach (string orderId in pair.Value.GetCancelIds()) RequestBasic.RequestCancelOrder(orderId);
+			}
+
+			// キャンセル完了待ち スリープ
+			Thread.Sleep(10000);
+
+			// 理想売り
+			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) RequestBasic.RequestSendOrder(pair.Value, false);
 		}
 
 		// 明日購入する銘柄の数・推定値段/現在所持の銘柄の数・現在値段/エラーログの数
@@ -286,7 +221,7 @@ namespace CSharp_sample
 			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
 				double lastEndPrice = pair.Value.LastEndPrice();
 				if (pair.Value.IsBuy()) {
-					double tommorowBuy = pair.Value.TommorowBuy(buyBasePrice, setDate);
+					double tommorowBuy = pair.Value.TommorowBuy();
 					buyData.Add(new string[]{
 						"コード:"+pair.Key,
 						"推定購入費用:"+tommorowBuy.ToString(), // 推定購入費用(終値*数)
@@ -300,7 +235,7 @@ namespace CSharp_sample
 						"損切:"+pair.Value.IsLossSell().ToString(),
 						"評価額:"+(pair.Value.StartHave()*lastEndPrice).ToString(),
 						"所持数:"+pair.Value.StartHave().ToString(),
-						"理想売値:"+pair.Value.SellPrice(TimeIdx.T0000).ToString(), // 理想売り値段
+						"理想売値:"+pair.Value.SellPrice().ToString(), // 理想売り値段
 						"前日終値:" + lastEndPrice.ToString(),
 					});
 					haveSum += pair.Value.StartHave() * lastEndPrice;

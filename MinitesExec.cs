@@ -5,7 +5,8 @@ namespace CSharp_sample
 {
 	class MinitesExec
 	{
-		public static void ExecBasic()
+
+		private static void ExecBasic()
 		{
 			CsvControll.Log("Interval", "MinitesExecStart", "", "");
 
@@ -23,8 +24,7 @@ namespace CSharp_sample
 			int buyBasePrice = Int32.Parse(CsvControll.GetBuyBasePriceInfo()[0]);
 
 			ResponsePositions[] posRes = RequestBasic.RequestPositions();
-			ResponseOrders[] orderRes = RequestBasic.RequestOrders();
-
+			SetResponseOrders(RequestBasic.RequestOrders(), false);
 
 			// 詳細ランキング確認 ボードで確認かな
 			if (true) {
@@ -53,71 +53,24 @@ namespace CSharp_sample
 				CsvControll.SaveRankingInfo(saveRankingInfo);
 			}
 
+			CsvControll.Log("Interval", "Ranking", "", "");
 
-			CsvControll.Log("Interval", "Orders", "", "");
-
-			// 所持銘柄情報一覧から終値売却フラグ(損切)をたてる
-			Dictionary<string, List<ResponsePositions>> positionCode = new Dictionary<string, List<ResponsePositions>>();
-			foreach (ResponsePositions position in posRes) {
-				if (position.LeavesQty <= 0) continue;
-				// 13時前ならSPのみ
-				if (isSpOnly && !Common.Sp10(position.Symbol)) continue;
-				if (!positionCode.ContainsKey(position.Symbol)) positionCode[position.Symbol] = new List<ResponsePositions>();
-				positionCode[position.Symbol].Add(position);
-			}
-			foreach (KeyValuePair<string, List<ResponsePositions>> pair in positionCode) {
-				// 終値売却フラグ(損切)をたてる
-				GetCodeDailys()[pair.Key].SetIsLossSell(pair.Value, jScore, now);
-			}
-
-			CsvControll.Log("Interval", "orderCode", "", "");
-
-			Dictionary<string, List<ResponseOrders>> orderCode = new Dictionary<string, List<ResponseOrders>>();
-			foreach (KeyValuePair<string, CodeDaily> pair in GetCodeDailys()) orderCode[pair.Key] = new List<ResponseOrders>();
-
-			// order情報の追加および処理中のものがあるので今回は無視する銘柄取得
-			List<string> removeSymbols = new List<string>();
-			foreach (ResponseOrders order in orderRes) {
-				if (!orderCode.ContainsKey(order.Symbol)) continue;
-				orderCode[order.Symbol].Add(order);
-				if (!removeSymbols.Contains(order.Symbol) && (order.State == 2 || order.State == 4)) removeSymbols.Add(order.Symbol);
-			}
-			foreach (string removeSymbol in removeSymbols) orderCode.Remove(removeSymbol);
-
-			CsvControll.Log("Interval", "GetCodeResOrders", "", "");
-
-			// 購入注文か売却注文をするため、板情報を見る必要がある銘柄
-			List<string> boardChecks = new List<string>();
-			foreach (KeyValuePair<string, List<ResponseOrders>> pair in orderCode) {
-				// シンボルごとに処理
+			foreach (KeyValuePair<string, CodeDaily> pair in GetCodeDailys()) {
 				string symbol = pair.Key;
-				// 13時前ならSPのみ
-				if (isSpOnly && !Common.Sp10(symbol)) continue;
+				CodeDaily codeDaily = pair.Value;
 
-				// 注文が一個もない場合もある
-				List<CodeResOrder> orders = new List<CodeResOrder>();
-				foreach (ResponseOrders order in pair.Value) {
-					if (GetCodeResOrders().ContainsKey(order.ID)) {
-						// 既存アップデート
-						GetCodeResOrders()[order.ID].UpdateData(order);
-					} else {
-						// 新規追加
-						GetCodeResOrders()[order.ID] = new CodeResOrder(order, false);
-					}
-					orders.Add(GetCodeResOrders()[order.ID]);
-				}
+				if (codeDaily.IsSp() && now.Hour <= 12) continue; // 13時前ならSPのみ
 
-				GetCodeDailys()[symbol].SetOrders(orders, jScore, buyBasePrice, now);
-				if (GetCodeDailys()[symbol].IsBoardCheck()) boardChecks.Add(symbol);
-			}
+				codeDaily.SetData(posRes, GetCodeResOrders(), now, jScore, false);
+				codeDaily.SetBuyBasePrice(buyBasePrice);
 
-			CsvControll.Log("Interval", "Update", "", "");
+				if (!codeDaily.IsBoardCheck()) continue;
 
-			foreach (string symbol in boardChecks) {
-				CodeDaily codeDaily = GetCodeDailys()[symbol];
-				ResponseBoard boardRes = RequestBasic.RequestBoard(Int32.Parse(symbol), codeDaily.Exchange);
-				codeDaily.SetBoard(boardRes, timeIdx);
-				List<string> ids = codeDaily.CancelOrderIds(timeIdx);
+				codeDaily.SetBoard(RequestBasic.RequestBoard(Int32.Parse(symbol), codeDaily.Exchange));
+
+				codeDaily.SetInfo();
+
+				HashSet<string> ids = codeDaily.GetCancelIds();
 				// キャンセル対象があるならキャンセルして終了
 				if (ids.Count > 0) {
 					foreach (string orderId in ids) RequestBasic.RequestCancelOrder(orderId);
@@ -125,8 +78,8 @@ namespace CSharp_sample
 				}
 
 				// 新規注文(買・売) 中で注文数0なら終了 基本今日中に終わらせるので期間は0
-				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, true, codeDaily.BuyOrderNeed(), codeDaily.BuyPrice(), 0);
-				RequestBasic.RequestSendOrder(Int32.Parse(symbol), codeDaily.Exchange, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(timeIdx), 0);
+				RequestBasic.RequestSendOrder(codeDaily, true);
+				RequestBasic.RequestSendOrder(codeDaily, false);
 			}
 
 			SaveCodeResOrder();
@@ -167,7 +120,7 @@ namespace CSharp_sample
 		}
 
 		// 現在時刻に応じた値
-		private static TimeIdx GetTimeIdx(DateTime now)
+		public static TimeIdx GetTimeIdx(DateTime now)
 		{
 			if (now.Hour == 15) {
 				if (now.Minute >= 25) return TimeIdx.T1525;

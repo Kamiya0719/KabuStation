@@ -184,14 +184,21 @@ namespace CSharp_sample
 			return res;
 		}
 		/** 注文送信 todo 引数はCodeDailyにするか */
-		public static ResponseOrder RequestSendOrder(int symbol, int exchange, bool isBuy, int qty, int price, int expireDay)
+		public static ResponseOrder RequestSendOrder(CodeDaily codeDaily, bool isBuy)
 		{
+			int symbol = Int32.Parse(codeDaily.Symbol);
+
+			int qty = isBuy ? codeDaily.BuyOrderNeed() : codeDaily.SellOrderNeed();
 			if (qty <= 0) return null;
+
+			int price = isBuy ? codeDaily.BuyPrice():codeDaily.SellPrice();
 			if (price <= 5) {
 				CsvControll.ErrorLog("RequestSendOrder", symbol.ToString(), price.ToString(), isBuy.ToString());
 				return null;
 			}
 
+			int exchange = codeDaily.Exchange;
+			int expireDay = codeDaily.ExpireDay();
 			ResponseOrder res = null;
 			for (int i = 0; i < RepeatNum; i++) {
 				RequestParam param = new RequestParam(REQUEST_TYPE.SENDORDER);
@@ -255,21 +262,22 @@ namespace CSharp_sample
 		/** 保有銘柄取得 */
 		public static ResponsePositions[] RequestPositions()
 		{
-			ResponsePositions[] res = null;
 			for (int i = 0; i < RepeatNum; i++) {
 				string raw = Request(new RequestParam(REQUEST_TYPE.POSITIONS));
 				// todo rawがapi値エラーならトークン取り直し
-				res = JsonConvert.DeserializeObject<ResponsePositions[]>(raw, GetJSSetting());
+				ResponsePositions[] res = JsonConvert.DeserializeObject<ResponsePositions[]>(raw, GetJSSetting());
 				if (res != null) {
 					bool isOk = true;
+					List<ResponsePositions> list = new List<ResponsePositions>();
 					foreach (ResponsePositions pos in res) {
 						if (pos.ExecutionID == "" || pos.Symbol == "" || pos.Price <= 0) isOk = false;
+						if (pos.LeavesQty > 0) list.Add(pos);
 					}
-					if (isOk) return res;
+					if (isOk) return list.ToArray();
 				}
 				Failed(raw, i);
 			}
-			return res;
+			return new ResponsePositions[0];
 		}
 		/** 登録銘柄全解除 */
 		public static void RequestUnregisterAll()
