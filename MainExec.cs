@@ -6,6 +6,7 @@ namespace CSharp_sample
 	{
 		static void Main(string[] args)
 		{
+			DateTime now = DateTime.Now;
 			string execType = args[0];
 			try {
 				if (execType == "1") EveryDayExec.ExecBasic();
@@ -42,6 +43,8 @@ namespace CSharp_sample
 			} catch (Exception e) {
 				Console.WriteLine(e);
 				CsvControll.ErrorLog("Exception", execType, e.Message, "");
+			} finally{
+				Common.DebugInfo("End", (DateTime.Now - now));
 			}
 		}
 	}
