@@ -142,7 +142,7 @@ namespace CSharp_sample
 
 
 		private const bool IsAndCheck = false; // andチェックかorチェックか
-		private const bool SkipMode = false; // 購入時に所持期間分日付をスキップすうかどうか
+		private const bool SkipMode = true; // 購入時に所持期間分日付をスキップすうかどうか
 		private const int AllTrueCondIdx = 1;
 		// skip   T0:23732,  T1:0.195, T2:10.2  #End#
 		// noskip T0:116276, T1:0.256, T2:12.9  #End#
@@ -251,6 +251,7 @@ namespace CSharp_sample
 			*/
 		};
 		private static readonly int[] KouhoAnds = new int[] {
+			//AllTrueCondIdx
 		/*
 2734,
 62,
@@ -269,7 +270,7 @@ namespace CSharp_sample
 
 		};
 		private static readonly int[] KouhoOrs = new int[] {
-		AllTrueCondIdx
+			AllTrueCondIdx-1
 		};
 		private const int AllCond51Num = 3754886; // 2000日*2500銘柄
 		private const double AllCond51Ratio = -0.000912;
@@ -452,22 +453,40 @@ namespace CSharp_sample
 				Dictionary<int, double> havePeriodRes = new Dictionary<int, double>();
 				int tMin = AllCond51Num; int tMax = 0;
 				double maxBenefit = 0; double minBenefit = 9999;
+				double baseBenefit = 0;
 				for (int j = 0; j < condNum(); j++) {
 					if (trueAll[i, j] == 0) continue;
 					benefitRes[j] = Common.Round((double)benefitAll[i, j] / (double)trueAll[i, j], 4);
 					havePeriodRes[j] = Common.Round((double)havePeriodAll[i, j] / (double)trueAll[i, j], 4);
 
-					tMin = Math.Min(tMin, trueAll[i, j]); tMax = Math.Max(tMax, trueAll[i, j]);
+					if(tMin > trueAll[i, j]){
+						tMin = trueAll[i, j];
+						if (!IsAndCheck) baseBenefit = benefitRes[j];
+					}
+					if (tMax < trueAll[i, j]) {
+						tMax = trueAll[i, j];
+						if (IsAndCheck) baseBenefit = benefitRes[j];
+					}
 					maxBenefit = Math.Max(maxBenefit, benefitRes[j]); minBenefit = Math.Min(minBenefit, benefitRes[j]);
 				}
 				double needNum = tMax * 0.6;
+				double needBenefit = 0;
+				if(IsAndCheck) {
+					needNum = tMax * 0.7;
+					needBenefit = baseBenefit * 1.05;
+				} else{
+					needNum = tMin + 1000;
+					needBenefit = baseBenefit * 0.8;
+				}
 
 				int max = maxNum;
 				string result = "";
 				string result2 = "";
 				// OrderByDescending:高い順、OrderBy：低い順
 				maxBenefit = 0;
-				foreach (KeyValuePair<int, double> b in benefitRes.OrderByDescending(c => trueAll[i, c.Key] >= needNum ? c.Value : 0)) {
+				foreach (KeyValuePair<int, double> b in benefitRes.OrderByDescending(
+					c => trueAll[i, c.Key] >= needNum && c.Value >= needBenefit ? c.Value : 0
+				)) {
 					if (max > 0) {
 						double tr = (AllCond51Num * AllCond51Ratio - trueAll[i, b.Key] * b.Value) / (AllCond51Num - trueAll[i, b.Key]);
 						result += "\nCond:" + b.Key + ", T:" + trueAll[i, b.Key] + ", TR:" + tr + ", Period:" +havePeriodRes[b.Key] + ", Benefit" + b.Value + ",";
@@ -484,7 +503,7 @@ namespace CSharp_sample
 				max = 30;
 				foreach (KeyValuePair<int, double> b in benefitRes.OrderByDescending(c =>
 					//c.Value >= maxBenefit * 0.5 & trueAll[i, c.Key] >= needNum ?
-					trueAll[i, c.Key] >= needNum ? (AllCond51Num * AllCond51Ratio - trueAll[i, c.Key] * c.Value) / (AllCond51Num - trueAll[i, c.Key]) : -999
+					trueAll[i, c.Key] >= needNum && c.Value >= needBenefit ? (AllCond51Num * AllCond51Ratio - trueAll[i, c.Key] * c.Value) / (AllCond51Num - trueAll[i, c.Key]) : -999
 
 				)) {
 					if (max > 0) {
@@ -500,7 +519,9 @@ namespace CSharp_sample
 				result = "";
 				result2 = "";
 				max = 30;
-				foreach (KeyValuePair<int, double> b2 in benefitRes.OrderByDescending(c => (c.Value >= maxBenefit * 0.7) ? trueAll[i, c.Key] : 0)) {
+				foreach (KeyValuePair<int, double> b2 in benefitRes.OrderByDescending(
+					c => trueAll[i, c.Key] >= needNum && c.Value >= needBenefit ? trueAll[i, c.Key] : 0
+				)) {
 					if (max > 0) {
 						double tr = (AllCond51Num * AllCond51Ratio - trueAll[i, b2.Key] * b2.Value) / (AllCond51Num - trueAll[i, b2.Key]);
 						result += "\nCond:" + b2.Key + ", T:" + trueAll[i, b2.Key] + ", TR:" + tr + ", Period:" + havePeriodRes[b2.Key] + ", Benefit" + b2.Value + ",";
@@ -512,7 +533,9 @@ namespace CSharp_sample
 				result = "";
 				result2 = "";
 				max = 30;
-				foreach (KeyValuePair<int, double> b in benefitRes.OrderBy(c => (c.Value >= maxBenefit * 0.7) ? trueAll[i, c.Key] : 9999999)) {
+				foreach (KeyValuePair<int, double> b in benefitRes.OrderBy(c =>
+					trueAll[i, c.Key] >= needNum && c.Value >= needBenefit ? trueAll[i, c.Key] : 9999999
+				)) {
 					if (max > 0) {
 						double tr = (AllCond51Num * AllCond51Ratio - trueAll[i, b.Key] * b.Value) / (AllCond51Num - trueAll[i, b.Key]);
 						result += "\nCond:" + b.Key + ", T:" + trueAll[i, b.Key] + ", TR:" + tr + ", Period:" + havePeriodRes[b.Key] + ", Benefit" + b.Value + ",";
@@ -1455,4 +1478,271 @@ namespace CSharp_sample
 
 	}
 }
+
+
+/*
+ LowScoreRank1 , T0:0 , T1:
+Cond:1618, T:143399, TR:-0.0301919457364792, Period:5.661, Benefit0.7365,
+Cond:1602, T:137310, TR:-0.028252418202686, Period:5.6578, Benefit0.7194,
+Cond:2722, T:142935, TR:-0.0292070239967264, Period:5.6816, Benefit0.7141,
+Cond:722, T:137423, TR:-0.0278578963301076, Period:5.6521, Benefit0.7084,
+Cond:1616, T:136599, TR:-0.0276562496374666, Period:5.6595, Benefit0.7075,
+Cond:1604, T:140758, TR:-0.0284516086956522, Period:5.6236, Benefit0.7062,
+Cond:2738, T:158651, TR:-0.0320715613501342, Period:5.7219, Benefit0.7054,
+Cond:1961, T:139444, TR:-0.0281151819423462, Period:5.6499, Benefit0.7044,
+Cond:2998, T:138703, TR:-0.0279612450288052, Period:5.6094, Benefit0.7043,
+Cond:2706, T:138016, TR:-0.0278068933724463, Period:5.6567, Benefit0.7039,
+Cond:1588, T:136803, TR:-0.0275351133824183, Period:5.647, Benefit0.7032,
+Cond:2530, T:136754, TR:-0.0275176577394081, Period:5.639, Benefit0.703,
+Cond:3444, T:139081, TR:-0.0279647133714346, Period:5.5774, Benefit0.7024,
+Cond:1632, T:143231, TR:-0.0287404917778691, Period:5.699, Benefit0.7008,
+Cond:1172, T:136902, TR:-0.0274415907953158, Period:5.6618, Benefit0.7002,
+Cond:3206, T:136755, TR:-0.0273742305162527, Period:5.6259, Benefit0.6992,
+Cond:3890, T:137653, TR:-0.0275469960138039, Period:5.6048, Benefit0.699,
+Cond:621, T:136690, TR:-0.0273309549930407, Period:5.6598, Benefit0.6984,
+Cond:3491, T:136516, TR:-0.02728473750114, Period:5.6466, Benefit0.6981,
+Cond:6584, T:137522, TR:-0.0274826674982114, Period:5.6522, Benefit0.698,
+Cond:7339, T:136511, TR:-0.0272761897072581, Period:5.6471, Benefit0.6979,
+Cond:4580, T:136962, TR:-0.0273590167819998, Period:5.6775, Benefit0.6977,
+Cond:7581, T:136777, TR:-0.0273219432946879, Period:5.6475, Benefit0.6977,
+Cond:1279, T:136588, TR:-0.0272765222853397, Period:5.6674, Benefit0.6975,
+Cond:1041, T:137346, TR:-0.0274245914162663, Period:5.6297, Benefit0.6974,
+Cond:369, T:136492, TR:-0.0272497488200566, Period:5.637, Benefit0.6973,
+Cond:7095, T:137457, TR:-0.0274354329364861, Period:5.6456, Benefit0.6971,
+Cond:1497, T:136617, TR:-0.0272634525050514, Period:5.6549, Benefit0.697,
+Cond:7373, T:136581, TR:-0.0272562465110045, Period:5.6456, Benefit0.697,
+Cond:5041, T:136943, TR:-0.027324928206995, Period:5.6344, Benefit0.6969, , T2:1618,1602,2722,722,1616,1604,2738,1961,2998,2706,1588,2530,3444,1632,1172,3206,3890,621,3491,6584,7339,4580,7581,1279,1041,369,7095,1497,7373,5041,  #End#
+LowScoreRank2 , T0:0 , T1:
+Cond:8306, T:156479, TR:-0.0258341371145621, Period:5.7086, Benefit0.5722,
+Cond:4304, T:155084, TR:-0.0258350249352603, Period:5.7159, Benefit0.5776,
+Cond:581, T:158622, TR:-0.0260934670068716, Period:5.5114, Benefit0.57,
+Cond:2375, T:153974, TR:-0.026217717242743, Period:5.6065, Benefit0.5909,
+Cond:1459, T:146022, TR:-0.0262295840552595, Period:5.5579, Benefit0.6248,
+Cond:151, T:143076, TR:-0.0263086129203917, Period:5.5692, Benefit0.6402,
+Cond:805, T:143345, TR:-0.0263185659617321, Period:5.5815, Benefit0.6392,
+Cond:1253, T:157393, TR:-0.0263754587797669, Period:5.5236, Benefit0.5811,
+Cond:8320, T:145294, TR:-0.0263840718374819, Period:5.6755, Benefit0.6319,
+Cond:807, T:149703, TR:-0.0264001646329743, Period:5.6098, Benefit0.6129,
+Cond:7854, T:144860, TR:-0.0264052502757598, Period:5.5696, Benefit0.6344,
+Cond:1685, T:144156, TR:-0.0264720394025585, Period:5.6496, Benefit0.6393,
+Cond:4274, T:143489, TR:-0.0265318443616141, Period:5.6293, Benefit0.6439,
+Cond:3719, T:152564, TR:-0.0265394445116233, Period:5.6214, Benefit0.6042,
+Cond:5495, T:151344, TR:-0.0265526968832332, Period:5.674, Benefit0.6096,
+Cond:5721, T:163368, TR:-0.0266037010623363, Period:5.8479, Benefit0.5639,
+Cond:4665, T:142335, TR:-0.0266053013596209, Period:5.6396, Benefit0.6512,
+Cond:2581, T:147521, TR:-0.0266105269447367, Period:5.6249, Benefit0.6275,
+Cond:7511, T:153159, TR:-0.0266393893629362, Period:5.6178, Benefit0.6041,
+Cond:4290, T:157593, TR:-0.0266677045856426, Period:5.6766, Benefit0.587,
+Cond:375, T:150027, TR:-0.02671565565588, Period:5.535, Benefit0.6191,
+Cond:787, T:148826, TR:-0.0267399387231494, Period:5.6032, Benefit0.6249,
+Cond:1477, T:145477, TR:-0.0267479478584998, Period:5.5728, Benefit0.6401,
+Cond:6153, T:143027, TR:-0.0267747620912112, Period:5.8418, Benefit0.6522,
+Cond:2599, T:139910, TR:-0.0267776024051059, Period:5.6396, Benefit0.6674,
+Cond:1251, T:140830, TR:-0.0267867540049186, Period:5.5894, Benefit0.6631,
+Cond:811, T:164961, TR:-0.0267876154047787, Period:5.8204, Benefit0.5622,
+Cond:2100, T:151783, TR:-0.0267902827734872, Period:5.5485, Benefit0.6134,
+Cond:1479, T:153250, TR:-0.0268042511880712, Period:5.6174, Benefit0.6076,
+Cond:80, T:154957, TR:-0.0268080636957007, Period:5.616, Benefit0.6007, , T2:8306,4304,581,2375,1459,151,805,1253,8320,807,7854,1685,4274,3719,5495,5721,4665,2581,7511,4290,375,787,1477,6153,2599,1251,811,2100,1479,80,  #End#
+LowScoreRank3 , T0:0 , T1:
+Cond:3236, T:231482, TR:-0.0381309311200192, Period:6.6805, Benefit0.5656,
+Cond:3458, T:218284, TR:-0.0365445005211217, Period:6.4747, Benefit0.5764,
+Cond:504, T:213386, TR:-0.0359980450182126, Period:5.5195, Benefit0.5814,
+Cond:56, T:212435, TR:-0.034926777119006, Period:5.5046, Benefit0.5663,
+Cond:4114, T:209406, TR:-0.035523513496621, Period:5.188, Benefit0.5851,
+Cond:2296, T:206715, TR:-0.0341323193081731, Period:5.5095, Benefit0.5693,
+Cond:254, T:205108, TR:-0.0333911206931814, Period:5.4243, Benefit0.5612,
+Cond:1176, T:203834, TR:-0.0351409158840817, Period:5.5188, Benefit0.5954,
+Cond:1864, T:202989, TR:-0.0341908170850675, Period:5.7151, Benefit0.5814,
+Cond:3000, T:202281, TR:-0.0340225847320487, Period:5.7752, Benefit0.5806,
+Cond:5670, T:201059, TR:-0.0327193396673502, Period:5.2346, Benefit0.5613,
+Cond:740, T:199435, TR:-0.0329808944159264, Period:5.6445, Benefit0.5708,
+Cond:1608, T:199370, TR:-0.0345903787332134, Period:5.3443, Benefit0.5997,
+Cond:3864, T:197840, TR:-0.032420935807971, Period:5.4746, Benefit0.5656,
+Cond:2046, T:197337, TR:-0.0321588781579677, Period:5.4179, Benefit0.5624,
+Cond:1850, T:193319, TR:-0.0319060733469285, Period:5.5273, Benefit0.5701,
+Cond:2112, T:192895, TR:-0.0316557066067826, Period:6.5993, Benefit0.5668,
+Cond:2546, T:191122, TR:-0.0316904716563723, Period:5.4277, Benefit0.573,
+Cond:3680, T:191113, TR:-0.0310507881203432, Period:6.4229, Benefit0.5611,
+Cond:3614, T:190893, TR:-0.0318337272918325, Period:5.4539, Benefit0.5764,
+Cond:3404, T:190294, TR:-0.0319237029180338, Period:5.5242, Benefit0.58,
+Cond:4072, T:190232, TR:-0.03117660632196, Period:5.3528, Benefit0.5662,
+Cond:8104, T:190104, TR:-0.0317044385973672, Period:5.4182, Benefit0.5765,
+Cond:476, T:189836, TR:-0.0308333549408844, Period:5.3333, Benefit0.561,
+Cond:1162, T:189270, TR:-0.0307075590955392, Period:5.3651, Benefit0.5604,
+Cond:7674, T:188904, TR:-0.0313037663207498, Period:5.619, Benefit0.5728,
+Cond:6439, T:188717, TR:-0.0313250074889889, Period:5.6094, Benefit0.5738,
+Cond:2740, T:187776, TR:-0.0322813639142051, Period:5.5971, Benefit0.595,
+Cond:926, T:187478, TR:-0.0320923267627364, Period:5.4353, Benefit0.5924,
+Cond:5196, T:186276, TR:-0.0316053297031617, Period:5.579, Benefit0.5871, , T2:3236,3458,504,56,4114,2296,254,1176,1864,3000,5670,740,1608,3864,2046,1850,2112,2546,3680,3614,3404,4072,8104,476,1162,7674,6439,2740,926,5196,  #End#
+LowScoreRank4 , T0:0 , T1:
+Cond:6699, T:136470, TR:-0.0271963135338778, Period:5.646, Benefit0.696,
+Cond:383, T:136477, TR:-0.0272014843352424, Period:5.6672, Benefit0.6961,
+Cond:6471, T:136477, TR:-0.0271901691135524, Period:5.6514, Benefit0.6958,
+Cond:3943, T:136480, TR:-0.0272171713268218, Period:5.6574, Benefit0.6965,
+Cond:7042, T:136483, TR:-0.0272026837065965, Period:5.6646, Benefit0.6961,
+Cond:369, T:136492, TR:-0.0272497488200566, Period:5.637, Benefit0.6973,
+Cond:7615, T:136510, TR:-0.027177899431126, Period:5.6466, Benefit0.6953,
+Cond:7339, T:136511, TR:-0.0272761897072581, Period:5.6471, Benefit0.6979,
+Cond:3491, T:136516, TR:-0.02728473750114, Period:5.6466, Benefit0.6981,
+Cond:4893, T:136526, TR:-0.0272188256093921, Period:5.6504, Benefit0.6963,
+Cond:3846, T:136532, TR:-0.0270200395074667, Period:5.6319, Benefit0.691,
+Cond:3150, T:136537, TR:-0.0271606497692732, Period:5.6458, Benefit0.6947,
+Cond:5192, T:136539, TR:-0.027123313582694, Period:5.6379, Benefit0.6937,
+Cond:7997, T:136555, TR:-0.0272170764731032, Period:5.6601, Benefit0.6961,
+Cond:1723, T:136561, TR:-0.0271767602501157, Period:5.6593, Benefit0.695,
+Cond:8304, T:136563, TR:-0.0271054494946969, Period:5.6709, Benefit0.6931,
+Cond:1983, T:136565, TR:-0.0271511387552403, Period:5.6529, Benefit0.6943,
+Cond:1725, T:136576, TR:-0.0271797540929329, Period:5.6605, Benefit0.695,
+Cond:825, T:136581, TR:-0.0272298234482721, Period:5.6551, Benefit0.6963,
+Cond:7373, T:136581, TR:-0.0272562465110045, Period:5.6456, Benefit0.697,
+Cond:3596, T:136582, TR:-0.0271205556061624, Period:5.6369, Benefit0.6934,
+Cond:1279, T:136588, TR:-0.0272765222853397, Period:5.6674, Benefit0.6975,
+Cond:6570, T:136592, TR:-0.0272320230561696, Period:5.6569, Benefit0.6963,
+Cond:8205, T:136598, TR:-0.0271954707397532, Period:5.6647, Benefit0.6953,
+Cond:1616, T:136599, TR:-0.0276562496374666, Period:5.6595, Benefit0.7075,
+Cond:1059, T:136608, TR:-0.0271710390500675, Period:5.634, Benefit0.6946,
+Cond:1497, T:136617, TR:-0.0272634525050514, Period:5.6549, Benefit0.697,
+Cond:4889, T:136623, TR:-0.0271173923321771, Period:5.6462, Benefit0.6931,
+Cond:7686, T:136634, TR:-0.0269647559186038, Period:5.6335, Benefit0.689,
+Cond:3093, T:136635, TR:-0.0272141877476162, Period:5.6438, Benefit0.6956, , T2:6699,383,6471,3943,7042,369,7615,7339,3491,4893,3846,3150,5192,7997,1723,8304,1983,1725,825,7373,3596,1279,6570,8205,1616,1059,1497,4889,7686,3093,  #End#
+End , T0:00:37:40.0457049  #End#
+
+
+
+
+
+////////////////////////////////////////////////////////
+ 
+
+
+LowScoreRank1 , T0:0 , T1:
+Cond:3456, T:48726, TR:-0.0107358208582468, Period:4.5474, Benefit0.7463,
+Cond:397, T:48648, TR:-0.0106240689432249, Period:4.4939, Benefit0.739,
+Cond:6493, T:48880, TR:-0.0106393416610766, Period:4.4312, Benefit0.7366,
+Cond:7599, T:48544, TR:-0.0105663613428011, Period:4.4473, Benefit0.7362,
+Cond:2619, T:48535, TR:-0.0105580004516572, Period:4.4824, Benefit0.7357,
+Cond:1273, T:48729, TR:-0.0105904895102933, Period:4.4738, Benefit0.7352,
+Cond:7321, T:48596, TR:-0.0105611045093611, Period:4.4587, Benefit0.735,
+Cond:8397, T:49675, TR:-0.0107701763899546, Period:4.6567, Benefit0.7344,
+Cond:829, T:49041, TR:-0.0106294584452399, Period:4.5046, Benefit0.7334,
+Cond:6925, T:49169, TR:-0.0106432165575515, Period:4.435, Benefit0.7325,
+Cond:7357, T:48860, TR:-0.0105720262167616, Period:4.4482, Benefit0.7318,
+Cond:4169, T:48796, TR:-0.0105552563569692, Period:4.492, Benefit0.7315,
+Cond:4970, T:48641, TR:-0.0105242226382767, Period:4.4451, Benefit0.7315,
+Cond:7672, T:48669, TR:-0.0105272021935035, Period:4.4216, Benefit0.7313,
+Cond:6988, T:48978, TR:-0.0105798046880818, Period:4.4455, Benefit0.7306,
+Cond:2399, T:48826, TR:-0.0105335964425832, Period:4.5178, Benefit0.7294,
+Cond:6794, T:48525, TR:-0.010473505152898, Period:4.4563, Benefit0.7294,
+Cond:1069, T:49094, TR:-0.0105857830747112, Period:4.4923, Benefit0.7293,
+Cond:827, T:48830, TR:-0.0105317599172813, Period:4.4926, Benefit0.7292,
+Cond:4911, T:49223, TR:-0.0106062263978133, Period:4.4348, Benefit0.7289,
+Cond:6681, T:48624, TR:-0.0104814608443764, Period:4.4374, Benefit0.7285,
+Cond:5343, T:49158, TR:-0.0105799897434458, Period:4.4487, Benefit0.7279,
+Cond:6661, T:48679, TR:-0.0104832331901591, Period:4.4491, Benefit0.7278,
+Cond:7565, T:49263, TR:-0.0105982559834068, Period:4.4534, Benefit0.7277,
+Cond:3327, T:49274, TR:-0.0105964584613824, Period:4.4556, Benefit0.7274,
+Cond:2829, T:49102, TR:-0.0105582301159485, Period:4.5176, Benefit0.7271,
+Cond:4381, T:49444, TR:-0.0106263135226513, Period:4.561, Benefit0.7271,
+Cond:6453, T:48764, TR:-0.0104896395833704, Period:4.4491, Benefit0.727,
+Cond:129, T:49458, TR:-0.0106210923628795, Period:4.4387, Benefit0.7265,
+Cond:3598, T:48588, TR:-0.0104336432828661, Period:4.4331, Benefit0.7254, , T2:3456,397,6493,7599,2619,1273,7321,8397,829,6925,7357,4169,4970,7672,6988,2399,6794,1069,827,4911,6681,5343,6661,7565,3327,2829,4381,6453,129,3598,  #End#
+LowScoreRank2 , T0:0 , T1:
+Cond:738, T:49633, TR:-0.00896407954652489, Period:4.4708, Benefit0.6002,
+Cond:2724, T:51322, TR:-0.00936106129987223, Period:4.4196, Benefit0.6088,
+Cond:4304, T:51325, TR:-0.00938789276914839, Period:4.4711, Benefit0.6107,
+Cond:2752, T:51430, TR:-0.00947074247189652, Period:4.5578, Benefit0.6154,
+Cond:3848, T:52789, TR:-0.00949907085956959, Period:4.3339, Benefit0.6013,
+Cond:250, T:51916, TR:-0.00950788994563823, Period:4.3612, Benefit0.6122,
+Cond:1620, T:52772, TR:-0.00952049883715088, Period:4.4563, Benefit0.603,
+Cond:1606, T:51622, TR:-0.00952404900973844, Period:4.4086, Benefit0.6169,
+Cond:2266, T:53088, TR:-0.00957565421776121, Period:4.3048, Benefit0.6032,
+Cond:3402, T:52696, TR:-0.00957767009040595, Period:4.3571, Benefit0.6079,
+Cond:292, T:49281, TR:-0.00957914587010758, Period:4.4953, Benefit0.6508,
+Cond:6096, T:53271, TR:-0.00958723987556783, Period:4.4902, Benefit0.6019,
+Cond:4056, T:52708, TR:-0.00958821375741523, Period:4.3161, Benefit0.6085,
+Cond:2970, T:53000, TR:-0.00958828986954217, Period:4.4027, Benefit0.6051,
+Cond:1188, T:50347, TR:-0.0095992905276473, Period:4.5062, Benefit0.6383,
+Cond:1580, T:52070, TR:-0.00960546433633213, Period:4.3126, Benefit0.6173,
+Cond:3834, T:51851, TR:-0.00961739676562604, Period:4.3431, Benefit0.6208,
+Cond:151, T:51444, TR:-0.00966340945315196, Period:4.4562, Benefit0.6291,
+Cond:922, T:50617, TR:-0.00966564548416975, Period:4.376, Benefit0.6397,
+Cond:2710, T:50285, TR:-0.00966988928956182, Period:4.4038, Benefit0.6443,
+Cond:2042, T:51367, TR:-0.00967786846294025, Period:4.3434, Benefit0.6311,
+Cond:6082, T:53913, TR:-0.00969185655555985, Period:4.4851, Benefit0.6018,
+Cond:1146, T:53135, TR:-0.00971118520181395, Period:4.3138, Benefit0.6121,
+Cond:5626, T:53048, TR:-0.00971376770998623, Period:4.3307, Benefit0.6133,
+Cond:8132, T:53697, TR:-0.00971855469472107, Period:4.2895, Benefit0.6061,
+Cond:5446, T:51534, TR:-0.00972763713306216, Period:4.3212, Benefit0.6326,
+Cond:2375, T:53543, TR:-0.00973343695301949, Period:4.5237, Benefit0.6089,
+Cond:1459, T:51873, TR:-0.00974021288394073, Period:4.4561, Benefit0.6293,
+Cond:264, T:51990, TR:-0.00974074806097714, Period:4.4041, Benefit0.6279,
+Cond:4264, T:50187, TR:-0.00975012721195433, Period:4.3641, Benefit0.6515, , T2:738,2724,4304,2752,3848,250,1620,1606,2266,3402,292,6096,4056,2970,1188,1580,3834,151,922,2710,2042,6082,1146,5626,8132,5446,2375,1459,264,4264,  #End#
+LowScoreRank3 , T0:0 , T1:
+Cond:4367, T:68166, TR:-0.0128028874533461, Period:5.6231, Benefit0.6422,
+Cond:8381, T:64932, TR:-0.0122569760034949, Period:5.7154, Benefit0.6438,
+Cond:6159, T:63334, TR:-0.0124413535098517, Period:5.4147, Benefit0.6711,
+Cond:1693, T:61686, TR:-0.0109370940734323, Period:5.0249, Benefit0.5993,
+Cond:589, T:61571, TR:-0.010958103149068, Period:4.9195, Benefit0.6017,
+Cond:5951, T:61546, TR:-0.0111139309762979, Period:5.1372, Benefit0.6113,
+Cond:80, T:61357, TR:-0.0113080052524293, Period:4.7923, Benefit0.6249,
+Cond:4365, T:60734, TR:-0.0111070006951528, Period:5.2417, Benefit0.6192,
+Cond:5725, T:60636, TR:-0.0107784213932463, Period:5.0445, Benefit0.6002,
+Cond:7305, T:59170, TR:-0.0105440664358409, Period:4.5477, Benefit0.6007,
+Cond:6439, T:58782, TR:-0.010465587448838, Period:4.4313, Benefit0.5998,
+Cond:1945, T:58467, TR:-0.0104752691542815, Period:4.5705, Benefit0.6037,
+Cond:2381, T:58435, TR:-0.0105237008503562, Period:4.7721, Benefit0.6071,
+Cond:1949, T:58145, TR:-0.0107206178447449, Period:4.6445, Benefit0.6227,
+Cond:8399, T:58138, TR:-0.011578101464314, Period:5.1439, Benefit0.6773,
+Cond:4653, T:58033, TR:-0.0104392720056762, Period:4.5731, Benefit0.606,
+Cond:2377, T:57905, TR:-0.0103380489464241, Period:4.7105, Benefit0.6009,
+Cond:2383, T:57893, TR:-0.0105913145175011, Period:4.9477, Benefit0.6172,
+Cond:1485, T:57291, TR:-0.0108067343048657, Period:4.7568, Benefit0.6377,
+Cond:6479, T:57116, TR:-0.0104176944569294, Period:4.3914, Benefit0.6145,
+Cond:1051, T:56789, TR:-0.0103624368241287, Period:4.5988, Benefit0.6145,
+Cond:7488, T:56764, TR:-0.0103121643991193, Period:4.7739, Benefit0.6115,
+Cond:5103, T:56731, TR:-0.0102713329300692, Period:4.5095, Benefit0.6092,
+Cond:992, T:56635, TR:-0.0110592373346211, Period:5.1263, Benefit0.6617,
+Cond:4671, T:56622, TR:-0.010352592846806, Period:4.4528, Benefit0.6157,
+Cond:7099, T:56540, TR:-0.0103066073406869, Period:4.4745, Benefit0.6136,
+Cond:3390, T:56457, TR:-0.0104147266939557, Period:4.3658, Benefit0.6216,
+Cond:4750, T:56379, TR:-0.0101178645956328, Period:4.4395, Benefit0.603,
+Cond:813, T:56339, TR:-0.010744915620107, Period:4.7608, Benefit0.6446,
+Cond:5085, T:56323, TR:-0.0102654333404622, Period:4.6101, Benefit0.6133, , T2:4367,8381,6159,1693,589,5951,80,4365,5725,7305,6439,1945,2381,1949,8399,4653,2377,2383,1485,6479,1051,7488,5103,992,4671,7099,3390,4750,813,5085,  #End#
+LowScoreRank4 , T0:0 , T1:
+Cond:3820, T:48471, TR:-0.0101632487274091, Period:4.4218, Benefit0.7065,
+Cond:3162, T:48481, TR:-0.0103548470909142, Period:4.4324, Benefit0.721,
+Cond:2968, T:48483, TR:-0.0102976858781951, Period:4.4525, Benefit0.7166,
+Cond:4054, T:48492, TR:-0.0102471176113495, Period:4.4337, Benefit0.7126,
+Cond:6598, T:48496, TR:-0.0103133198697385, Period:4.4966, Benefit0.7176,
+Cond:920, T:48499, TR:-0.0101699713041299, Period:4.4365, Benefit0.7066,
+Cond:1576, T:48504, TR:-0.010170938244358, Period:4.4197, Benefit0.7066,
+Cond:1396, T:48505, TR:-0.0101737490106926, Period:4.4749, Benefit0.7068,
+Cond:5236, T:48505, TR:-0.0100716712696293, Period:4.4193, Benefit0.699,
+Cond:6794, T:48525, TR:-0.010473505152898, Period:4.4563, Benefit0.7294,
+Cond:4663, T:48534, TR:-0.0103770906357518, Period:4.4584, Benefit0.7219,
+Cond:2619, T:48535, TR:-0.0105580004516572, Period:4.4824, Benefit0.7357,
+Cond:2736, T:48538, TR:-0.0101028668198453, Period:4.501, Benefit0.7009,
+Cond:7599, T:48544, TR:-0.0105663613428011, Period:4.4473, Benefit0.7362,
+Cond:2940, T:48556, TR:-0.0104010885247671, Period:4.4433, Benefit0.7234,
+Cond:3305, T:48559, TR:-0.010418714628256, Period:4.4575, Benefit0.7247,
+Cond:803, T:48587, TR:-0.010223695884223, Period:4.4492, Benefit0.7094,
+Cond:3598, T:48588, TR:-0.0104336432828661, Period:4.4331, Benefit0.7254,
+Cond:7321, T:48596, TR:-0.0105611045093611, Period:4.4587, Benefit0.735,
+Cond:1632, T:48603, TR:-0.0101323840170867, Period:4.5149, Benefit0.7022,
+Cond:1354, T:48612, TR:-0.0100173801591571, Period:4.4149, Benefit0.6933,
+Cond:7240, T:48615, TR:-0.0104363804028362, Period:4.4363, Benefit0.7252,
+Cond:2278, T:48621, TR:-0.0100636912719409, Period:4.4311, Benefit0.6967,
+Cond:6681, T:48624, TR:-0.0104814608443764, Period:4.4374, Benefit0.7285,
+Cond:391, T:48628, TR:-0.0103261243097485, Period:4.4415, Benefit0.7166,
+Cond:6080, T:48630, TR:-0.0103698160709892, Period:4.4551, Benefit0.7199,
+Cond:7077, T:48635, TR:-0.0104390378665665, Period:4.4422, Benefit0.7251,
+Cond:4970, T:48641, TR:-0.0105242226382767, Period:4.4451, Benefit0.7315,
+Cond:147, T:48643, TR:-0.0103907520181488, Period:4.4275, Benefit0.7213,
+Cond:397, T:48648, TR:-0.0106240689432249, Period:4.4939, Benefit0.739, , T2:3820,3162,2968,4054,6598,920,1576,1396,5236,6794,4663,2619,2736,7599,2940,3305,803,3598,7321,1632,1354,7240,2278,6681,391,6080,7077,4970,147,397,  #End#
+End , T0:00:34:54.9103209  #End#
+
+
+
+ 
+ */
 

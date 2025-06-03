@@ -397,7 +397,13 @@ namespace CSharp_sample
 			if (!isBuy) return 0;
 			int num = buyNeedNum;
 			// todo キャンセルが含まれる？
-			foreach (CodeResOrder order in buyOrders) num -= (int)(order.OrderQty - order.CumQty);
+			foreach (CodeResOrder order in buyOrders) {
+				if (order.IsValid()) num -= (int)(order.OrderQty - order.CumQty);
+			}
+			if(num > buyNeedNum) {
+				CsvControll.ErrorLog("BuyOrderNeed", Symbol, buyNeedNum.ToString(), buyBasePrice.ToString());
+				return 0;
+			}
 			return num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
 		}
 		public int BuyPrice() { return buyPrice; }
