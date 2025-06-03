@@ -38,6 +38,8 @@ namespace CSharp_sample
 				if (execType == "27") Condtions.DebugCheckCond51Score();
 				if (execType == "28") Tools.CheckRanking();
 				if (execType == "29") Tools.CheckRankingBenfitAll();
+				if (execType == "30") Condtions.Aaa();
+				if (execType == "31") Tools.SaveJapanScoreMulti(DateTime.Parse("2025/05/29"), DateTime.Parse("2025/06/03"));
 
 
 			} catch (Exception e) {

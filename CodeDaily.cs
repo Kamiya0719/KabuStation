@@ -193,7 +193,7 @@ namespace CSharp_sample
 			if (isLossSell) return;
 			if (type == Def.TypeSp) return; // todo sp系は損切はなし？やるならEveryのほうかな
 
-			isLossSell = true;
+			isLossSell = posList.Count > 0;
 			bool isHalfLoss = Common.IsLossCutDate(now, FisDate());
 			foreach (ResponsePositions pos in posList) {
 				// 当日買ったやつについては損切なし EveryDayのほうではdateは翌営業日なので当日であることはありえない
@@ -234,7 +234,7 @@ namespace CSharp_sample
 			// 理想売→購入中のものがあるなら何もしない/全部終わったら注文 損切売→0の状態から全売り/値段が変化でキャンセル&全売り
 			sellOrderNeed = startHave + buyConfirm - sellConfirm - sellNowOrder;
 			// todo これだと終わったやつが含まれる
-			if (type != Def.TypeSp && buyOrders.Count > 0) sellOrderNeed = 0;
+			//if (type != Def.TypeSp && buyOrders.Count > 0) sellOrderNeed = 0;
 
 			// todo あってる？理想売中は購入無し ただし現在購入中なら理想売はしない
 			//if (sellOrderNeed > 0) buyNeedNum = 0;

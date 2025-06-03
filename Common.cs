@@ -26,7 +26,10 @@ namespace CSharp_sample
 			if (o as string == string.Empty) return "(empty)";
 			return o.ToString();
 		}
-
+		public static double Round(double value, int keta = 0)
+		{
+			return Math.Round(value, keta, MidpointRounding.AwayFromZero);
+		}
 
 
 
