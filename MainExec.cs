@@ -40,7 +40,7 @@ namespace CSharp_sample
 				if (execType == "29") Tools.CheckRankingBenfitAll();
 				if (execType == "30") Condtions.Aaa();
 				if (execType == "31") Tools.SaveJapanScoreMulti(DateTime.Parse("2025/05/29"), DateTime.Parse("2025/06/03"));
-
+				if (execType == "32") Tools.CheckLossSell();
 
 			} catch (Exception e) {
 				Console.WriteLine(e);

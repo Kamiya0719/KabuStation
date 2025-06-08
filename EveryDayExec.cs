@@ -237,6 +237,7 @@ namespace CSharp_sample
 						"所持数:"+pair.Value.StartHave().ToString(),
 						"理想売値:"+pair.Value.SellPrice().ToString(), // 理想売り値段
 						"前日終値:" + lastEndPrice.ToString(),
+						"SP系:" + pair.Value.IsSp().ToString(),
 					});
 					haveSum += pair.Value.StartHave() * lastEndPrice;
 				}

@@ -901,8 +901,23 @@ namespace CSharp_sample
 			return (benefitAll, res);
 		}
 
+		/** 損切が問題ないかチェック */
+		public static void CheckLossSell()
+		{
+			var posRes = RequestBasic.RequestPositions();
+			int jScore = 0;
+			DateTime setDate = DateTime.Parse("2025/06/09");
+			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
+				CodeDaily codeDaily = pair.Value;
+				//if (codeDaily.Symbol != "3591") continue;
+				codeDaily.SetData(posRes, MinitesExec.GetCodeResOrders(), setDate, jScore, true, codeDaily.LastEndPrice());
+				codeDaily.SetBuyBasePrice(600000);
+				codeDaily.SetInfo();
+				Common.DebugInfo("Check", codeDaily.Symbol, codeDaily.IsLossSell());
 
+			}
 
+		}
 
 
 		// 関数とかを簡易テストしとこ

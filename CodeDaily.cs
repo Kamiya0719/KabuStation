@@ -199,8 +199,9 @@ namespace CSharp_sample
 				// 当日買ったやつについては損切なし EveryDayのほうではdateは翌営業日なので当日であることはありえない
 				if (Common.SameD(Common.DateParse(pos.ExecutionDay), now)) { isLossSell = false; break; }
 				double beforeBenefit = pos.CurrentPrice / (isLastDay ? lastLastPrice : lastEndPrice) - 1;
+				//Common.DebugInfo("SetIsLossSell", 2, Symbol, beforeBenefit, pos.ProfitLossRate, pos.ExecutionDay);
 				// 損失が6％未満かつ前日からの上昇が-3.5％より大きい これが一個でもあればfalseで損切しない todo これ安値？
-				if (pos.ProfitLossRate < (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 0])
+				if (-pos.ProfitLossRate < (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 0])
 					&& beforeBenefit > -0.01 * (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 1])
 				) {
 					isLossSell = false; break;
