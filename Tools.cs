@@ -914,7 +914,12 @@ namespace CSharp_sample
 				codeDaily.SetBuyBasePrice(600000);
 				codeDaily.SetInfo();
 				Common.DebugInfo("Check", codeDaily.Symbol, codeDaily.IsLossSell());
-
+				foreach(CodeResOrder order in codeDaily.BuyValidOrders()) {
+					Common.DebugInfo("CheckB", order.Symbol, order.OrderQty, order.startCumQty, order.Price);
+				}
+				foreach (CodeResOrder order in codeDaily.SellValidOrders()) {
+					Common.DebugInfo("CheckS", order.Symbol, order.OrderQty, order.startCumQty, order.Price);
+				}
 			}
 
 		}

@@ -197,6 +197,18 @@ namespace CSharp_sample
 				return null;
 			}
 
+
+			// todo テスト用
+			if(true && isBuy) {
+				CsvControll.ErrorLog("BuyTest", symbol.ToString(), price.ToString(), qty.ToString());
+				return null;
+			}
+			if (true && !isBuy) {
+				CsvControll.ErrorLog("SellTest", symbol.ToString(), price.ToString(), qty.ToString());
+				return null;
+			}
+
+
 			int exchange = codeDaily.Exchange;
 			int expireDay = codeDaily.ExpireDay();
 			ResponseOrder res = null;

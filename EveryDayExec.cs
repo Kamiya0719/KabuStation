@@ -21,13 +21,13 @@ namespace CSharp_sample
 			if (Common.SameD(DateTime.Today, Common.GetDateByIdx(Common.GetDateIdx(DateTime.Today))) && DateTime.Now.Hour >= 15) add = 1;
 			DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Today) + add);
 
-			posRes = RequestBasic.RequestPositions();
-			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
-			CsvControll.Log("Interval", "SetResponseOrders", "", "");
-
 			// 各データの初期化 その日使ったデータ保存しておく
 			MinitesExec.InitInfo(Common.GetDateByIdx(Common.GetDateIdx(setDate) - 1));
 			CsvControll.Log("Interval", "InitInfo", "", "");
+
+			posRes = RequestBasic.RequestPositions();
+			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
+			CsvControll.Log("Interval", "SetResponseOrders", "", "");
 
 			// 余力
 			SetMargin(setDate);
@@ -226,6 +226,7 @@ namespace CSharp_sample
 						"コード:"+pair.Key,
 						"推定購入費用:"+tommorowBuy.ToString(), // 推定購入費用(終値*数)
 						"前日終値:" + lastEndPrice.ToString(),
+						"SP系:" + pair.Value.IsSp().ToString(),
 					});
 					buySum += tommorowBuy;
 				}
@@ -269,6 +270,7 @@ namespace CSharp_sample
 						"コード:"+pair.Value.Symbol,
 						"数量:"+pair.Value.CumQty.ToString()+"/"+pair.Value.OrderQty.ToString(),
 						"値段:"+pair.Value.Price.ToString(),
+						"SP系:" + (Common.Sp10(pair.Value.Symbol) ? "True" : "False"),
 					});
 					haveSum += (pair.Value.CumQty - oldCumQty) * pair.Value.Price;
 				} else if (!isSell && isSameD) {
@@ -277,6 +279,7 @@ namespace CSharp_sample
 						"コード:"+pair.Value.Symbol,
 						"数量:"+pair.Value.CumQty.ToString()+"/"+pair.Value.OrderQty.ToString(),
 						"値段:"+pair.Value.Price.ToString(),
+						"SP系:" + (Common.Sp10(pair.Value.Symbol) ? "True" : "False"),
 					});
 					buySum += (pair.Value.CumQty - oldCumQty) * pair.Value.Price;
 				}
