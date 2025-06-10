@@ -192,7 +192,11 @@ namespace CSharp_sample
 		private static Dictionary<string, CodeResOrder> codeResOrders = new Dictionary<string, CodeResOrder>();
 		public static void SetResponseOrders(ResponseOrders[] ordersRes, bool isLastDay)
 		{
-			if (isLastDay) codeResOrders = new Dictionary<string, CodeResOrder>();
+			if (isLastDay) {
+				codeResOrders = new Dictionary<string, CodeResOrder>();
+			}else{
+				GetCodeResOrders();
+			}
 			foreach (ResponseOrders order in ordersRes) {
 				if (!isLastDay && codeResOrders.ContainsKey(order.ID)) {
 					// 既存アップデート

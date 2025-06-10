@@ -203,10 +203,10 @@ namespace CSharp_sample
 				CsvControll.ErrorLog("BuyTest", symbol.ToString(), price.ToString(), qty.ToString());
 				return null;
 			}
-			if (true && !isBuy) {
-				CsvControll.ErrorLog("SellTest", symbol.ToString(), price.ToString(), qty.ToString());
-				return null;
-			}
+			//if (true && !isBuy) {
+			//	CsvControll.ErrorLog("SellTest", symbol.ToString(), price.ToString(), qty.ToString());
+			//	return null;
+			//}
 
 
 			int exchange = codeDaily.Exchange;

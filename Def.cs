@@ -29,7 +29,7 @@ namespace CSharp_sample
 
 
 		// todo SpŒn‚ÌŠî€w“ü”ïƒxƒ^‘Å‚¿
-		public const int SpBuyBasePricew = 200000;
+		public const int SpBuyBasePricew = 150000;
 		public static readonly Dictionary<string, int> SpBuyInfo = new Dictionary<string, int>() {
 			{ "1435", 0 },
 			{ "2193", 0 },

@@ -110,7 +110,7 @@ namespace CSharp_sample
 		public bool IsBoardCheck()
 		{
 			// 注文を取りやめる直前とかもあるので注文中のものがあるときも必要(todo SellValidはいらん？)
-			return !isProcess && (isBuy || posList.Count > 0 || BuyValidOrders().Count > 0 || SellValidOrders().Count > 0);
+			return !isProcess && (isBuy || posList.Count > 0 || BuyValidOrders().Count > 0);
 		}
 		public void SetBoard(ResponseBoard board) { this.board = board; }
 
@@ -126,6 +126,7 @@ namespace CSharp_sample
 			if (!isLastDay) SetCancelIds();
 		}
 		public HashSet<string> GetCancelIds() { return cancelIds; }
+
 
 		/** 所持情報を使って、初期所持数/理想売り価格/42損切/注文有効期間 をセット Everyオンリー */
 		private void SetPosListInfo()
@@ -180,6 +181,8 @@ namespace CSharp_sample
 				isBuy = TommorowBuy() > 0; // プロ500でもSPと同じでもいいといえばいい
 			}
 		}
+		
+		
 		/** 損切となるか算出 両方 */
 		private void SetIsLossSell()
 		{
@@ -209,6 +212,8 @@ namespace CSharp_sample
 				}
 			}
 		}
+		
+		
 		/** 注文の状態によって購入するかだったり購入必要数だったり売却必要数だったりを算出 Minitesのみ todo もうちょい後でもいいかも */
 		private void SetOrders()
 		{
@@ -242,14 +247,10 @@ namespace CSharp_sample
 			//if (sellOrderNeed > 0) buyNeedNum = 0;
 		}
 
-
 		// #B4# 板情報を渡して売値あるいは買値を設定する
 		// todo #A#でも使う？いやいらんやろ boardはメンバとしてもたせるかな そうすれば後でできる
 		private void SetBoardInfo()
 		{
-			int low = YobinePrice(board.LowPrice + yobine);
-			int high = YobinePrice(board.HighPrice - yobine);
-
 			// 流石に全部で30単元は少なすぎなのでやめておく
 			if (board.TradingVolume <= TradingUnit * 30) {
 				buyNeedNum = 0;
@@ -263,75 +264,14 @@ namespace CSharp_sample
 					}
 				} else {
 					// 購入注文必要 or 現在購入注文中
-					buyPrice = BoardPrice(low, high, true);
+					buyPrice = BoardPrice(true);
 					// 前日比4％越えになっている場合は流石に買うのは控えるため3％で茶を濁す
 					if (buyPrice >= lastEndPrice * 1.04) buyPrice = YobinePrice(lastEndPrice * 1.03);
 				}
 			}
-
 			// 売却注文必要(新規・キャンセル後) or 現在売却注文中で終値売却フラグが立っている
-			if (posList.Count > 0 && isLossSell) lossSellPrice = BoardPrice(high, low, false);
+			if (posList.Count > 0 && isLossSell) lossSellPrice = BoardPrice(false);
 		}
-		// maxは利益最大 minは利益最小
-		private int BoardPrice(int max, int min, bool isBuy)
-		{
-			// listは値段高い順(損な順)に並ぶ (買 => 0:売1,1:買1,...,9:買9,10:買10) 売りは逆かしら
-			int price = 0;
-			if (timeIdx == TimeIdx.T0900) {
-				// ⑥12時50分なら安値近く or 高値近く でワンちゃんねらい 一応即売・即買値段を見てお得な方にする
-				price = Toku(isBuy, isBuy ? (int)board.Sell1.Price : (int)board.Buy1.Price, max);
-			} else if (timeIdx == TimeIdx.T1420) {
-				// ⑤14時なら現実的な数値に  volume以内に入るもので利益最大のもの
-				price = MaxVolPrice(isBuy, Math.Max((int)(board.TradingVolume / 5), 30 * TradingUnit));
-				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
-			} else if (timeIdx == TimeIdx.T1500) {
-				// ④14時30分に本命くらい  volume以内に入るもので利益最大のもの
-				price = MaxVolPrice(isBuy, Math.Max((int)(board.TradingVolume / 15), 30 * TradingUnit));
-				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
-			} else if (timeIdx == TimeIdx.T1515) {
-				// ③14時45分なら1本目狙い でも近いものに大き目の差があったら
-				int maxVolPrice = MaxVolPrice(isBuy, 15 * TradingUnit);
-				price = isBuy ? (int)board.Buy1.Price : (int)board.Sell1.Price;
-				// 極端に差が大きい(0.8％以上かつ3yobine以上)
-				if (IsBigDiff(isBuy, price, maxVolPrice, 1.008)) price = maxVolPrice;
-			} else if (timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1525) {
-				// ②14時50分なら1本目+1 でも近いものに大き目の差があったら
-				int maxVolPrice = MaxVolPrice(isBuy, 8 * TradingUnit);
-				price = isBuy ? (int)board.Buy1.Price + 2 * yobine : (int)board.Sell1.Price - 2 * yobine;
-				// 極端に差が大きい(1％以上かつ4yobine以上)
-				if (IsBigDiff(isBuy, price, maxVolPrice, 1.01)) price = maxVolPrice;
-			}
-
-			return price;
-		}
-		private int Toku(bool isBuy, int a, int b)
-		{
-			return isBuy ? Math.Min(a, b) : Math.Max(a, b);
-		}
-		// 買1-10 or 売1-10 のうちvolumeの範囲内で最も得なものを算出
-		private int MaxVolPrice(bool isBuy, int volume)
-		{
-			SellBuy[] list = isBuy ? new SellBuy[10]{
-				board.Buy1,board.Buy2,board.Buy3,board.Buy4,board.Buy5,board.Buy6,board.Buy7,board.Buy8,board.Buy9,board.Buy10,
-			} : new SellBuy[10] {
-				board.Sell1,board.Sell2,board.Sell3,board.Sell4,board.Sell5,board.Sell6,board.Sell7,board.Sell8,board.Sell9,board.Sell10,
-			};
-			double price = list[0].Price;
-			foreach (SellBuy sellBuy in list) {
-				volume -= (int)sellBuy.Qty;
-				if (volume <= 0) break;
-				price = sellBuy.Price;
-			}
-			return (int)price;
-		}
-		// 差が大きい(買ならbase=Buy1,max=Buy3 => maxが小さい、売りなら逆)
-		private bool IsBigDiff(bool isBuy, int price, int maxVolPrice, double ratio)
-		{
-			int small = isBuy ? maxVolPrice : price; int big = isBuy ? price : maxVolPrice;
-			return Math.Max(small + 4 * yobine, small * ratio) <= big;
-		}
-
-
 
 		// #B5# 注文中の中でキャンセルする必要があるやつ あったらキャンセルして今回注文はしない
 		// todo #A#でも使う？
@@ -413,7 +353,7 @@ namespace CSharp_sample
 				// 時間に応じて+1をなくすか
 				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + (timeIdx == TimeIdx.T1525 ? 0 : 1));
 				// 前日設定値の設定がないなら理想売り-1
-				if (spPrice <= 5) return  idealSellPrice - 1;
+				if (spPrice <= 5) return idealSellPrice - 1;
 				// 前日設定値+1と買値+1が同値か片方の設定がないなら適当に
 				if (idealSellPrice <= 5 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
 				// 前日設定値+4<=買値 なら 前日設定値+4
@@ -451,6 +391,70 @@ namespace CSharp_sample
 				if (order.IsValid()) res.Add(order);
 			}
 			return res;
+		}
+
+
+
+		// maxは利益最大 minは利益最小
+		private int BoardPrice(bool isBuy)
+		{
+			int max = isBuy ? YobinePrice(board.LowPrice + yobine) : YobinePrice(board.HighPrice - yobine);
+			int min = isBuy ? YobinePrice(board.HighPrice - yobine) : YobinePrice(board.LowPrice + yobine);
+
+			// listは値段高い順(損な順)に並ぶ (買 => 0:売1,1:買1,...,9:買9,10:買10) 売りは逆かしら
+			int price = 0;
+			if (timeIdx == TimeIdx.T0900) {
+				// ⑥12時50分なら安値近く or 高値近く でワンちゃんねらい 一応即売・即買値段を見てお得な方にする
+				price = Toku(isBuy, isBuy ? (int)board.Sell1.Price : (int)board.Buy1.Price, max);
+			} else if (timeIdx == TimeIdx.T1420) {
+				// ⑤14時なら現実的な数値に  volume以内に入るもので利益最大のもの
+				price = MaxVolPrice(isBuy, Math.Max((int)(board.TradingVolume / 5), 30 * TradingUnit));
+				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
+			} else if (timeIdx == TimeIdx.T1500) {
+				// ④14時30分に本命くらい  volume以内に入るもので利益最大のもの
+				price = MaxVolPrice(isBuy, Math.Max((int)(board.TradingVolume / 15), 30 * TradingUnit));
+				price = Toku(isBuy, price, min); // 流石に利益今日最低未満は避ける
+			} else if (timeIdx == TimeIdx.T1515) {
+				// ③14時45分なら1本目狙い でも近いものに大き目の差があったら
+				int maxVolPrice = MaxVolPrice(isBuy, 15 * TradingUnit);
+				price = isBuy ? (int)board.Buy1.Price : (int)board.Sell1.Price;
+				// 極端に差が大きい(0.8％以上かつ3yobine以上)
+				if (IsBigDiff(isBuy, price, maxVolPrice, 1.008)) price = maxVolPrice;
+			} else if (timeIdx == TimeIdx.T1520 || timeIdx == TimeIdx.T1525) {
+				// ②14時50分なら1本目+1 でも近いものに大き目の差があったら
+				int maxVolPrice = MaxVolPrice(isBuy, 8 * TradingUnit);
+				price = isBuy ? (int)board.Buy1.Price + 2 * yobine : (int)board.Sell1.Price - 2 * yobine;
+				// 極端に差が大きい(1％以上かつ4yobine以上)
+				if (IsBigDiff(isBuy, price, maxVolPrice, 1.01)) price = maxVolPrice;
+			}
+
+			return price;
+		}
+		private int Toku(bool isBuy, int a, int b)
+		{
+			return isBuy ? Math.Min(a, b) : Math.Max(a, b);
+		}
+		// 買1-10 or 売1-10 のうちvolumeの範囲内で最も得なものを算出
+		private int MaxVolPrice(bool isBuy, int volume)
+		{
+			SellBuy[] list = isBuy ? new SellBuy[10]{
+				board.Buy1,board.Buy2,board.Buy3,board.Buy4,board.Buy5,board.Buy6,board.Buy7,board.Buy8,board.Buy9,board.Buy10,
+			} : new SellBuy[10] {
+				board.Sell1,board.Sell2,board.Sell3,board.Sell4,board.Sell5,board.Sell6,board.Sell7,board.Sell8,board.Sell9,board.Sell10,
+			};
+			double price = list[0].Price;
+			foreach (SellBuy sellBuy in list) {
+				volume -= (int)sellBuy.Qty;
+				if (volume <= 0) break;
+				price = sellBuy.Price;
+			}
+			return (int)price;
+		}
+		// 差が大きい(買ならbase=Buy1,max=Buy3 => maxが小さい、売りなら逆)
+		private bool IsBigDiff(bool isBuy, int price, int maxVolPrice, double ratio)
+		{
+			int small = isBuy ? maxVolPrice : price; int big = isBuy ? price : maxVolPrice;
+			return Math.Max(small + 4 * yobine, small * ratio) <= big;
 		}
 
 		// 呼び値(値段最低単位)に応じて1,5,10,50...単位に変換
