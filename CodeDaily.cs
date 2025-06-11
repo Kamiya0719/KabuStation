@@ -131,32 +131,23 @@ namespace CSharp_sample
 		/** 所持情報を使って、初期所持数/理想売り価格/42損切/注文有効期間 をセット Everyオンリー */
 		private void SetPosListInfo()
 		{
-			startHave = 0;
-			expireDay = 0;
-			foreach (ResponsePositions pos in posList) {
-				startHave += (int)pos.LeavesQty;
+			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
+			startHave = leaveQty;
 
-				// 約定日（建玉日）
-				DateTime buyDate = DateTime.ParseExact(pos.ExecutionDay.ToString(), CsvControll.DFILEFORM, null);
-				// 購入日翌日だと1になるな
-				int havePeriod = Common.GetDateIdx(now) - Common.GetDateIdx(buyDate);
-
-				int sellPeriod = 12; // 0なら今日のみ,1なら翌日まで的な
-				double sellPrice = pos.Price * 1.01; // todo
-				foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(now, FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
-					if (havePeriod <= pair.Key) { sellPrice = pos.Price * pair.Value; sellPeriod = pair.Key - havePeriod; }
-				}
-				if (type == Def.TypeSp) sellPrice = pos.Price + 1;
-
-				// 所持銘柄の数を加算 理想売のベーススコア保存 42以上たっていたら終値売却フラグも保存
-				sellPrice = YobinePrice(sellPrice);
-				if (idealSellPrice == 0 || idealSellPrice > sellPrice) idealSellPrice = (int)sellPrice; // 基本複数値段なら安い方
-				if (havePeriod >= 42) isLossSell = true;
-
-				// 注文有効期限(yyyyMMdd形式。本日なら0) 複数あるなら小さい方優先
-				int tmpExpireDay = sellPeriod > 0 ? Int32.Parse(Common.GetDateByIdx(Common.GetDateIdx(now) + sellPeriod).ToString(CsvControll.DFILEFORM)) : 0;
-				if (expireDay == 0 || expireDay > tmpExpireDay) expireDay = tmpExpireDay;
+			int sellPeriod = 12; // 0なら今日のみ,1なら翌日まで的な
+			double sellPrice = buyPrice * 1.01; // todo
+			foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(now, FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
+				if (havePeriod <= pair.Key) { sellPrice = buyPrice * pair.Value; sellPeriod = pair.Key - havePeriod; }
 			}
+			if (type == Def.TypeSp) sellPrice = buyPrice + 1;
+			// 理想売のベーススコア保存 
+			idealSellPrice = YobinePrice(sellPrice);
+
+			// 42以上たっていたら終値売却フラグも保存
+			if (havePeriod >= 42) isLossSell = true;
+
+			// 注文有効期限(yyyyMMdd形式。本日なら0) 複数あるなら小さい方優先
+			expireDay = sellPeriod > 0 ? Int32.Parse(Common.GetDateByIdx(Common.GetDateIdx(now) + sellPeriod).ToString(CsvControll.DFILEFORM)) : 0;
 		}
 
 		/** 理想売り注文をする必要がある数とキャンセルが必要なものを算出 Everyオンリー todo minitesのと合体でいいような */
@@ -393,7 +384,21 @@ namespace CSharp_sample
 			return res;
 		}
 
-
+		// 所持建玉・所持日数・購入金額を取得
+		private (int,int, int) GetPosInfo()
+		{
+			int leaveQty = 0; // 合計値
+			int havePeriod = 0; // 一番長い値
+			int buyPrice = 0; // 一番安い値
+			foreach (ResponsePositions pos in posList) {
+				leaveQty += (int)pos.LeavesQty;
+				// 約定日（建玉日） 購入日翌日だと1になるな
+				DateTime buyDate = DateTime.ParseExact(pos.ExecutionDay.ToString(), CsvControll.DFILEFORM, null);
+				havePeriod = Math.Max(havePeriod, Common.GetDateIdx(now) - Common.GetDateIdx(buyDate));
+				buyPrice = Math.Min((int)pos.Price, buyPrice);
+			}
+			return (leaveQty, havePeriod,buyPrice);
+		}
 
 		// maxは利益最大 minは利益最小
 		private int BoardPrice(bool isBuy)
