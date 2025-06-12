@@ -16,7 +16,7 @@ namespace CSharp_sample
 				idx++;
 			}
 			Console.WriteLine(message + " #End#");
-			
+
 			CsvControll.SaveDebugInfo(new List<string[]>() { new string[1] { message } }, !IsFirst);
 			IsFirst = false;
 		}
@@ -157,7 +157,12 @@ namespace CSharp_sample
 				|| (date.Month == 1 && date.Day <= 5)) {
 				return 0;
 			}
+			int proIdx = GetDateIdx(DateTime.Parse(Def.Pro500Day));
+			if (proIdx - 5 < GetDateIdx(date) && proIdx >= GetDateIdx(date)) return 0;
+
+			if (proIdx - 10 < GetDateIdx(date) && proIdx - 5 >= GetDateIdx(date)) return 0.5;
 			if ((date.Month == 3 && date.Day >= 9) || (date.Month == 12 && date.Day >= 14)) return 0.5;
+
 			return 1;
 		}
 

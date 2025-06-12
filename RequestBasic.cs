@@ -200,7 +200,7 @@ namespace CSharp_sample
 
 			// todo テスト用
 			if(true && isBuy) {
-				CsvControll.ErrorLog("BuyTest", symbol.ToString(), price.ToString(), qty.ToString());
+				//CsvControll.ErrorLog("BuyTest", symbol.ToString(), price.ToString(), qty.ToString());
 				return null;
 			}
 			//if (true && !isBuy) {

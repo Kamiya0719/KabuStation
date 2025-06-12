@@ -15,6 +15,8 @@ namespace CSharp_sample
 
 	class Def
 	{
+		// プロ500の発売日 この日および前数日は買いを控える
+		public const string Pro500Day = "2025/06/18";
 		// 代表となる銘柄 最新まであることが必須 プロ500にいなければならない
 		public const string CapitalSymbol = "1417";
 

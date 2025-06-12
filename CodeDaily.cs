@@ -326,13 +326,24 @@ namespace CSharp_sample
 		{
 			if (!isBuy) return 0;
 			int num = buyNeedNum;
-			// todo キャンセルが含まれる？
 			foreach (CodeResOrder order in BuyValidOrders()) num -= (int)(order.OrderQty - order.CumQty);
 			if (num > buyNeedNum) {
 				CsvControll.ErrorLog("BuyOrderNeed", Symbol, buyNeedNum.ToString(), buyBasePrice.ToString());
 				return 0;
 			}
-			return num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
+			int res = num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
+			// 一応チェック
+			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
+			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 0.95) {
+				// todo 仮
+				CsvControll.ErrorLog("BuyOrderNeed仮_"+ Symbol, num.ToString(), ((num + leaveQty) * lastEndPrice).ToString(), buyBasePrice.ToString());
+				//return 0;
+			}
+			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 1.2) {
+				CsvControll.ErrorLog("BuyOrderNeed2", Symbol, leaveQty.ToString(), num.ToString());
+				return 0;
+			}
+			return res;
 		}
 		public int BuyPrice() { return buyPrice; }
 		// #A4# #B6#
@@ -389,7 +400,7 @@ namespace CSharp_sample
 		{
 			int leaveQty = 0; // 合計値
 			int havePeriod = 0; // 一番長い値
-			int buyPrice = 0; // 一番安い値
+			int buyPrice = 999999999; // 一番安い値
 			foreach (ResponsePositions pos in posList) {
 				leaveQty += (int)pos.LeavesQty;
 				// 約定日（建玉日） 購入日翌日だと1になるな
@@ -397,6 +408,7 @@ namespace CSharp_sample
 				havePeriod = Math.Max(havePeriod, Common.GetDateIdx(now) - Common.GetDateIdx(buyDate));
 				buyPrice = Math.Min((int)pos.Price, buyPrice);
 			}
+			if (buyPrice == 999999999) buyPrice = 0;
 			return (leaveQty, havePeriod,buyPrice);
 		}
 
