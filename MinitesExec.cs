@@ -183,6 +183,7 @@ namespace CSharp_sample
 			List<string[]> saveDatas = new List<string[]>();
 			foreach (KeyValuePair<string, CodeDaily> pair in codeDailys) {
 				if (isEveryDay && !pair.Value.IsBuy() && pair.Value.StartHave() <= 0) continue;
+				pair.Value.DiffInfo(); // 差分を保存
 				saveDatas.Add(pair.Value.GetSaveInfo());
 			}
 			CsvControll.SaveCodeDaily(saveDatas);

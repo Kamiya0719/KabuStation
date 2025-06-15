@@ -46,6 +46,7 @@ namespace CSharp_sample
 				Console.WriteLine(e);
 				CsvControll.ErrorLog("Exception", execType, e.Message, "");
 			} finally{
+				CsvControll.FlushSymbolLog();
 				Common.DebugInfo("End", (DateTime.Now - now));
 			}
 		}

@@ -228,22 +228,65 @@ namespace CSharp_sample
 
 		};
 		private static readonly int[] ConfirmAnds = new int[6] {
-			2806, // T2:4353.954 , T3:43200 , T4:0.76 , T5:3.43 , T6:130514 , T7:0.88 , T8:3.96
-			5100, // T2:4393.302 , T3:43836 , T4:0.76 , T5:3.43 , T6:131573 , T7:0.88 , T8:3.97
-			737, // 
-			126, // T2:4352.487 , T3:44426 , T4:0.75 , T5:3.43 , T6:134711 , T7:0.85 , T8:3.96
-			8354, // T2:4217.273 , T3:46612 , T4:0.71 , T5:3.49 , T6:142942 , T7:0.8 , T8:4.08
-			8344, // T2:4201.974 , T3:46693 , T4:0.74 , T5:3.72 , T6:136993 , T7:0.85 , T8:4.15
+			6130, // Cond:6130, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
+			2796, // Cond:2796, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
+			737, // Cond:737, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
+			8046, // Cond:8046, Score:4974.193, sT:56628, sP:3.1063, sB:0.7335, nT:175983, nP:3.6702, nB:0.728
+			8354, // Cond:8354, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
+			8344, // Cond:8344, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
+
+/*
+Cond:8046, Score:4974.193, sT:56628, sP:3.1063, sB:0.7335, nT:175983, nP:3.6702, nB:0.728
+
+LowScoreRank2 , T0:-1 , T1:1 , T2:
+Cond:2786, Score:4927.574, sT:52198, sP:3.1454, sB:0.7826, nT:160836, nP:3.7232, nB:0.7943
+ */
 		};
-		private static readonly int[] ConfirmOrs = new int[8] {
-			472, // T3:4182.689 , T4:40694 , T5:0.78 , T6:3.47 , T7:123741 , T8:0.89 , T9:4.01
-			66, // T3:4177.842 , T4:38963 , T5:0.79 , T6:3.38 , T7:121832 , T8:0.9 , T9:3.97
-			1065, // T3:4338.98 , T4:41286 , T5:0.79 , T6:3.42 , T7:123811 , T8:0.91 , T9:3.95
-			6851, // T3:4351.649 , T4:40931 , T5:0.81 , T6:3.45 , T7:121676 , T8:0.92 , T9:3.97
-			1618, // T3:4395.805 , T4:41365 , T5:0.83 , T6:3.34 , T7:121683 , T8:0.86 , T9:3.89
-			7436, // T3:4233.446 , T4:37492 , T5:0.85 , T6:3.37 , T7:104561 , T8:0.96 , T9:3.79
-			5388, // T3:4322.379 , T4:42183 , T5:0.78 , T6:3.45 , T7:126578 , T8:0.89 , T9:3.99
-			7599, // T3:4376.87 , T4:42214 , T5:0.79 , T6:3.44 , T7:126844 , T8:0.89 , T9:3.97
+		private static readonly int[] ConfirmOrs = new int[11] {
+			472,  // Cond:3444, Score:4839.551, sT:51450, sP:3.1411, sB:0.7736, nT:157219, nP:3.7187, nB:0.8079
+			66,   // Cond:5904, Score:4707.361, sT:50150, sP:3.0857, sB:0.7569, nT:161393, nP:3.7145, nB:0.7789
+			1977, // Cond:1977, Score:4864.97, sT:51332, sP:3.1188, sB:0.7739, nT:158137, nP:3.6953, nB:0.8106
+			2203, // Cond:1083, Score:4876.456, sT:51314, sP:3.1596, sB:0.7885, nT:157830, nP:3.7373, nB:0.7994
+			1618, // Cond:1602, Score:4847.739, sT:51510, sP:3.0996, sB:0.7727, nT:157259, nP:3.664, nB:0.7833
+			7436, // Cond:8298, Score:4771.598, sT:51574, sP:3.0373, sB:0.745, nT:158351, nP:3.5353, nB:0.7652
+			5388, // Cond:7642, Score:4878.302, sT:52784, sP:3.1533, sB:0.7683, nT:163227, nP:3.7368, nB:0.7798
+			2639, // Cond:1083, Score:4863.172, sT:52714, sP:3.1514, sB:0.7662, nT:163416, nP:3.7414, nB:0.7782
+			52,   // Cond:1424, Score:4813.474, sT:52168, sP:3.1161, sB:0.7588, nT:161722, nP:3.7236, nB:0.7772
+			6717, // Cond:6717, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
+			6433, // Cond:6433, Score:5031.917, sT:54780, sP:3.0866, sB:0.7562, nT:169701, nP:3.6544, nB:0.7707
+//5068
+
+/*
+ LowScoreRank2 , T0:-1 , T1:1 , T2:
+Cond:5059, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:6695, Score:5088.489, sT:52473, sP:3.0991, sB:0.7997, nT:161152, nP:3.6672, nB:0.801
+Cond:7922, Score:5088.186, sT:52532, sP:3.0962, sB:0.7983, nT:161378, nP:3.6626, nB:0.7997 , T3:5059,6695,7922,  #End#
+LowScoreRank2 , T0:472 , T1:1 , T2:
+Cond:3444, Score:5098.695, sT:50612, sP:3.0915, sB:0.825, nT:153377, nP:3.6542, nB:0.835
+Cond:1604, Score:5036.643, sT:50114, sP:3.1204, sB:0.8275, nT:153589, nP:3.7142, nB:0.8303
+Cond:1144, Score:5036.013, sT:52042, sP:3.0903, sB:0.7929, nT:159513, nP:3.6679, nB:0.8089 , T3:3444,1604,1144,  #End#
+LowScoreRank2 , T0:66 , T1:1 , T2:
+Cond:6851, Score:4862.573, sT:50916, sP:3.0509, sB:0.7704, nT:164370, nP:3.6727, nB:0.7723
+Cond:4972, Score:4862.136, sT:50271, sP:3.1054, sB:0.786, nT:164773, nP:3.7782, nB:0.7907
+Cond:7896, Score:4855.415, sT:51446, sP:3.0573, sB:0.7618, nT:169193, nP:3.7114, nB:0.7634 , T3:6851,4972,7896,  #End#
+LowScoreRank2 , T0:1977 , T1:1 , T2:
+Cond:1081, Score:5051.082, sT:52006, sP:3.0987, sB:0.802, nT:159204, nP:3.6614, nB:0.795
+Cond:5059, Score:5021.69, sT:51821, sP:3.0984, sB:0.7977, nT:159073, nP:3.667, nB:0.7986
+Cond:1289, Score:5014.516, sT:52108, sP:3.1045, sB:0.7944, nT:159478, nP:3.6704, nB:0.7943 , T3:1081,5059,1289,  #End#
+LowScoreRank2 , T0:2203 , T1:1 , T2:
+Cond:1739, Score:5067.118, sT:52288, sP:3.098, sB:0.7992, nT:160217, nP:3.6661, nB:0.7992
+Cond:843, Score:5064.199, sT:52786, sP:3.103, sB:0.7933, nT:161497, nP:3.6677, nB:0.7931
+Cond:5077, Score:5062.726, sT:52616, sP:3.0948, sB:0.7943, nT:161808, nP:3.6632, nB:0.7895 , T3:1739,843,5077,  #End#
+LowScoreRank2 , T0:1618 , T1:1 , T2:
+Cond:1602, Score:5046.68, sT:50746, sP:3.0479, sB:0.8103, nT:153297, nP:3.5933, nB:0.8073
+Cond:353, Score:5044.553, sT:52640, sP:3.0034, sB:0.7856, nT:156727, nP:3.5359, nB:0.7557
+Cond:1937, Score:5007.028, sT:50894, sP:3.0007, sB:0.8011, nT:153451, nP:3.5651, nB:0.7708 , T3:1602,353,1937,  #End#
+LowScoreRank2 , T0:7436 , T1:1 , T2:
+Cond:8298, Score:4954.52, sT:51722, sP:2.9877, sB:0.7659, nT:158524, nP:3.4697, nB:0.7759
+Cond:7868, Score:4919.117, sT:52393, sP:3.0622, sB:0.7662, nT:161365, nP:3.6068, nB:0.7716
+Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333, nB:0.7227 , T3:8298,7868,7660,  #End#
+ 
+ */
 		};
 		private static readonly int[] KouhoAnds = new int[] {
 			AllTrueCondIdx
@@ -267,10 +310,11 @@ namespace CSharp_sample
 					CheckCond51AllBase(confirmAnds, confirmOrs, i, -1);
 				}
 			} else {
-				//for (int i = -1; i < confirmOrs.Length; i++) {
-				for (int i = confirmOrs.Length - 2; i >= -1; i--) {
+				for (int i = -1; i < confirmOrs.Length; i++) {
+				//for (int i = -1; i <= 1; i++) {
 					CheckCond51AllBase(confirmAnds, confirmOrs, -1, i);
 				}
+				//CheckCond51AllBase(confirmAnds, confirmOrs, -1, 8);
 			}
 
 		}
@@ -520,7 +564,7 @@ namespace CSharp_sample
 				var rankRes = benefitRes.Where(c => trueAll[i, c.Key] >= needNum && c.Value >= needBenefit);
 				*/
 				for (int r = 2; r <= 2; r++) {
-					string result = ""; string result2 = ""; int max = 8;
+					string result = ""; string result2 = ""; int max = 3;
 					foreach (KeyValuePair<int, double> b in (r==0?scores: r == 1 ? scores2 : r == 2 ? scores3 : scores4).OrderByDescending(c => trueAll[i, c.Key, 1] > 50000 ? c.Value : -999)) {
 						if (max > 0) {
 							result += "\nCond:" + b.Key + ", Score:" + b.Value + ", sT:" + trueAll[i, b.Key, 1] + ", sP:" + skipPeriod[b.Key] + ", sB:" + skipBenefit[b.Key]

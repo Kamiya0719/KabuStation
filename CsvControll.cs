@@ -37,9 +37,10 @@ namespace CSharp_sample
 
 			/* ログ系 */
 			Log, // ログ今日分
-			ErrorLog, // ログ今日分
+			ErrorLog, // エラーログ今日分
+			SymbolLog, // シンボルログ
 			LogOld, // ログ過去分
-			ErrorLogOld, // ログ過去分
+			ErrorLogOld, // エラーログ過去分
 
 			/* 検証用一時情報 */
 			BuyCode, // 購入可否情報(検証用一時情報)
@@ -78,6 +79,7 @@ namespace CSharp_sample
 			/* ログ系 */
 			{FILE_TYPE.Log, @"Log\Log" }, // ログ今日分(タグごとにファイル分ける？)
 			{FILE_TYPE.ErrorLog, @"Log\ErrorLog" }, // エラーログ今日分(タグごとにファイル分ける？)
+			{FILE_TYPE.SymbolLog, @"Log\SymbolLog\" }, // シンボルログ今日分(タグごとにファイル分ける？)
 			{FILE_TYPE.LogOld, @"Log\LogOld\" }, // ログ過去分
 			{FILE_TYPE.ErrorLogOld, @"Log\ErrorLogOld\" }, // エラーログ過去分
 			/* 検証用一時情報 */
@@ -395,6 +397,24 @@ namespace CSharp_sample
 		}
 		public static List<string[]> GetErrorLogOld(DateTime date) { return GetCsvDatas(FILE_TYPE.ErrorLogOld, date.ToString(DFILEFORM)); }
 
+
+		private static Dictionary<string, List<string[]>> symbolLogs = new Dictionary<string, List<string[]>>();
+		// シンボルログ情報を保存
+		public static void SymbolLog(string symbol, string tag, string d1, string d2 = "", string d3 = "")
+		{
+			if (!symbolLogs.ContainsKey(symbol)) symbolLogs[symbol] = new List<string[]>();
+			symbolLogs[symbol].Add(new string[5] { DateTime.Now.ToString(), tag, d1, d2, d3 });
+		}
+		public static void FlushSymbolLog()
+		{
+			string dateString = DateTime.Today.ToString(DFILEFORM);
+			foreach (KeyValuePair<string, List<string[]>> pair in symbolLogs) {
+				CreateFolder(FILE_TYPE.SymbolLog, pair.Key);
+				SaveCsvDatas(FILE_TYPE.SymbolLog, pair.Key + @"\" + pair.Key + "_" + dateString + "_SymbolLog", pair.Value, true);
+			}
+		}
+
+
 		/// <summary>
 		/// 汎用private ///
 		/// </summary>
@@ -446,6 +466,15 @@ namespace CSharp_sample
 			//return Environment.CurrentDirectory + @"\csv\" + FileNames[type] + addName + ".csv";
 			return FilePath + FileNames[type] + addName + ".csv";
 		}
+
+		private static void CreateFolder(FILE_TYPE type, string addName)
+		{
+			string path = FilePath + FileNames[type] + addName;
+			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+		}
+
+
+
 
 		private static string[] GetBasicInfo(int row)
 		{

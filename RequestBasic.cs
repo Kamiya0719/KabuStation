@@ -191,16 +191,17 @@ namespace CSharp_sample
 			int qty = isBuy ? codeDaily.BuyOrderNeed() : codeDaily.SellOrderNeed();
 			if (qty <= 0) return null;
 
-			int price = isBuy ? codeDaily.BuyPrice():codeDaily.SellPrice();
+			int price = isBuy ? codeDaily.BuyPrice() : codeDaily.SellPrice();
 			if (price <= 5) {
 				CsvControll.ErrorLog("RequestSendOrder", symbol.ToString(), price.ToString(), isBuy.ToString());
 				return null;
 			}
 
+			CsvControll.SymbolLog(codeDaily.Symbol, "RequestSendOrder", isBuy ? "Buy" : "Sell", price.ToString(), qty.ToString());
 
 			// todo テスト用
-			if(true && isBuy) {
-				//CsvControll.ErrorLog("BuyTest", symbol.ToString(), price.ToString(), qty.ToString());
+			if (true && isBuy) {
+				CsvControll.ErrorLog("BuyTest", symbol.ToString(), price.ToString(), qty.ToString());
 				return null;
 			}
 			//if (true && !isBuy) {

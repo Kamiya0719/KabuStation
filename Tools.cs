@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CSharp_sample
@@ -929,90 +930,8 @@ namespace CSharp_sample
 		public static void TestExec()
 		{
 
-			//RequestBasic.RequestSendOrder(3656, 1, false, codeDaily.SellOrderNeed(), codeDaily.SellPrice(true), 0);
-			//RequestBasic.RequestSendOrder(3656, 1, true, 100, 121, 0);
+			CsvControll.SymbolLog("1111", "Test", "AAA");
 
-			List<string[]> logOld = CsvControll.GetErrorLogOld(DateTime.Today);
-			string raw = logOld[10][3];
-
-
-			JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-			jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-			//Common.DebugInfo("TestExec", raw);
-			ResponseOrders[] res = JsonConvert.DeserializeObject<ResponseOrders[]>(raw, jsonSerializerSettings);
-			if (res != null) {
-				bool isOk = true;
-				foreach (ResponseOrders order in res) {
-					// 個数はワンちゃん0あるか？
-					if (order.ID == "" || order.Price <= 0) {
-						isOk = false;
-						Common.DebugInfo("TestExec", "No", order.Symbol, order.ID);
-					}
-				}
-				if (isOk) {
-					//Common.DebugInfo("TestExec", raw);
-				}
-			}
-
-
-			/*
-			//CsvControll.Log("TestExec", "aaa", "", "");
-			Dictionary<string, Dictionary<string, string>> rankingDic = new Dictionary<string, Dictionary<string, string>>();
-			foreach (string[] tmpRank in CsvControll.GetRankingInfo()) {
-				if (!rankingDic.ContainsKey(tmpRank[0])) rankingDic[tmpRank[0]] = new Dictionary<string, string>();
-				DateTime date = DateTime.Parse(tmpRank[1]);
-				rankingDic[tmpRank[0]][date.ToString("yyyy/MM/dd HH:mm")] = tmpRank[2];
-			}
-			List<string[]> saveRankingInfo = new List<string[]>();
-			foreach (string symbol in rankingDic.Keys) {
-				foreach (KeyValuePair<string, string> pair in rankingDic[symbol]) {
-					saveRankingInfo.Add(new string[3] { symbol, pair.Key, pair.Value });
-				}
-			}
-
-			CsvControll.SaveRankingInfoOld(saveRankingInfo, DateTime.Today);
-
-			//CsvControll.SaveRankingInfo(new List<string[]>());
-
-			return;
-
-			string aa = "2025/04/24 9:02";
-			string bb = "2025-04-23T15:30:00+09:00";
-			DateTime dateB = DateTime.Parse(bb);
-			DateTime dateA = DateTime.Parse(aa);
-
-			Common.DebugInfo("TestExec", dateB.ToString("yyyy/MM/dd hh:mm"), dateA.ToString("yyyy/MM/dd hh:mm"));
-			return;
-			RankingInfo[] rankingInfos = RequestBasic.RequestRanking();
-			foreach (RankingInfo rankingInfo in rankingInfos) {
-				Common.DebugInfo("RankingInfo", rankingInfo.No, rankingInfo.ChangePercentage, rankingInfo.Symbol);
-			}
-			return;
-
-			string d = "2025-04-04T13:10:07.881899+09:00";
-			DateTime da = DateTime.Parse(d);
-
-			ResponseBoard jScoreRes = RequestBasic.RequestBoard(101, 1);
-			//CsvControll.Log("GetJapanScoreNow", jScoreRes.ChangePreviousClosePer.ToString(), "", "");
-
-			Common.DebugInfo("TestExec", da.ToString(), jScoreRes.ChangePreviousClosePer.ToString());
-
-			return;
-
-			DateTime fisDate = DateTime.Parse("2025/10/25");
-
-			for (int a = 1; a < 30; a++) {
-				DateTime date = DateTime.Parse("2025/03/" + a.ToString());
-				Common.DebugInfo("TestExec",
-					date.ToString(),
-					Common.DateBuyRatioOne(date, fisDate),
-					Common.DateBuyRatioAll(date),
-					Common.IsLossCutDate(date, fisDate),
-					Common.IsHalfSellDate(date, fisDate)
-				);
-			}
-
-			*/
 		}
 
 

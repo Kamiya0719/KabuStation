@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CSharp_sample
 {
@@ -7,6 +8,8 @@ namespace CSharp_sample
 	// 前日に保有銘柄および購入予定から作り(売却or購入が必要な銘柄全部)、売買中はcsvファイルからとって操作
 	public class CodeDaily
 	{
+		private const int MemberNum = 16;
+
 		/// 初期ステータス ///
 		public string Symbol;
 		public int Exchange; // 市場コード
@@ -31,13 +34,14 @@ namespace CSharp_sample
 
 
 		/// 保存なし一時メンバ ///
-		HashSet<ResponsePositions> posList = new HashSet<ResponsePositions>();
+		private HashSet<ResponsePositions> posList = new HashSet<ResponsePositions>();
 		private HashSet<CodeResOrder> buyOrders = new HashSet<CodeResOrder>(); // 現在注文中購入注文ID
 		private HashSet<CodeResOrder> sellOrders = new HashSet<CodeResOrder>(); // 現在注文中購入注文ID
 		private HashSet<string> cancelIds = new HashSet<string>();
 		private ResponseBoard board;
 		private bool isProcess = false;
 		DateTime now; int jScore; int buyBasePrice = 0; bool isLastDay; TimeIdx timeIdx; int expireDay = 0; double lastLastPrice;
+		private string[] startInfo = null;
 
 		// 1から新規作成
 		public CodeDaily(string Symbol, int Exchange, int yobine, int TradingUnit, double lastEndPrice, int fisDate)
@@ -49,6 +53,9 @@ namespace CSharp_sample
 			this.lastEndPrice = lastEndPrice;
 			this.fisDate = fisDate;
 			this.type = Common.Sp10(Symbol) ? Def.TypeSp : Def.TypePro; // todo
+
+			// コンストラクタ時情報
+			startInfo = GetSaveInfo();
 		}
 		// csvファイルデータをコンストラクタとする
 		public CodeDaily(string[] csvInfo)
@@ -73,16 +80,28 @@ namespace CSharp_sample
 			fisDate = Int32.Parse(csvInfo[13]);
 			type = Int32.Parse(csvInfo[14]);
 			isTodayBuy = Boolean.Parse(csvInfo[15]);
+
+			// コンストラクタ時情報
+			startInfo = GetSaveInfo();
 		}
 
 		public string[] GetSaveInfo()
 		{
-			return new string[16]{
+			return new string[MemberNum]{
 				Symbol, Exchange.ToString(), yobine.ToString(), TradingUnit.ToString(), lastEndPrice.ToString(),
 				startHave.ToString(), idealSellPrice.ToString(), isBuy.ToString(), isLossSell.ToString(),
 				buyPrice.ToString(), lossSellPrice.ToString(), buyNeedNum.ToString(), sellOrderNeed.ToString(),
 				fisDate.ToString(), type.ToString(), isTodayBuy.ToString(),
 			};
+		}
+		public void DiffInfo()
+		{
+			string diff = "";
+			string[] newInfo = GetSaveInfo();
+			for (int i = 0; i < MemberNum; i++) {
+				if (startInfo[i] != newInfo[i]) { diff += i + ":" + startInfo[i] + " => " + newInfo[i] + ", "; }
+			}
+			if (diff != "") CsvControll.SymbolLog(Symbol, "DiffInfo", diff);
 		}
 
 		/** 一時メンバをセットする 基本的に必ず行う */
@@ -125,7 +144,12 @@ namespace CSharp_sample
 			if (!isLastDay) SetBoardInfo();
 			if (!isLastDay) SetCancelIds();
 		}
-		public HashSet<string> GetCancelIds() { return cancelIds; }
+		public HashSet<string> GetCancelIds() { 
+			if(cancelIds.Count > 0){
+				CsvControll.SymbolLog(Symbol, "GetCancelIds", isBuy.ToString(), isLossSell.ToString(), sellOrderNeed.ToString());
+			}
+			return cancelIds; 
+		}
 
 
 		/** 所持情報を使って、初期所持数/理想売り価格/42損切/注文有効期間 をセット Everyオンリー */
@@ -171,9 +195,11 @@ namespace CSharp_sample
 			} else {
 				isBuy = TommorowBuy() > 0; // プロ500でもSPと同じでもいいといえばいい
 			}
+			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
+			if (havePeriod > 21) isBuy = false;
 		}
-		
-		
+
+
 		/** 損切となるか算出 両方 */
 		private void SetIsLossSell()
 		{
@@ -194,6 +220,16 @@ namespace CSharp_sample
 				// 当日買ったやつについては損切なし EveryDayのほうではdateは翌営業日なので当日であることはありえない
 				if (Common.SameD(Common.DateParse(pos.ExecutionDay), now)) { isLossSell = false; break; }
 				double beforeBenefit = pos.CurrentPrice / (isLastDay ? lastLastPrice : lastEndPrice) - 1;
+
+				// ProfitLossRateがちょっと怪しいのでチェック 本来一致するはずなので差が大きければおかしい
+				if (true) {
+					double diff = (pos.CurrentPrice / pos.Price - 1) * 100 - pos.ProfitLossRate;
+					if (diff > 0.1 || diff < -0.1) {
+						CsvControll.ErrorLog("SetIsLossSell", Symbol, pos.ProfitLossRate.ToString(), (pos.CurrentPrice / pos.Price - 1).ToString());
+						isLossSell = false; return;
+					}
+				}
+
 				//Common.DebugInfo("SetIsLossSell", 2, Symbol, beforeBenefit, pos.ProfitLossRate, pos.ExecutionDay);
 				// 損失が6％未満かつ前日からの上昇が-3.5％より大きい これが一個でもあればfalseで損切しない todo これ安値？
 				if (-pos.ProfitLossRate < (isHalfLoss ? Def.LossCutRatioHalf[jScore, 0] : Def.LossCutRatio[jScore, 0])
@@ -203,8 +239,8 @@ namespace CSharp_sample
 				}
 			}
 		}
-		
-		
+
+
 		/** 注文の状態によって購入するかだったり購入必要数だったり売却必要数だったりを算出 Minitesのみ todo もうちょい後でもいいかも */
 		private void SetOrders()
 		{
@@ -334,9 +370,9 @@ namespace CSharp_sample
 			int res = num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
 			// 一応チェック
 			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
-			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 0.95) {
+			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 0.8) {
 				// todo 仮
-				CsvControll.ErrorLog("BuyOrderNeed仮_"+ Symbol, num.ToString(), ((num + leaveQty) * lastEndPrice).ToString(), buyBasePrice.ToString());
+				CsvControll.ErrorLog("BuyOrderNeed仮_" + Symbol, num.ToString(), ((num + leaveQty) * lastEndPrice).ToString(), buyBasePrice.ToString());
 				//return 0;
 			}
 			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 1.2) {
@@ -350,14 +386,19 @@ namespace CSharp_sample
 		public int SellOrderNeed() { return sellOrderNeed; }
 		public int SellPrice()
 		{
+			// 売却するものがなければ0
+			if (sellOrderNeed <= 0) return 0;
+			// 損切
 			if (isLossSell && timeIdx != TimeIdx.T0000) return lossSellPrice;
+			// SP系
 			if (type == Def.TypeSp) {
 				// 時間に応じて+1をなくすか
 				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + (timeIdx == TimeIdx.T1525 ? 0 : 1));
-				// 前日設定値の設定がないなら理想売り-1
-				if (spPrice <= 5) return idealSellPrice - 1;
-				// 前日設定値+1と買値+1が同値か片方の設定がないなら適当に
-				if (idealSellPrice <= 5 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
+				// 理想売が設定されてない(今日購入で前日に所持してない)か同値なら適当に
+				if (idealSellPrice < 10 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
+				// 前日設定値の設定がない(結構前に買ってsp対象外となった)ならさっさと売りたい 前日終値+3と買い値で低い方
+				if (spPrice < 10) return Math.Min((int)lastEndPrice + 3, idealSellPrice - 1);
+
 				// 前日設定値+4<=買値 なら 前日設定値+4
 				if (spPrice + 4 <= idealSellPrice) return spPrice + 3;
 				// そうでない(前日設定値+1<=買値+2 or 前日設定値+2>=買値+1)なら高い方-1
@@ -396,7 +437,7 @@ namespace CSharp_sample
 		}
 
 		// 所持建玉・所持日数・購入金額を取得
-		private (int,int, int) GetPosInfo()
+		private (int, int, int) GetPosInfo()
 		{
 			int leaveQty = 0; // 合計値
 			int havePeriod = 0; // 一番長い値
@@ -409,7 +450,7 @@ namespace CSharp_sample
 				buyPrice = Math.Min((int)pos.Price, buyPrice);
 			}
 			if (buyPrice == 999999999) buyPrice = 0;
-			return (leaveQty, havePeriod,buyPrice);
+			return (leaveQty, havePeriod, buyPrice);
 		}
 
 		// maxは利益最大 minは利益最小
@@ -483,6 +524,7 @@ namespace CSharp_sample
 			if (unitNum >= tradeNum * Def.BuyMax) unitNum -= TradingUnit;
 			return unitNum;
 		}
+
 
 	}
 

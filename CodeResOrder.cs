@@ -40,6 +40,8 @@ namespace CSharp_sample
 			} else {
 				startCumQty = 0;
 			}
+
+			CsvControll.SymbolLog(Symbol, "CodeResOrderNew", IsSell() ? "Sell" : "Buy", CumQty + "/" + OrderQty, Price.ToString());
 		}
 		// csvファイルデータをコンストラクタとする
 		public CodeResOrder(string[] csvInfo)
@@ -69,6 +71,9 @@ namespace CSharp_sample
 		// 既存データがある場合のアップデート
 		public void UpdateData(ResponseOrders order)
 		{
+			if (State != order.State || CumQty != order.CumQty) {
+				CsvControll.SymbolLog(Symbol, "CodeResOrderUp", IsSell() ? "Sell" : "Buy", CumQty + " => " + order.CumQty, CumQty + " => " + order.CumQty);
+			}
 			State = order.State;
 			CumQty = order.CumQty;
 		}
