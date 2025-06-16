@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace CSharp_sample
 {
@@ -144,11 +143,12 @@ namespace CSharp_sample
 			if (!isLastDay) SetBoardInfo();
 			if (!isLastDay) SetCancelIds();
 		}
-		public HashSet<string> GetCancelIds() { 
-			if(cancelIds.Count > 0){
+		public HashSet<string> GetCancelIds()
+		{
+			if (cancelIds.Count > 0) {
 				CsvControll.SymbolLog(Symbol, "GetCancelIds", isBuy.ToString(), isLossSell.ToString(), sellOrderNeed.ToString());
 			}
-			return cancelIds; 
+			return cancelIds;
 		}
 
 
@@ -221,10 +221,10 @@ namespace CSharp_sample
 				if (Common.SameD(Common.DateParse(pos.ExecutionDay), now)) { isLossSell = false; break; }
 				double beforeBenefit = pos.CurrentPrice / (isLastDay ? lastLastPrice : lastEndPrice) - 1;
 
-				// ProfitLossRateがちょっと怪しいのでチェック 本来一致するはずなので差が大きければおかしい
+				// ProfitLossRateがちょっと怪しいのでチェック 本来一致するはずなので差が大きければおかしい 評価損益は参考値だし意外とずれたりする模様
 				if (true) {
 					double diff = (pos.CurrentPrice / pos.Price - 1) * 100 - pos.ProfitLossRate;
-					if (diff > 0.1 || diff < -0.1) {
+					if (diff > 1 || diff < -1) {
 						CsvControll.ErrorLog("SetIsLossSell", Symbol, pos.ProfitLossRate.ToString(), (pos.CurrentPrice / pos.Price - 1).ToString());
 						isLossSell = false; return;
 					}
@@ -368,6 +368,7 @@ namespace CSharp_sample
 				return 0;
 			}
 			int res = num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
+			if (res == 0) return 0;
 			// 一応チェック
 			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
 			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 0.8) {

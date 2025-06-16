@@ -141,7 +141,7 @@ namespace CSharp_sample
 		}
 
 
-		private const bool IsAndCheck = false; // andチェックかorチェックか
+		private const bool IsAndCheck = true; // andチェックかorチェックか
 		private const bool IsPro500Only = false;
 		private const int AllTrueCondIdx = 1;
 		private static readonly int[] OldPro500 = new int[] {
@@ -242,7 +242,7 @@ LowScoreRank2 , T0:-1 , T1:1 , T2:
 Cond:2786, Score:4927.574, sT:52198, sP:3.1454, sB:0.7826, nT:160836, nP:3.7232, nB:0.7943
  */
 		};
-		private static readonly int[] ConfirmOrs = new int[11] {
+		private static readonly int[] ConfirmOrs = new int[12] {
 			472,  // Cond:3444, Score:4839.551, sT:51450, sP:3.1411, sB:0.7736, nT:157219, nP:3.7187, nB:0.8079
 			66,   // Cond:5904, Score:4707.361, sT:50150, sP:3.0857, sB:0.7569, nT:161393, nP:3.7145, nB:0.7789
 			1977, // Cond:1977, Score:4864.97, sT:51332, sP:3.1188, sB:0.7739, nT:158137, nP:3.6953, nB:0.8106
@@ -254,7 +254,9 @@ Cond:2786, Score:4927.574, sT:52198, sP:3.1454, sB:0.7826, nT:160836, nP:3.7232,
 			52,   // Cond:1424, Score:4813.474, sT:52168, sP:3.1161, sB:0.7588, nT:161722, nP:3.7236, nB:0.7772
 			6717, // Cond:6717, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
 			6433, // Cond:6433, Score:5031.917, sT:54780, sP:3.0866, sB:0.7562, nT:169701, nP:3.6544, nB:0.7707
+			5059,
 //5068
+// Cond:5059, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
 
 /*
  LowScoreRank2 , T0:-1 , T1:1 , T2:
@@ -285,8 +287,249 @@ LowScoreRank2 , T0:7436 , T1:1 , T2:
 Cond:8298, Score:4954.52, sT:51722, sP:2.9877, sB:0.7659, nT:158524, nP:3.4697, nB:0.7759
 Cond:7868, Score:4919.117, sT:52393, sP:3.0622, sB:0.7662, nT:161365, nP:3.6068, nB:0.7716
 Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333, nB:0.7227 , T3:8298,7868,7660,  #End#
+
+///////////////////////////////////////////////////////////////////
+
+LowScoreRank2 , T0:6 , T1:0 , T2:
+Cond:3444, Score:5098.695, sT:50612, sP:3.0915, sB:0.825, nT:153377, nP:3.6542, nB:0.835
+Cond:472, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:1604, Score:5036.643, sT:50114, sP:3.1204, sB:0.8275, nT:153589, nP:3.7142, nB:0.8303 , T3:3444,472,1604,  #End#
+LowScoreRank2 , T0:6 , T1:1 , T2:
+Cond:66, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:6851, Score:4862.573, sT:50916, sP:3.0509, sB:0.7704, nT:164370, nP:3.6727, nB:0.7723
+Cond:4972, Score:4862.136, sT:50271, sP:3.1054, sB:0.786, nT:164773, nP:3.7782, nB:0.7907 , T3:66,6851,4972,  #End#
+LowScoreRank2 , T0:6 , T1:2 , T2:
+Cond:1977, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:1081, Score:5051.082, sT:52006, sP:3.0987, sB:0.802, nT:159204, nP:3.6614, nB:0.795
+Cond:5059, Score:5021.69, sT:51821, sP:3.0984, sB:0.7977, nT:159073, nP:3.667, nB:0.7986 , T3:1977,1081,5059,  #End#
+LowScoreRank2 , T0:6 , T1:3 , T2:
+Cond:2203, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:1739, Score:5067.118, sT:52288, sP:3.098, sB:0.7992, nT:160217, nP:3.6661, nB:0.7992
+Cond:843, Score:5064.199, sT:52786, sP:3.103, sB:0.7933, nT:161497, nP:3.6677, nB:0.7931 , T3:2203,1739,843,  #End#
+LowScoreRank2 , T0:6 , T1:4 , T2:
+Cond:1618, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:1602, Score:5046.68, sT:50746, sP:3.0479, sB:0.8103, nT:153297, nP:3.5933, nB:0.8073
+Cond:353, Score:5044.553, sT:52640, sP:3.0034, sB:0.7856, nT:156727, nP:3.5359, nB:0.7557 , T3:1618,1602,353,  #End#
+LowScoreRank2 , T0:6 , T1:5 , T2:
+Cond:7436, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:8298, Score:4954.52, sT:51722, sP:2.9877, sB:0.7659, nT:158524, nP:3.4697, nB:0.7759
+Cond:7868, Score:4919.117, sT:52393, sP:3.0622, sB:0.7662, nT:161365, nP:3.6068, nB:0.7716 , T3:7436,8298,7868,  #End#
+LowScoreRank2 , T0:6 , T1:6 , T2:
+Cond:4954, Score:5070.665, sT:52246, sP:3.1062, sB:0.8015, nT:160255, nP:3.6751, nB:0.8015
+Cond:7642, Score:5069.245, sT:52190, sP:3.1058, sB:0.8023, nT:160065, nP:3.6741, nB:0.8007
+Cond:7880, Score:5068.679, sT:52464, sP:3.0985, sB:0.7967, nT:161279, nP:3.6664, nB:0.7969 , T3:4954,7642,7880,  #End#
+LowScoreRank2 , T0:6 , T1:7 , T2:
+Cond:2639, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:5285, Score:5066.773, sT:51878, sP:3.0966, sB:0.8027, nT:159237, nP:3.6672, nB:0.8089
+Cond:5059, Score:5066.018, sT:52153, sP:3.0957, sB:0.7982, nT:160374, nP:3.6653, nB:0.8058 , T3:2639,5285,5059,  #End#
+LowScoreRank2 , T0:6 , T1:8 , T2:
+Cond:52, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:5059, Score:5024.48, sT:52154, sP:3.0651, sB:0.7873, nT:160860, nP:3.6579, nB:0.7935
+Cond:7922, Score:5017.862, sT:51624, sP:3.0648, sB:0.7934, nT:158833, nP:3.6565, nB:0.7997 , T3:52,5059,7922,  #End#
+LowScoreRank2 , T0:6 , T1:9 , T2:
+Cond:6717, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:6695, Score:5037.478, sT:51458, sP:3.1053, sB:0.8045, nT:157469, nP:3.6754, nB:0.815
+Cond:7922, Score:5036.78, sT:51513, sP:3.1019, sB:0.8028, nT:157654, nP:3.6708, nB:0.8144 , T3:6717,6695,7922,  #End#
+LowScoreRank2 , T0:6 , T1:10 , T2:
+Cond:5059, Score:5069.966, sT:52603, sP:3.0933, sB:0.7929, nT:161409, nP:3.6489, nB:0.7987
+Cond:6433, Score:5068.098, sT:52363, sP:3.0991, sB:0.7977, nT:160768, nP:3.6675, nB:0.8002
+Cond:5285, Score:5065.1, sT:52336, sP:3.0934, sB:0.796, nT:160269, nP:3.65, nB:0.8015 , T3:5059,6433,5285,  #End#
+LowScoreRank2 , T0:6 , T1:11 , T2:
+Cond:5059, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:6695, Score:5088.489, sT:52473, sP:3.0991, sB:0.7997, nT:161152, nP:3.6672, nB:0.801
+Cond:7922, Score:5088.186, sT:52532, sP:3.0962, sB:0.7983, nT:161378, nP:3.6626, nB:0.7997 , T3:5059,6695,7922,  #End#
+End , T0:03:18:35.1823939  #End#
+
+LowScoreRank2 , T0:0 , T1:11 , T2:
+Cond:5059, Score:5056.176, sT:54085, sP:3.1304, sB:0.7807, nT:169445, nP:3.7717, nB:0.7727
+Cond:7922, Score:5047.565, sT:53550, sP:3.131, sB:0.7865, nT:167402, nP:3.7721, nB:0.778
+Cond:6695, Score:5045.774, sT:53494, sP:3.134, sB:0.7875, nT:167183, nP:3.7767, nB:0.7789 , T3:5059,7922,6695,  #End#
+LowScoreRank2 , T0:1 , T1:11 , T2:
+Cond:5059, Score:4986.922, sT:62588, sP:3.0227, sB:0.6679, nT:193910, nP:3.5866, nB:0.6472
+Cond:6695, Score:4972.774, sT:61887, sP:3.0238, sB:0.6725, nT:191247, nP:3.5905, nB:0.6537
+Cond:7922, Score:4970.817, sT:61818, sP:3.0233, sB:0.6726, nT:190921, nP:3.5873, nB:0.6547 , T3:5059,6695,7922,  #End#
+LowScoreRank2 , T0:2 , T1:11 , T2:
+Cond:5285, Score:4618.583, sT:56585, sP:3.0635, sB:0.6387, nT:177797, nP:3.6241, nB:0.7883
+Cond:6695, Score:4618.566, sT:56250, sP:3.0653, sB:0.6422, nT:176628, nP:3.6259, nB:0.7929
+Cond:6903, Score:4616.98, sT:56331, sP:3.0656, sB:0.6413, nT:176912, nP:3.6257, nB:0.7913 , T3:5285,6695,6903,  #End#
+LowScoreRank2 , T0:3 , T1:11 , T2:
+Cond:5059, Score:5045.291, sT:55197, sP:3.0679, sB:0.7562, nT:170206, nP:3.6295, nB:0.7474
+Cond:6695, Score:5039.168, sT:54603, sP:3.0703, sB:0.7632, nT:167932, nP:3.6326, nB:0.7536
+Cond:7922, Score:5038.856, sT:54662, sP:3.0676, sB:0.7619, nT:168158, nP:3.6282, nB:0.7525 , T3:5059,6695,7922,  #End#
+LowScoreRank2 , T0:4 , T1:11 , T2:
+Cond:5059, Score:4956.771, sT:57415, sP:3.1276, sB:0.7266, nT:180194, nP:3.7404, nB:0.7165
+Cond:2189, Score:4950.569, sT:57318, sP:3.1359, sB:0.7279, nT:179079, nP:3.7461, nB:0.7204
+Cond:2998, Score:4950.276, sT:57550, sP:3.1389, sB:0.724, nT:179926, nP:3.7473, nB:0.7238 , T3:5059,2189,2998,  #End#
+LowScoreRank2 , T0:5 , T1:11 , T2:
+Cond:5059, Score:5041.279, sT:57561, sP:3.3061, sB:0.7623, nT:173500, nP:3.7764, nB:0.7647
+Cond:7922, Score:5036.285, sT:56991, sP:3.3084, sB:0.7688, nT:171347, nP:3.7772, nB:0.7707
+Cond:6695, Score:5036.104, sT:56933, sP:3.3113, sB:0.77, nT:171124, nP:3.7817, nB:0.7717 , T3:5059,7922,6695,  #End#
+
+
+
+
+////////////////////////////////////////////////////////////////////
+
+ 
+ LowScoreRank2 , T0:0 , T1:12 , T2:
+Cond:6130, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:51, Score:5075.763, sT:53628, sP:3.1453, sB:0.8006, nT:166934, nP:3.7982, nB:0.759
+Cond:6148, Score:5066.355, sT:54074, sP:3.1302, sB:0.7828, nT:169390, nP:3.7716, nB:0.773 , T3:6130,51,6148,  #End#
+LowScoreRank2 , T0:1 , T1:12 , T2:
+Cond:2796, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:4380, Score:5076.196, sT:58332, sP:3.0539, sB:0.7233, nT:179942, nP:3.6156, nB:0.7171
+Cond:4364, Score:5065.506, sT:56746, sP:3.0601, sB:0.7389, nT:174868, nP:3.6224, nB:0.7374 , T3:2796,4380,4364,  #End#
+LowScoreRank2 , T0:2 , T1:12 , T2:
+Cond:737, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:51, Score:4992.931, sT:54911, sP:3.1046, sB:0.7482, nT:168867, nP:3.6792, nB:0.7832
+Cond:65, Score:4986.994, sT:55762, sP:3.0803, sB:0.7257, nT:173749, nP:3.65, nB:0.7873 , T3:737,51,65,  #End#
+LowScoreRank2 , T0:3 , T1:12 , T2:
+Cond:8046, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:8446, Score:5089.662, sT:53577, sP:3.0878, sB:0.7836, nT:164968, nP:3.654, nB:0.7849
+Cond:6206, Score:5086.601, sT:53310, sP:3.0907, sB:0.7867, nT:164104, nP:3.6571, nB:0.7892 , T3:8046,8446,6206,  #End#
+LowScoreRank2 , T0:4 , T1:12 , T2:
+Cond:8354, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:8368, Score:5068.272, sT:55724, sP:3.1011, sB:0.7577, nT:173229, nP:3.6856, nB:0.7509
+Cond:8356, Score:5026.834, sT:56190, sP:3.1081, sB:0.7472, nT:175577, nP:3.7101, nB:0.7398 , T3:8354,8368,8356,  #End#
+LowScoreRank2 , T0:5 , T1:12 , T2:
+Cond:8344, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:8358, Score:5059.498, sT:56529, sP:3.239, sB:0.7665, nT:171431, nP:3.7453, nB:0.7716
+Cond:51, Score:5054.175, sT:57073, sP:3.3221, sB:0.7808, nT:170740, nP:3.8014, nB:0.751 , T3:8344,8358,51,  #End#
+LowScoreRank2 , T0:6 , T1:0 , T2:
+Cond:1, Score:4902.948, sT:49072, sP:3.1387, sB:0.824, nT:149651, nP:3.7132, nB:0.8233
+Cond:3, Score:4902.948, sT:49072, sP:3.1387, sB:0.824, nT:149651, nP:3.7132, nB:0.8233
+Cond:5, Score:4894.97, sT:49035, sP:3.1399, sB:0.8234, nT:149505, nP:3.7145, nB:0.8228 , T3:1,3,5,  #End#
+LowScoreRank2 , T0:6 , T1:1 , T2:
+Cond:1, Score:4901.191, sT:48669, sP:3.0555, sB:0.8097, nT:156184, nP:3.6789, nB:0.8071
+Cond:3, Score:4901.191, sT:48669, sP:3.0555, sB:0.8097, nT:156184, nP:3.6789, nB:0.8071
+Cond:5, Score:4892.778, sT:48632, sP:3.0566, sB:0.809, nT:156038, nP:3.6801, nB:0.8066 , T3:1,3,5,  #End#
+LowScoreRank2 , T0:6 , T1:2 , T2:
+Cond:51, Score:5041.657, sT:51366, sP:3.1134, sB:0.8187, nT:156562, nP:3.6936, nB:0.7844
+Cond:2786, Score:5039.359, sT:51352, sP:3.1045, sB:0.8081, nT:156678, nP:3.6691, nB:0.8109
+Cond:8446, Score:5033.879, sT:51316, sP:3.1011, sB:0.8064, nT:157258, nP:3.6713, nB:0.8103 , T3:51,2786,8446,  #End#
+LowScoreRank2 , T0:6 , T1:3 , T2:
+Cond:51, Score:5078.319, sT:52355, sP:3.1077, sB:0.8096, nT:159875, nP:3.6868, nB:0.7781
+Cond:8446, Score:5070.58, sT:52305, sP:3.0957, sB:0.7976, nT:160568, nP:3.665, nB:0.8034
+Cond:5334, Score:5068.022, sT:52753, sP:3.0945, sB:0.792, nT:162224, nP:3.6628, nB:0.7931 , T3:51,8446,5334,  #End#
+LowScoreRank2 , T0:6 , T1:4 , T2:
+Cond:51, Score:5034.878, sT:50192, sP:3.0086, sB:0.827, nT:150438, nP:3.5839, nB:0.754
+Cond:2786, Score:5009.107, sT:50260, sP:3.0024, sB:0.8108, nT:150243, nP:3.5589, nB:0.7825
+Cond:305, Score:5008.573, sT:50736, sP:2.9985, sB:0.8061, nT:152580, nP:3.5623, nB:0.7638 , T3:51,2786,305,  #End#
+LowScoreRank2 , T0:6 , T1:5 , T2:
+Cond:1, Score:4485.605, sT:42129, sP:2.924, sB:0.8368, nT:114714, nP:3.2757, nB:0.8071
+Cond:3, Score:4485.605, sT:42129, sP:2.924, sB:0.8368, nT:114714, nP:3.2757, nB:0.8071
+Cond:5, Score:4477.095, sT:42092, sP:2.9252, sB:0.8361, nT:114568, nP:3.277, nB:0.8065 , T3:1,3,5,  #End#
+LowScoreRank2 , T0:6 , T1:6 , T2:
+Cond:51, Score:5073.419, sT:52044, sP:3.1191, sB:0.8159, nT:158460, nP:3.6966, nB:0.781
+Cond:2786, Score:5065.053, sT:51953, sP:3.111, sB:0.8055, nT:158270, nP:3.673, nB:0.808
+Cond:8446, Score:5062.762, sT:51995, sP:3.107, sB:0.8032, nT:159153, nP:3.6746, nB:0.8065 , T3:51,2786,8446,  #End#
+LowScoreRank2 , T0:6 , T1:7 , T2:
+Cond:51, Score:5085.362, sT:51696, sP:3.1107, sB:0.819, nT:157863, nP:3.6917, nB:0.7918
+Cond:2786, Score:5078.3, sT:51616, sP:3.1017, sB:0.8085, nT:157703, nP:3.668, nB:0.8188
+Cond:5582, Score:5075.048, sT:51870, sP:3.1, sB:0.8042, nT:159500, nP:3.6702, nB:0.8112 , T3:51,2786,5582,  #End#
+LowScoreRank2 , T0:6 , T1:8 , T2:
+Cond:8446, Score:5035.747, sT:51648, sP:3.0676, sB:0.7957, nT:159043, nP:3.662, nB:0.8048
+Cond:5334, Score:5033.225, sT:52095, sP:3.0666, sB:0.7901, nT:160698, nP:3.6599, nB:0.7944
+Cond:8164, Score:5033.207, sT:52154, sP:3.0645, sB:0.789, nT:160833, nP:3.6579, nB:0.7935 , T3:8446,5334,8164,  #End#
+LowScoreRank2 , T0:6 , T1:9 , T2:
+Cond:51, Score:5051.974, sT:51589, sP:3.1168, sB:0.8152, nT:157177, nP:3.698, nB:0.7935
+Cond:8446, Score:5050.756, sT:51544, sP:3.1049, sB:0.8044, nT:157936, nP:3.6756, nB:0.8186
+Cond:2786, Score:5047.35, sT:51508, sP:3.1083, sB:0.8052, nT:157030, nP:3.6739, nB:0.8208 , T3:51,8446,2786,  #End#
+LowScoreRank2 , T0:6 , T1:10 , T2:
+Cond:51, Score:5087.43, sT:52147, sP:3.1079, sB:0.813, nT:158898, nP:3.6748, nB:0.7848
+Cond:2786, Score:5083.545, sT:52059, sP:3.0998, sB:0.8034, nT:158733, nP:3.6515, nB:0.8119
+Cond:8446, Score:5081.699, sT:52096, sP:3.096, sB:0.8014, nT:159592, nP:3.6529, nB:0.8101 , T3:51,2786,8446,  #End#
+LowScoreRank2 , T0:6 , T1:11 , T2:
+Cond:51, Score:5085.269, sT:51903, sP:3.1141, sB:0.818, nT:158257, nP:3.6938, nB:0.7862
+Cond:8446, Score:5079.695, sT:51857, sP:3.1018, sB:0.8062, nT:158957, nP:3.6717, nB:0.8118
+Cond:2784, Score:5079.043, sT:52303, sP:3.1, sB:0.8007, nT:160433, nP:3.6678, nB:0.8022 , T3:51,8446,2784,  #End#
+LowScoreRank2 , T0:6 , T1:12 , T2:
+Cond:51, Score:5113.933, sT:52608, sP:3.111, sB:0.8124, nT:160907, nP:3.6894, nB:0.78
+Cond:8446, Score:5105.846, sT:52558, sP:3.0991, sB:0.8004, nT:161600, nP:3.6678, nB:0.8051
+Cond:5334, Score:5103.797, sT:53006, sP:3.0978, sB:0.7949, nT:163256, nP:3.6655, nB:0.7948 , T3:51,8446,5334,  #End#
+LowScoreRank2 , T0:0 , T1:12 , T2:
+Cond:2998, Score:5073.429, sT:54623, sP:3.1302, sB:0.7756, nT:171073, nP:3.7675, nB:0.7725
+Cond:7922, Score:5073.362, sT:54233, sP:3.1278, sB:0.7814, nT:169989, nP:3.7669, nB:0.7716
+Cond:6903, Score:5070.205, sT:54256, sP:3.1307, sB:0.7808, nT:170041, nP:3.771, nB:0.7725 , T3:2998,7922,6903,  #End#
+LowScoreRank2 , T0:1 , T1:12 , T2:
+Cond:7922, Score:5004.179, sT:62739, sP:3.0207, sB:0.6688, nT:194459, nP:3.5829, nB:0.6466
+Cond:2998, Score:5001.603, sT:63134, sP:3.0232, sB:0.6639, nT:195555, nP:3.5844, nB:0.648
+Cond:145, Score:4998.212, sT:62809, sP:3.0186, sB:0.6671, nT:194220, nP:3.5838, nB:0.6465 , T3:7922,2998,145,  #End#
+LowScoreRank2 , T0:2 , T1:12 , T2:
+Cond:6903, Score:4632.538, sT:57020, sP:3.0629, sB:0.6357, nT:179513, nP:3.6228, nB:0.7864
+Cond:621, Score:4632.514, sT:57229, sP:3.0663, sB:0.6337, nT:179831, nP:3.624, nB:0.787
+Cond:7337, Score:4630.012, sT:57157, sP:3.0636, sB:0.6344, nT:179947, nP:3.6226, nB:0.7835 , T3:6903,621,7337,  #End#
+LowScoreRank2 , T0:3 , T1:12 , T2:
+Cond:621, Score:5062.274, sT:55577, sP:3.0716, sB:0.7545, nT:171120, nP:3.6305, nB:0.7481
+Cond:7922, Score:5061.811, sT:55346, sP:3.0655, sB:0.7568, nT:170750, nP:3.6252, nB:0.7464
+Cond:2998, Score:5060.641, sT:55734, sP:3.0681, sB:0.7511, nT:171837, nP:3.6266, nB:0.7474 , T3:621,7922,2998,  #End#
+LowScoreRank2 , T0:4 , T1:12 , T2:
+Cond:2189, Score:4983.981, sT:58028, sP:3.1331, sB:0.7247, nT:181772, nP:3.7418, nB:0.7158
+Cond:2998, Score:4979.391, sT:58301, sP:3.1354, sB:0.7197, nT:182726, nP:3.7421, nB:0.7181
+Cond:621, Score:4978.922, sT:58089, sP:3.1368, sB:0.7239, nT:181916, nP:3.7434, nB:0.7147 , T3:2189,2998,621,  #End#
+LowScoreRank2 , T0:5 , T1:12 , T2:
+Cond:2998, Score:5058.75, sT:58098, sP:3.3041, sB:0.7575, nT:175128, nP:3.7723, nB:0.7646
+Cond:7922, Score:5057.709, sT:57710, sP:3.3031, sB:0.7629, nT:174044, nP:3.7717, nB:0.7637
+Cond:6487, Score:5054.835, sT:57611, sP:3.3066, sB:0.7641, nT:173717, nP:3.7762, nB:0.7651 , T3:2998,7922,6487,  #End#
+LowScoreRank2 , T0:6 , T1:0 , T2:
+Cond:3444, Score:5126.941, sT:51330, sP:3.0888, sB:0.8188, nT:156067, nP:3.6501, nB:0.8282
+Cond:472, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:1604, Score:5071.527, sT:50816, sP:3.1168, sB:0.8227, nT:156217, nP:3.7094, nB:0.8238 , T3:3444,472,1604,  #End#
+LowScoreRank2 , T0:6 , T1:1 , T2:
+Cond:66, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:5904, Score:4930.806, sT:50216, sP:3.0281, sB:0.7853, nT:161445, nP:3.641, nB:0.7951
+Cond:3164, Score:4912.29, sT:50330, sP:3.0604, sB:0.785, nT:163700, nP:3.6993, nB:0.7951 , T3:66,5904,3164,  #End#
+LowScoreRank2 , T0:6 , T1:2 , T2:
+Cond:1977, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:1081, Score:5084.151, sT:52787, sP:3.0956, sB:0.7959, nT:162197, nP:3.6583, nB:0.7895
+Cond:1289, Score:5054.019, sT:52886, sP:3.101, sB:0.7893, nT:162481, nP:3.6671, nB:0.7901 , T3:1977,1081,1289,  #End#
+LowScoreRank2 , T0:6 , T1:3 , T2:
+Cond:1739, Score:5094.977, sT:53007, sP:3.0946, sB:0.7933, nT:162954, nP:3.6621, nB:0.7931
+Cond:2203, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:843, Score:5091.154, sT:53403, sP:3.1003, sB:0.7887, nT:163932, nP:3.6642, nB:0.7886 , T3:1739,2203,843,  #End#
+LowScoreRank2 , T0:6 , T1:4 , T2:
+Cond:1618, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:1602, Score:5067.857, sT:51481, sP:3.045, sB:0.8028, nT:156038, nP:3.5901, nB:0.7999
+Cond:353, Score:5067.529, sT:53257, sP:3.0024, sB:0.781, nT:159204, nP:3.5359, nB:0.7499 , T3:1618,1602,353,  #End#
+LowScoreRank2 , T0:6 , T1:5 , T2:
+Cond:7436, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:8298, Score:4966.88, sT:52325, sP:2.9857, sB:0.7597, nT:160676, nP:3.4695, nB:0.7698
+Cond:7868, Score:4934.676, sT:53073, sP:3.059, sB:0.759, nT:163862, nP:3.6047, nB:0.7662 , T3:7436,8298,7868,  #End#
+LowScoreRank2 , T0:6 , T1:6 , T2:
+Cond:4954, Score:5102.428, sT:52963, sP:3.1028, sB:0.7964, nT:162956, nP:3.6705, nB:0.7954
+Cond:7642, Score:5099.724, sT:52906, sP:3.1025, sB:0.7969, nT:162764, nP:3.6695, nB:0.7948
+Cond:7880, Score:5095.895, sT:53167, sP:3.0956, sB:0.791, nT:163943, nP:3.6624, nB:0.7912 , T3:4954,7642,7880,  #End#
+LowScoreRank2 , T0:6 , T1:7 , T2:
+Cond:2639, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:1311, Score:5090.906, sT:52677, sP:3.0923, sB:0.7954, nT:161942, nP:3.6596, nB:0.8001
+Cond:1743, Score:5088.089, sT:52722, sP:3.0937, sB:0.7947, nT:162057, nP:3.6632, nB:0.7994 , T3:2639,1311,1743,  #End#
+LowScoreRank2 , T0:6 , T1:8 , T2:
+Cond:52, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:24, Score:5045.413, sT:52990, sP:3.0663, sB:0.7807, nT:162947, nP:3.6538, nB:0.7857
+Cond:7922, Score:5044.057, sT:52312, sP:3.0625, sB:0.7882, nT:161427, nP:3.653, nB:0.7925 , T3:52,24,7922,  #End#
+LowScoreRank2 , T0:6 , T1:9 , T2:
+Cond:6717, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:6697, Score:5057.512, sT:52534, sP:3.0987, sB:0.7917, nT:161453, nP:3.6679, nB:0.8028
+Cond:7922, Score:5057.207, sT:52220, sP:3.0984, sB:0.7959, nT:160303, nP:3.666, nB:0.8065 , T3:6717,6697,7922,  #End#
+LowScoreRank2 , T0:6 , T1:10 , T2:
+Cond:6433, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:621, Score:5090.439, sT:52998, sP:3.097, sB:0.7913, nT:162361, nP:3.6496, nB:0.7993
+Cond:4641, Score:5090.369, sT:52859, sP:3.0915, sB:0.793, nT:162384, nP:3.6528, nB:0.7967 , T3:6433,621,4641,  #End#
+LowScoreRank2 , T0:6 , T1:11 , T2:
+Cond:5059, Score:5094.897, sT:53065, sP:3.0963, sB:0.7921, nT:163418, nP:3.6636, nB:0.7939
+Cond:6695, Score:5088.489, sT:52473, sP:3.0991, sB:0.7997, nT:161152, nP:3.6672, nB:0.801
+Cond:7922, Score:5088.186, sT:52532, sP:3.0962, sB:0.7983, nT:161378, nP:3.6626, nB:0.7997 , T3:5059,6695,7922,  #End#
+LowScoreRank2 , T0:6 , T1:12 , T2:
+Cond:621, Score:5111.816, sT:53445, sP:3.1, sB:0.7901, nT:164332, nP:3.6645, nB:0.7944
+Cond:7922, Score:5111.416, sT:53214, sP:3.0937, sB:0.7926, nT:163962, nP:3.659, nB:0.7927
+Cond:2998, Score:5110.515, sT:53602, sP:3.0963, sB:0.7865, nT:165046, nP:3.6603, nB:0.7935 , T3:621,7922,2998,  #End#
+End , T0:04:41:58.2458547  #End#
+ 
+ 
+ 
  
  */
+
 		};
 		private static readonly int[] KouhoAnds = new int[] {
 			AllTrueCondIdx
@@ -302,16 +545,16 @@ Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333,
 		/** 51条件の全検証 */
 		public static void CheckCond51All()
 		{
-			int[] confirmAnds =  ConfirmAnds;
+			int[] confirmAnds = ConfirmAnds;
 			int[] confirmOrs = ConfirmOrs;
 
-			if(IsAndCheck) {
+			if (IsAndCheck) {
 				for (int i = -1; i < confirmAnds.Length; i++) {
 					CheckCond51AllBase(confirmAnds, confirmOrs, i, -1);
 				}
 			} else {
 				for (int i = -1; i < confirmOrs.Length; i++) {
-				//for (int i = -1; i <= 1; i++) {
+					//for (int i = -1; i <= 1; i++) {
 					CheckCond51AllBase(confirmAnds, confirmOrs, -1, i);
 				}
 				//CheckCond51AllBase(confirmAnds, confirmOrs, -1, 8);
@@ -565,7 +808,7 @@ Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333,
 				*/
 				for (int r = 2; r <= 2; r++) {
 					string result = ""; string result2 = ""; int max = 3;
-					foreach (KeyValuePair<int, double> b in (r==0?scores: r == 1 ? scores2 : r == 2 ? scores3 : scores4).OrderByDescending(c => trueAll[i, c.Key, 1] > 50000 ? c.Value : -999)) {
+					foreach (KeyValuePair<int, double> b in (r == 0 ? scores : r == 1 ? scores2 : r == 2 ? scores3 : scores4).OrderByDescending(c => trueAll[i, c.Key, 1] > 50000 ? c.Value : -999)) {
 						if (max > 0) {
 							result += "\nCond:" + b.Key + ", Score:" + b.Value + ", sT:" + trueAll[i, b.Key, 1] + ", sP:" + skipPeriod[b.Key] + ", sB:" + skipBenefit[b.Key]
 								+ ", nT:" + trueAll[i, b.Key, 0] + ", nP:" + noPeriod[b.Key] + ", nB:" + noBenefit[b.Key];
@@ -638,6 +881,166 @@ Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333,
 
 		}
 
+
+
+
+		public static void CheckCond51All2()
+		{
+			CheckCond51AllBase2(true);
+			CheckCond51AllBase2(false);
+		}
+		private static void CheckCond51AllBase2(bool isAndCheck)
+		{ 
+			List<string> codeList = CsvControll.GetCodeList();
+			if (false) {
+				codeList = new List<string>();
+				int aaa = 0;
+				foreach (string code in CsvControll.GetCodeList()) {
+					codeList.Add(code); aaa++;
+					if (aaa >= 3) break;
+				}
+			}
+
+			int kouhoNum = ConfirmOrs.Length + ConfirmAnds.Length + 1;
+
+			int[,,] benefitAll = new int[kouhoNum, condNum(), 2];
+			int[,,] havePeriodAll = new int[kouhoNum, condNum(), 2];
+			int[,,] trueAll = new int[kouhoNum, condNum(), 2];
+
+			foreach (string symbol in codeList) {
+				HashSet<string>[] beforeNotAndKouho = new HashSet<string>[ConfirmAnds.Length + 1];
+				for (int i = 0; i < ConfirmAnds.Length; i++) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(ConfirmAnds[i]);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if ((cond51[pIdx + 1] == "1") != isT) {
+							for (int i2 = 0; i2 < ConfirmAnds.Length + 1; i2++) {
+								if (i == i2) continue; // 一致するもの(はぶくやつ)はスキップ
+								if (beforeNotAndKouho[i2] == null) beforeNotAndKouho[i2] = new HashSet<string>();
+								beforeNotAndKouho[i2].Add(cond51[0]);
+							}
+						}
+					}
+				}
+
+				HashSet<string>[] beforeOrKouho = new HashSet<string>[ConfirmOrs.Length + 1];
+				for (int i = 0; i < ConfirmOrs.Length; i++) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(ConfirmOrs[i]);
+					foreach (string[] cond51 in CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx)) {
+						if ((cond51[pIdx + 1] == "1") == isT) {
+							for (int i2 = 0; i2 < ConfirmOrs.Length + 1; i2++) {
+								if (i == i2) continue; // 一致するもの(はぶくやつ)はスキップ
+								if (beforeOrKouho[i2] == null) beforeOrKouho[i2] = new HashSet<string>();
+								beforeOrKouho[i2].Add(cond51[0]);
+							}
+						}
+					}
+				}
+
+				Dictionary<string, int> benefits = new Dictionary<string, int>();
+				Dictionary<string, int> havePeriods = new Dictionary<string, int>();
+				foreach (string[] benefitInfo in CsvControll.GetBenefitAll(symbol)) {
+					benefits[benefitInfo[0]] = Int32.Parse(benefitInfo[1]);
+					havePeriods[benefitInfo[0]] = Int32.Parse(benefitInfo[2]);
+				}
+
+				for (int diffDayIdx = 0; diffDayIdx < diffDayList.Length; diffDayIdx++) {
+					for (int ratioIdx = 0; ratioIdx < ratioList.Length; ratioIdx++) {
+						List<string[]> cond51All = CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx);
+						for (int pIdx = 0; pIdx < periodCntList.GetLength(0); pIdx++) {
+							foreach (bool isT in new bool[2] { true, false }) {
+								int condIdx = GetCondIdx(pIdx, ratioIdx, diffDayIdx, isT);
+								if (Array.IndexOf(NotCond, condIdx) >= 0) continue;
+								int[] nowHaves = new int[kouhoNum];
+								for (int c = 0; c < cond51All.Count; c++) {
+									string[] cond51 = cond51All[c];
+
+									if (!benefits.ContainsKey(cond51[0])) continue;
+
+									//if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+									if (isAndCheck && (cond51[pIdx + 1] == "1") != isT) continue;
+									bool isOrCheck = !isAndCheck && (cond51[pIdx + 1] == "1") == isT;
+
+									//if (!isOrCheck) continue;
+									for (int i = 0; i < kouhoNum; i++) {
+										int andIdx = i >= ConfirmAnds.Length ? ConfirmAnds.Length : i;
+										int orIdx = i < ConfirmAnds.Length ? ConfirmOrs.Length : i - ConfirmAnds.Length;
+										HashSet<string> beAnd = beforeNotAndKouho[andIdx] ?? new HashSet<string>();
+										HashSet<string> beOr = beforeOrKouho[orIdx] ?? new HashSet<string>();
+										if (beAnd.Contains(cond51[0]) || (!beOr.Contains(cond51[0]) && !isOrCheck)) continue;
+
+										benefitAll[i, condIdx, 0] += benefits[cond51[0]];
+										havePeriodAll[i, condIdx, 0] += havePeriods[cond51[0]];
+										trueAll[i, condIdx, 0]++;
+
+										if (nowHaves[i] > c) continue;
+										benefitAll[i, condIdx, 1] += benefits[cond51[0]];
+										havePeriodAll[i, condIdx, 1] += havePeriods[cond51[0]];
+										trueAll[i, condIdx, 1]++;
+										nowHaves[i] = c + havePeriods[cond51[0]] + 1;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				//Common.DebugInfo("CheckCond51AllBase2Symbol", symbol, DateTime.Now);
+			}
+
+			// 並び変えるか
+			for (int i = 0; i < kouhoNum; i++) {
+				Dictionary<int, double> noBenefit = new Dictionary<int, double>();
+				Dictionary<int, double> skipBenefit = new Dictionary<int, double>();
+				Dictionary<int, double> noPeriod = new Dictionary<int, double>();
+				Dictionary<int, double> skipPeriod = new Dictionary<int, double>();
+				Dictionary<int, double> scores = new Dictionary<int, double>();
+				Dictionary<int, double> scores2 = new Dictionary<int, double>();
+				Dictionary<int, double> scores3 = new Dictionary<int, double>();
+				Dictionary<int, double> scores4 = new Dictionary<int, double>();
+				for (int j = 0; j < condNum(); j++) {
+					if (trueAll[i, j, 1] == 0) continue;
+					noBenefit[j] = Common.Round((double)benefitAll[i, j, 0] / (double)trueAll[i, j, 0], 4);
+					noPeriod[j] = Common.Round((double)havePeriodAll[i, j, 0] / (double)trueAll[i, j, 0], 4);
+					skipBenefit[j] = Common.Round((double)benefitAll[i, j, 1] / (double)trueAll[i, j, 1], 4);
+					skipPeriod[j] = Common.Round((double)havePeriodAll[i, j, 1] / (double)trueAll[i, j, 1], 4);
+
+					scores[j] = Common.Round(Math.Pow(trueAll[i, j, 1], 0.75) * skipBenefit[j] / Math.Pow(skipPeriod[j], PeriodPow)
+						+ Math.Pow(trueAll[i, j, 0], 0.75) * noBenefit[j] / Math.Pow(noPeriod[j], PeriodPow) / NoSkipRatio, 3);
+					scores2[j] = Common.Round(Math.Pow(trueAll[i, j, 1], 0.8) * skipBenefit[j] / Math.Pow(skipPeriod[j], PeriodPow)
+						+ Math.Pow(trueAll[i, j, 0], 0.8) * noBenefit[j] / Math.Pow(noPeriod[j], PeriodPow) / NoSkipRatio, 3);
+					scores3[j] = Common.Round(Math.Pow(trueAll[i, j, 1], 0.85) * skipBenefit[j] / Math.Pow(skipPeriod[j], PeriodPow)
+						+ Math.Pow(trueAll[i, j, 0], 0.85) * noBenefit[j] / Math.Pow(noPeriod[j], PeriodPow) / NoSkipRatio, 3);
+					scores4[j] = Common.Round(Math.Pow(trueAll[i, j, 1], 0.9) * skipBenefit[j] / Math.Pow(skipPeriod[j], PeriodPow)
+						+ Math.Pow(trueAll[i, j, 0], 0.9) * noBenefit[j] / Math.Pow(noPeriod[j], PeriodPow) / NoSkipRatio, 3);
+
+				}
+
+				int andIdx = i >= ConfirmAnds.Length ? ConfirmAnds.Length : i;
+				int orIdx = i < ConfirmAnds.Length ? ConfirmOrs.Length : i - ConfirmAnds.Length;
+				for (int r = 2; r <= 2; r++) {
+					string result = ""; string result2 = ""; int max = 3;
+					foreach (KeyValuePair<int, double> b in (r == 0 ? scores : r == 1 ? scores2 : r == 2 ? scores3 : scores4).OrderByDescending(c => trueAll[i, c.Key, 1] > 50000 ? c.Value : -999)) {
+						if (max > 0) {
+							result += "\nCond:" + b.Key + ", Score:" + b.Value + ", sT:" + trueAll[i, b.Key, 1] + ", sP:" + skipPeriod[b.Key] + ", sB:" + skipBenefit[b.Key]
+								+ ", nT:" + trueAll[i, b.Key, 0] + ", nP:" + noPeriod[b.Key] + ", nB:" + noBenefit[b.Key];
+							result2 += b.Key + ",";
+						}
+						max--;
+					}
+					Common.DebugInfo("LowScoreRank" + r, andIdx, orIdx, result, result2);
+				}
+
+			}
+
+		}
+
+
+
+
+
+
+
+
 		private static int GetCondIdx(int pIdx, int ratioIdx, int diffDayIdx, bool isT)
 		{
 			return pIdx * ratioList.Length * diffDayList.Length * 2 + ratioIdx * diffDayList.Length * 2 + diffDayIdx * 2 + (isT ? 1 : 0);
@@ -660,7 +1063,7 @@ Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333,
 		{
 			bool isOldCheck = false;
 
-			int[] confirmAnds = isOldCheck? OldAnd51List : ConfirmAnds;
+			int[] confirmAnds = isOldCheck ? OldAnd51List : ConfirmAnds;
 			int[] confirmOrs = isOldCheck ? OldOr51List : ConfirmOrs;
 
 			for (int i = confirmOrs.Length - 1; i >= 0; i--) {
@@ -719,7 +1122,7 @@ Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333,
 				List<string[]> list = CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx);
 				for (int i = 0; i < list.Count; i++) {
 					string[] cond51 = list[i];
-					if (IsPro500Only && (Common.NewD2(DateTime.Parse(cond51[0]), startDate) || Common.NewD2(endDate,DateTime.Parse(cond51[0])))) continue;
+					if (IsPro500Only && (Common.NewD2(DateTime.Parse(cond51[0]), startDate) || Common.NewD2(endDate, DateTime.Parse(cond51[0])))) continue;
 					if (!benefits.ContainsKey(cond51[0])) continue;
 
 					numAll++;
@@ -748,7 +1151,7 @@ Cond:7660, Score:4861.257, sT:57026, sP:3.1657, sB:0.7164, nT:183632, nP:3.8333,
 			double score = Common.Round(Math.Pow(skipTrue, 0.85) * skipB / Math.Pow(skipP, PeriodPow)
 				+ Math.Pow(noTrue, 0.85) * noB / Math.Pow(noP, PeriodPow) / NoSkipRatio, 3);
 
-			int idx = andSkip == - 1 ? confirmOrs[orSkip] :confirmAnds[andSkip];
+			int idx = andSkip == -1 ? confirmOrs[orSkip] : confirmAnds[andSkip];
 			Common.DebugInfo("DebugCheckCond51", idx, andSkip, orSkip, score, skipTrue, Common.Round(skipB, 2), Common.Round(skipP, 2), noTrue, Common.Round(noB, 2), Common.Round(noP, 2));
 		}
 

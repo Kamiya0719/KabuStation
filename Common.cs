@@ -158,7 +158,7 @@ namespace CSharp_sample
 				return 0;
 			}
 			int proIdx = GetDateIdx(DateTime.Parse(Def.Pro500Day));
-			if (proIdx - 5 < GetDateIdx(date) && proIdx >= GetDateIdx(date)) return 0;
+			if (proIdx - 5 < GetDateIdx(date) && proIdx >= GetDateIdx(date)) return 0.5; // todo 本来は0
 
 			if (proIdx - 10 < GetDateIdx(date) && proIdx - 5 >= GetDateIdx(date)) return 0.5;
 			if ((date.Month == 3 && date.Day >= 9) || (date.Month == 12 && date.Day >= 14)) return 0.5;
