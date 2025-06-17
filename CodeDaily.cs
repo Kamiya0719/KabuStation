@@ -93,12 +93,16 @@ namespace CSharp_sample
 				fisDate.ToString(), type.ToString(), isTodayBuy.ToString(),
 			};
 		}
+		private static readonly string[] MemberName = new string[MemberNum] {
+			"Symbol", "Exchange","yobine","TradingUnit","lastEndPrice","startHave","idealSellPrice","isBuy",
+			"isLossSell","buyPrice"," lossSellPrice"," buyNeedNum"," sellOrderNeed","fisDate","type","isTodayBuy",
+		};
 		public void DiffInfo()
 		{
 			string diff = "";
 			string[] newInfo = GetSaveInfo();
 			for (int i = 0; i < MemberNum; i++) {
-				if (startInfo[i] != newInfo[i]) { diff += i + ":" + startInfo[i] + " => " + newInfo[i] + ", "; }
+				if (startInfo[i] != newInfo[i]) { diff += MemberName[i]+ "("+i + "):" + startInfo[i] + " => " + newInfo[i] + ", "; }
 			}
 			if (diff != "") CsvControll.SymbolLog(Symbol, "DiffInfo", diff);
 		}

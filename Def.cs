@@ -66,7 +66,7 @@ namespace CSharp_sample
 		// Å‘åw“üŠz55–œ‚ğ‚Æ‚è‚ ‚¦‚¸^‚ÌãŒÀ
 		public const double BuyMax = 1.1;
 		// Å’áw“ü’•¶‹àŠz(‘O“ú”¼’[‚É”ƒ‚Á‚½‚Æ‚«‚Æ‚©)
-		public const int BuyLowestPrice = 100000;
+		public const int BuyLowestPrice = 50000;
 
 		// JScore‚É‰‚¶‚Äw“ü”‚É”{—¦‚ğ‚©‚¯‚é 4‚È‚ç”ƒ‚í‚È‚¢
 		public static readonly double[] BuyJScoreRatio = new double[5] {
