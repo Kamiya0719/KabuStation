@@ -18,7 +18,7 @@ namespace CSharp_sample
 		// プロ500の発売日 この日および前数日は買いを控える
 		public const string Pro500Day = "2025/06/18";
 		// 代表となる銘柄 最新まであることが必須 プロ500にいなければならない
-		public const string CapitalSymbol = "1417";
+		public const string CapitalSymbol = "1605";
 
 		// トランプモード todo 理想売りはhalfにするかな 損切はオーバーアップ時のみ(全売) 購入はオーバーダウン時のみ？
 		public const bool TranpMode = false;
@@ -31,7 +31,7 @@ namespace CSharp_sample
 
 
 		// todo Sp系の基準購入費ベタ打ち
-		public const int SpBuyBasePricew = 150000;
+		public const int SpBuyBasePricew = 50000;
 		public static readonly Dictionary<string, int> SpBuyInfo = new Dictionary<string, int>() {
 			{ "1435", 0 },
 			{ "2193", 0 },
@@ -66,7 +66,7 @@ namespace CSharp_sample
 		// 最大購入額55万をとりあえず真の上限
 		public const double BuyMax = 1.1;
 		// 最低購入注文金額(前日半端に買ったときとか)
-		public const int BuyLowestPrice = 50000;
+		public const int BuyLowestPrice = 30000;
 
 		// JScoreに応じて購入数に倍率をかける 4なら買わない
 		public static readonly double[] BuyJScoreRatio = new double[5] {
@@ -109,51 +109,7 @@ namespace CSharp_sample
 		};
 
 
-
-
-		/*
-		 			if (now.Hour == 15) {
-				if (now.Minute >= 25) return 1;
-				if (now.Minute >= 20) return 2;
-				if (now.Minute >= 15) return 3;
-				return 4;
-			}
-			if (now.Hour == 14 && now.Minute >= 20) return 5;
-			return 6;
-		 
-		 */
 	}
 
-	/**
-	 1435,1,1,100,151,0,0,True,False,0,0,0,0,20251231,2,False
-1928,1,1,100,3291,200,3519,False,False,0,0,0,200,20260131,1,False
-2331,1,1,100,1005.5,900,1052,False,False,0,0,0,900,20260331,1,False
-2501,1,1,100,7326,100,7935,False,False,0,0,0,100,20251231,1,False
-2930,1,1,100,143,700,146,True,False,0,0,0,700,20260228,2,False
-3046,1,10,100,8450,100,9210,False,False,0,0,0,100,20250831,1,False
-3139,1,5,100,3530,200,3575,False,False,0,0,0,200,20251130,1,False
-3591,1,1,100,4900,100,5276,False,False,0,0,0,100,20260331,1,False
-3656,1,1,100,115,0,0,True,False,0,0,0,0,20251231,2,False
-4323,1,1,100,1913,500,2017,False,False,0,0,0,500,20260331,1,False
-4571,1,1,100,129,0,0,True,False,0,0,0,0,20260331,2,False
-4586,1,1,100,61,3300,63,False,False,0,0,0,3300,20251231,2,False
-4591,1,1,100,92,0,0,True,False,0,0,0,0,20260331,2,False
-4829,1,1,100,115,0,0,True,False,0,0,0,0,20260531,2,False
-4883,1,1,100,76,2500,80,True,False,0,0,0,2500,20251231,2,False
-5233,1,1,100,3644,0,0,True,False,0,0,0,0,20260331,1,False
-5261,1,10,100,5030,0,0,True,False,0,0,0,0,20260331,1,False
-6046,1,1,100,120,0,0,True,False,0,0,0,0,20250930,2,False
-6054,1,1,100,146,0,0,True,False,0,0,0,0,20251231,2,False
-6072,1,1,100,163,0,0,True,False,0,0,0,0,20260331,2,False
-6093,1,1,100,137,0,0,True,False,0,0,0,0,20260228,2,False
-6740,1,1,100,15,9000,18,False,False,0,0,0,9000,20260331,2,False
-7545,1,1,100,2070,400,2228,False,False,0,0,0,400,20260220,1,False
-7550,1,1,100,7768,100,8389,False,False,0,0,0,100,20260331,1,False
-8202,1,1,100,165,0,0,True,False,0,0,0,0,20251231,2,False
-8566,1,10,100,5200,0,0,True,False,0,0,0,0,20260331,1,False
-8929,1,1,100,1796,0,0,True,False,0,0,0,0,20251231,1,False
-8946,1,1,100,92,0,0,True,False,0,0,0,0,20251231,2,False
 
-	 
-	 */
 }

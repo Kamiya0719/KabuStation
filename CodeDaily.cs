@@ -102,7 +102,7 @@ namespace CSharp_sample
 			string diff = "";
 			string[] newInfo = GetSaveInfo();
 			for (int i = 0; i < MemberNum; i++) {
-				if (startInfo[i] != newInfo[i]) { diff += MemberName[i]+ "("+i + "):" + startInfo[i] + " => " + newInfo[i] + ", "; }
+				if (startInfo[i] != newInfo[i]) { diff += MemberName[i] + "(" + i + "):" + startInfo[i] + " => " + newInfo[i] + ", "; }
 			}
 			if (diff != "") CsvControll.SymbolLog(Symbol, "DiffInfo", diff);
 		}
@@ -128,7 +128,7 @@ namespace CSharp_sample
 			this.now = now; this.jScore = jScore; this.isLastDay = isLastDay; this.lastLastPrice = lastLastPrice;
 			timeIdx = isLastDay ? TimeIdx.T0000 : MinitesExec.GetTimeIdx(now);
 		}
-		public void SetBuyBasePrice(int buyBasePrice) { this.buyBasePrice = buyBasePrice; }
+		public void SetBuyBasePrice(int buyBasePrice) { this.buyBasePrice = IsSp() ? Def.SpBuyBasePricew : buyBasePrice; }
 		public bool IsBoardCheck()
 		{
 			// 注文を取りやめる直前とかもあるので注文中のものがあるときも必要(todo SellValidはいらん？)
@@ -159,15 +159,15 @@ namespace CSharp_sample
 		/** 所持情報を使って、初期所持数/理想売り価格/42損切/注文有効期間 をセット Everyオンリー */
 		private void SetPosListInfo()
 		{
-			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
+			(int leaveQty, int havePeriod, int minBuyPrice, double minBenefit) = GetPosInfo();
 			startHave = leaveQty;
 
 			int sellPeriod = 12; // 0なら今日のみ,1なら翌日まで的な
-			double sellPrice = buyPrice * 1.01; // todo
+			double sellPrice = minBuyPrice * 1.01; // todo
 			foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(now, FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
-				if (havePeriod <= pair.Key) { sellPrice = buyPrice * pair.Value; sellPeriod = pair.Key - havePeriod; }
+				if (havePeriod <= pair.Key) { sellPrice = minBuyPrice * pair.Value; sellPeriod = pair.Key - havePeriod; }
 			}
-			if (type == Def.TypeSp) sellPrice = buyPrice + 1;
+			if (type == Def.TypeSp) sellPrice = minBuyPrice + 1;
 			// 理想売のベーススコア保存 
 			idealSellPrice = YobinePrice(sellPrice);
 
@@ -199,7 +199,7 @@ namespace CSharp_sample
 			} else {
 				isBuy = TommorowBuy() > 0; // プロ500でもSPと同じでもいいといえばいい
 			}
-			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
+			(int leaveQty, int havePeriod, int minBuyPrice, double minBenefit) = GetPosInfo();
 			if (havePeriod > 21) isBuy = false;
 		}
 
@@ -374,7 +374,7 @@ namespace CSharp_sample
 			int res = num * lastEndPrice > Def.BuyLowestPrice ? num : 0;
 			if (res == 0) return 0;
 			// 一応チェック
-			(int leaveQty, int havePeriod, int buyPrice) = GetPosInfo();
+			(int leaveQty, int havePeriod, int minBuyPrice, double minBenefit) = GetPosInfo();
 			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 0.8) {
 				// todo 仮
 				CsvControll.ErrorLog("BuyOrderNeed仮_" + Symbol, num.ToString(), ((num + leaveQty) * lastEndPrice).ToString(), buyBasePrice.ToString());
@@ -383,6 +383,11 @@ namespace CSharp_sample
 			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 1.2) {
 				CsvControll.ErrorLog("BuyOrderNeed2", Symbol, leaveQty.ToString(), num.ToString());
 				return 0;
+			}
+
+			// 2％以上の損失を含む不良債権を所持しているなら購入は禁止
+			if (leaveQty > 0 && minBenefit <= -1.8) {
+				CsvControll.SymbolLog(Symbol, "MinBenefit", minBenefit.ToString()); return 0;
 			}
 			return res;
 		}
@@ -442,20 +447,22 @@ namespace CSharp_sample
 		}
 
 		// 所持建玉・所持日数・購入金額を取得
-		private (int, int, int) GetPosInfo()
+		private (int, int, int, double) GetPosInfo()
 		{
 			int leaveQty = 0; // 合計値
 			int havePeriod = 0; // 一番長い値
-			int buyPrice = 999999999; // 一番安い値
+			int minBuyPrice = 99999999; // 一番安い値
+			double minBenefit = 99999999; // 一番損失が高い値
 			foreach (ResponsePositions pos in posList) {
 				leaveQty += (int)pos.LeavesQty;
 				// 約定日（建玉日） 購入日翌日だと1になるな
 				DateTime buyDate = DateTime.ParseExact(pos.ExecutionDay.ToString(), CsvControll.DFILEFORM, null);
 				havePeriod = Math.Max(havePeriod, Common.GetDateIdx(now) - Common.GetDateIdx(buyDate));
-				buyPrice = Math.Min((int)pos.Price, buyPrice);
+				minBuyPrice = Math.Min((int)pos.Price, minBuyPrice);
+				minBenefit = Math.Min((int)pos.ProfitLossRate, minBenefit);
 			}
-			if (buyPrice == 999999999) buyPrice = 0;
-			return (leaveQty, havePeriod, buyPrice);
+			if (minBuyPrice == 999999999) minBuyPrice = 0;
+			return (leaveQty, havePeriod, minBuyPrice, minBenefit);
 		}
 
 		// maxは利益最大 minは利益最小

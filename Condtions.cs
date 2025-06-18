@@ -242,270 +242,29 @@ Cond:51, Score:9494.817, sT:53145, sP:3.1109, sB:0.8071, nT:162535, nP:3.6859, n
 and系　LowScoreRank , T0:True , T1:4 , T2:13 , T3:  8354
 Cond:8368, Score:9499.727, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
 
-
-//////////////////////////////////////////////
-
-LowScoreRank , T0:False , T1:0 , T2:13 , T3:
-Cond:2189, Score:10683.218, sT:57776, sP:3.1581, sB:0.7565, nT:181175, nP:3.8166, nB:0.7142
-Cond:1069, Score:10667.917, sT:58555, sP:3.1687, sB:0.7458, nT:183604, nP:3.8243, nB:0.7111
-Cond:1981, Score:10658.208, sT:57683, sP:3.1539, sB:0.7549, nT:181068, nP:3.8152, nB:0.7141 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:1 , T2:13 , T3:
-Cond:528, Score:10587.367, sT:67798, sP:3.0357, sB:0.641, nT:210993, nP:3.6151, nB:0.5864
-Cond:1424, Score:10578.592, sT:67623, sP:3.0359, sB:0.6414, nT:210529, nP:3.6163, nB:0.589
-Cond:7922, Score:10574.951, sT:67697, sP:3.0348, sB:0.6402, nT:210860, nP:3.6139, nB:0.5885 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:2 , T2:13 , T3:
-Cond:2189, Score:10509.961, sT:58878, sP:3.1158, sB:0.7095, nT:182349, nP:3.6989, nB:0.7421
-Cond:1069, Score:10500.47, sT:59545, sP:3.122, sB:0.7015, nT:184363, nP:3.703, nB:0.7374
-Cond:397, Score:10498.702, sT:59370, sP:3.122, sB:0.7039, nT:183738, nP:3.7014, nB:0.7373 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:3 , T2:13 , T3:
-Cond:2189, Score:10695.786, sT:58839, sP:3.0951, sB:0.7389, nT:181688, nP:3.6756, nB:0.6958
-Cond:1069, Score:10695.179, sT:59502, sP:3.1017, sB:0.7314, nT:183680, nP:3.6802, nB:0.692
-Cond:397, Score:10683.936, sT:59325, sP:3.1013, sB:0.733, nT:183055, nP:3.6785, nB:0.6918 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:4 , T2:13 , T3:
-Cond:2189, Score:10556.137, sT:58468, sP:3.1543, sB:0.7375, nT:181793, nP:3.7674, nB:0.704
-Cond:1069, Score:10550.797, sT:59305, sP:3.1673, sB:0.7286, nT:184369, nP:3.7766, nB:0.6977
-Cond:621, Score:10547.816, sT:58528, sP:3.158, sB:0.7367, nT:181937, nP:3.769, nB:0.703 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:5 , T2:13 , T3:
-Cond:1981, Score:10661.776, sT:61922, sP:3.317, sB:0.7264, nT:187327, nP:3.8207, nB:0.6938
-Cond:2189, Score:10659.939, sT:62110, sP:3.3198, sB:0.7248, nT:187640, nP:3.8228, nB:0.6922
-Cond:528, Score:10655.731, sT:61637, sP:3.317, sB:0.73, nT:186493, nP:3.819, nB:0.6929 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:6 , T2:13 , T3:
-Cond:2189, Score:10701.547, sT:57004, sP:3.109, sB:0.7506, nT:176784, nP:3.6858, nB:0.7516
-Cond:1069, Score:10692.932, sT:57666, sP:3.1158, sB:0.7421, nT:178782, nP:3.6904, nB:0.7469
-Cond:397, Score:10684.037, sT:57490, sP:3.1154, sB:0.744, nT:178162, nP:3.6887, nB:0.7468 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:0 , T3:
-Cond:472, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:3444, Score:10605.398, sT:54438, sP:3.1126, sB:0.7836, nT:165924, nP:3.697, nB:0.7648
-Cond:1144, Score:10588.073, sT:55614, sP:3.1152, sB:0.7664, nT:171344, nP:3.7128, nB:0.7476 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:1 , T3:
-Cond:66, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:528, Score:10396.164, sT:52748, sP:3.0826, sB:0.7869, nT:167821, nP:3.7145, nB:0.7424
-Cond:2189, Score:10357.38, sT:52351, sP:3.0919, sB:0.7887, nT:167331, nP:3.7261, nB:0.7483 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:2 , T3:
-Cond:1977, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:1081, Score:10655.675, sT:55743, sP:3.1187, sB:0.7754, nT:171656, nP:3.7038, nB:0.7335
-Cond:2189, Score:10614.133, sT:55238, sP:3.126, sB:0.7784, nT:169677, nP:3.7144, nB:0.7433 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:3 , T3:
-Cond:1739, Score:10686.913, sT:55975, sP:3.1176, sB:0.7733, nT:172452, nP:3.7076, nB:0.7372
-Cond:2203, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:1069, Score:10680.498, sT:57020, sP:3.1268, sB:0.7597, nT:175350, nP:3.7113, nB:0.7309 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:4 , T3:
-Cond:1618, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:353, Score:10629.978, sT:56676, sP:3.0339, sB:0.7631, nT:170170, nP:3.5895, nB:0.6889
-Cond:1602, Score:10619.88, sT:54322, sP:3.0684, sB:0.7868, nT:165595, nP:3.6411, nB:0.7415 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:5 , T3:
-Cond:7436, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:7644, Score:10387.778, sT:51884, sP:3.0204, sB:0.7981, nT:153440, nP:3.5161, nB:0.7558
-Cond:7868, Score:10350.959, sT:55814, sP:3.075, sB:0.7432, nT:172316, nP:3.6405, nB:0.7162 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:6 , T3:
-Cond:4954, Score:10716.223, sT:55928, sP:3.1246, sB:0.7772, nT:172470, nP:3.7153, nB:0.7389
-Cond:7642, Score:10698.558, sT:55870, sP:3.1244, sB:0.7766, nT:172276, nP:3.7144, nB:0.7384
-Cond:5388, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:7 , T3:
-Cond:2189, Score:10752.743, sT:55471, sP:3.1231, sB:0.7836, nT:170586, nP:3.7121, nB:0.7543
-Cond:1981, Score:10729.793, sT:55369, sP:3.1191, sB:0.7824, nT:170450, nP:3.7106, nB:0.7541
-Cond:1069, Score:10726.136, sT:56118, sP:3.1297, sB:0.7734, nT:172513, nP:3.7159, nB:0.7483 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:8 , T3:
-Cond:52, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:24, Score:10583.65, sT:55905, sP:3.0868, sB:0.7629, nT:172495, nP:3.6975, nB:0.7289
-Cond:2189, Score:10571.557, sT:55436, sP:3.0943, sB:0.7676, nT:171439, nP:3.7068, nB:0.7367 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:9 , T3:
-Cond:6717, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:6493, Score:10623.444, sT:57052, sP:3.1182, sB:0.7556, nT:176979, nP:3.71, nB:0.7165
-Cond:2189, Score:10600.955, sT:55477, sP:3.1279, sB:0.7716, nT:170312, nP:3.7175, nB:0.7499 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:10 , T3:
-Cond:2189, Score:10696.432, sT:56075, sP:3.1206, sB:0.7717, nT:172133, nP:3.6967, nB:0.7425
-Cond:1069, Score:10689.98, sT:56760, sP:3.1274, sB:0.7627, nT:174205, nP:3.7015, nB:0.7377
-Cond:6433, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:11 , T3:
-Cond:5059, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:1069, Score:10685.02, sT:56562, sP:3.1321, sB:0.7664, nT:173734, nP:3.7172, nB:0.7373
-Cond:2189, Score:10680.163, sT:55847, sP:3.1258, sB:0.7746, nT:171597, nP:3.7141, nB:0.7433 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:12 , T3:
-Cond:2189, Score:10700.937, sT:55802, sP:3.1192, sB:0.7775, nT:172074, nP:3.7115, nB:0.7374
-Cond:1069, Score:10697.78, sT:56464, sP:3.1264, sB:0.7691, nT:174072, nP:3.716, nB:0.7327
-Cond:397, Score:10687.114, sT:56288, sP:3.1257, sB:0.7709, nT:173452, nP:3.7143, nB:0.7326 , T4:(empty)  #End#
-LowScoreRank , T0:False , T1:7 , T2:13 , T3:
-Cond:2189, Score:10760.263, sT:56557, sP:3.1229, sB:0.7712, nT:174273, nP:3.71, nB:0.7382
-Cond:1069, Score:10755.67, sT:57219, sP:3.1296, sB:0.7628, nT:176271, nP:3.7144, nB:0.7335
-Cond:397, Score:10746.145, sT:57043, sP:3.1292, sB:0.7647, nT:175651, nP:3.7127, nB:0.7334 , T4:(empty)  #End#
-LowScoreRankAll , T0:False , T1:
-AndIdx:7, OrIdx:13, Cond:2189, Score:10760.263, sT:56557, sP:3.1229, sB:0.7712, nT:174273, nP:3.71, nB:0.7382
-AndIdx:7, OrIdx:13, Cond:1069, Score:10755.67, sT:57219, sP:3.1296, sB:0.7628, nT:176271, nP:3.7144, nB:0.7335
-AndIdx:7, OrIdx:7, Cond:2189, Score:10752.743, sT:55471, sP:3.1231, sB:0.7836, nT:170586, nP:3.7121, nB:0.7543
-AndIdx:7, OrIdx:13, Cond:397, Score:10746.145, sT:57043, sP:3.1292, sB:0.7647, nT:175651, nP:3.7127, nB:0.7334
-AndIdx:7, OrIdx:13, Cond:1981, Score:10740.505, sT:56478, sP:3.1204, sB:0.7702, nT:174178, nP:3.7092, nB:0.7379
-AndIdx:7, OrIdx:13, Cond:621, Score:10740.153, sT:56573, sP:3.1253, sB:0.7696, nT:174304, nP:3.7108, nB:0.7376
-AndIdx:7, OrIdx:7, Cond:1981, Score:10729.793, sT:55369, sP:3.1191, sB:0.7824, nT:170450, nP:3.7106, nB:0.7541
-AndIdx:7, OrIdx:13, Cond:1293, Score:10726.839, sT:56412, sP:3.1227, sB:0.7701, nT:173847, nP:3.7102, nB:0.739
-AndIdx:7, OrIdx:7, Cond:1069, Score:10726.136, sT:56118, sP:3.1297, sB:0.7734, nT:172513, nP:3.7159, nB:0.7483
-AndIdx:7, OrIdx:13, Cond:528, Score:10726.062, sT:56254, sP:3.1175, sB:0.773, nT:173528, nP:3.7058, nB:0.7345
-AndIdx:7, OrIdx:13, Cond:1517, Score:10723.13, sT:56259, sP:3.1211, sB:0.772, nT:173423, nP:3.7097, nB:0.7388
-AndIdx:7, OrIdx:13, Cond:7922, Score:10722.207, sT:56177, sP:3.1166, sB:0.7727, nT:173454, nP:3.7043, nB:0.7371
-AndIdx:7, OrIdx:13, Cond:1085, Score:10720.409, sT:56394, sP:3.1208, sB:0.7697, nT:173910, nP:3.7094, nB:0.738
-AndIdx:7, OrIdx:7, Cond:397, Score:10718.558, sT:55867, sP:3.1278, sB:0.7762, nT:171693, nP:3.7136, nB:0.7493
-AndIdx:7, OrIdx:13, Cond:6487, Score:10716.693, sT:56082, sP:3.1198, sB:0.7739, nT:173137, nP:3.7087, nB:0.7383
-AndIdx:7, OrIdx:6, Cond:4954, Score:10716.223, sT:55928, sP:3.1246, sB:0.7772, nT:172470, nP:3.7153, nB:0.7389
-AndIdx:7, OrIdx:13, Cond:6695, Score:10713.542, sT:56127, sP:3.1191, sB:0.7727, nT:173254, nP:3.709, nB:0.7387
-AndIdx:7, OrIdx:7, Cond:621, Score:10712.994, sT:55359, sP:3.1237, sB:0.7819, nT:170272, nP:3.712, nB:0.7537
-AndIdx:7, OrIdx:7, Cond:191, Score:10711.434, sT:55602, sP:3.1123, sB:0.7781, nT:170762, nP:3.7015, nB:0.748
-AndIdx:7, OrIdx:7, Cond:6697, Score:10711.411, sT:55302, sP:3.1155, sB:0.7817, nT:170607, nP:3.7074, nB:0.7511
-AndIdx:7, OrIdx:13, Cond:1424, Score:10711.141, sT:56094, sP:3.1183, sB:0.7732, nT:173107, nP:3.7075, nB:0.7378
-AndIdx:7, OrIdx:13, Cond:6471, Score:10710.716, sT:56525, sP:3.1202, sB:0.7681, nT:174909, nP:3.7155, nB:0.7317
-AndIdx:7, OrIdx:7, Cond:1743, Score:10710.007, sT:55557, sP:3.1168, sB:0.7796, nT:171088, nP:3.7073, nB:0.7457
-AndIdx:7, OrIdx:13, Cond:1366, Score:10709.638, sT:56105, sP:3.1192, sB:0.7733, nT:173349, nP:3.7102, nB:0.7363
-AndIdx:7, OrIdx:13, Cond:785, Score:10709.566, sT:56157, sP:3.1173, sB:0.7722, nT:173082, nP:3.7072, nB:0.7377
-AndIdx:7, OrIdx:13, Cond:6715, Score:10709.436, sT:56104, sP:3.1177, sB:0.7728, nT:173149, nP:3.7078, nB:0.7378
-AndIdx:7, OrIdx:13, Cond:413, Score:10708.956, sT:56362, sP:3.1206, sB:0.7693, nT:173766, nP:3.7095, nB:0.7376
-AndIdx:7, OrIdx:13, Cond:845, Score:10708.757, sT:56333, sP:3.1232, sB:0.77, nT:173598, nP:3.7104, nB:0.7382
-AndIdx:7, OrIdx:7, Cond:528, Score:10708.17, sT:55015, sP:3.1161, sB:0.7865, nT:169439, nP:3.7071, nB:0.7514
-AndIdx:7, OrIdx:13, Cond:4887, Score:10707.003, sT:56211, sP:3.1176, sB:0.771, nT:173584, nP:3.708, nB:0.7369 , T2:(empty)  #End#
-
-
-
-////////////////////////////////////////
-///
-
-
-LowScoreRank , T0:True , T1:0 , T2:13 , T3:
-Cond:6130, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:8356, Score:10666.91, sT:56319, sP:3.1371, sB:0.7699, nT:176693, nP:3.8005, nB:0.7292
-Cond:8354, Score:10644.997, sT:53611, sP:3.1327, sB:0.8017, nT:166559, nP:3.7741, nB:0.7676 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:1 , T2:13 , T3:
-Cond:2796, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:4380, Score:10681.457, sT:62389, sP:3.0693, sB:0.6959, nT:193125, nP:3.6503, nB:0.6592
-Cond:4364, Score:10645.546, sT:60516, sP:3.0747, sB:0.7124, nT:187056, nP:3.6585, nB:0.6803 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:2 , T2:13 , T3:
-Cond:737, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:65, Score:10669.931, sT:57795, sP:3.1175, sB:0.7375, nT:179225, nP:3.7019, nB:0.7502
-Cond:49, Score:10535.185, sT:58278, sP:3.1137, sB:0.7195, nT:180751, nP:3.6984, nB:0.7436 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:3 , T2:13 , T3:
-Cond:8046, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:8446, Score:10681.46, sT:56496, sP:3.1104, sB:0.7647, nT:174294, nP:3.6988, nB:0.7318
-Cond:3790, Score:10680.173, sT:56058, sP:3.1199, sB:0.7702, nT:173166, nP:3.7116, nB:0.7403 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:4 , T2:13 , T3:
-Cond:8368, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:8354, Score:10677.723, sT:53145, sP:3.1109, sB:0.8071, nT:162535, nP:3.6859, nB:0.7797
-Cond:8356, Score:10614.074, sT:56570, sP:3.1273, sB:0.7605, nT:175464, nP:3.7355, nB:0.7281 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:5 , T2:13 , T3:
-Cond:8344, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:8446, Score:10671.617, sT:60190, sP:3.3211, sB:0.745, nT:181482, nP:3.822, nB:0.7189
-Cond:8356, Score:10667.668, sT:59269, sP:3.256, sB:0.748, nT:179962, nP:3.7828, nB:0.7194 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:6 , T2:13 , T3:
-Cond:51, Score:10686.757, sT:56032, sP:3.119, sB:0.772, nT:172917, nP:3.7087, nB:0.7379
-Cond:8356, Score:10665.686, sT:55675, sP:3.0917, sB:0.7614, nT:172797, nP:3.672, nB:0.7651
-Cond:529, Score:10655.65, sT:54171, sP:3.1504, sB:0.8029, nT:168165, nP:3.7519, nB:0.7418 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:0 , T3:
-Cond:8356, Score:10414.797, sT:52261, sP:3.1254, sB:0.7989, nT:158837, nP:3.7225, nB:0.7872
-Cond:5148, Score:10390.445, sT:52954, sP:3.1398, sB:0.7895, nT:161059, nP:3.7365, nB:0.7769
-Cond:6148, Score:10388.354, sT:53058, sP:3.1392, sB:0.7887, nT:161426, nP:3.7355, nB:0.7724 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:1 , T3:
-Cond:8356, Score:10312.418, sT:51196, sP:3.0807, sB:0.799, nT:163638, nP:3.7145, nB:0.7613
-Cond:5148, Score:10294.976, sT:51676, sP:3.0886, sB:0.7922, nT:165537, nP:3.7262, nB:0.7527
-Cond:5108, Score:10294.095, sT:51686, sP:3.091, sB:0.7931, nT:165664, nP:3.7276, nB:0.7498 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:2 , T3:
-Cond:8356, Score:10570.97, sT:53884, sP:3.1086, sB:0.79, nT:165662, nP:3.7006, nB:0.7567
-Cond:2784, Score:10551.452, sT:54593, sP:3.1236, sB:0.782, nT:167834, nP:3.715, nB:0.7454
-Cond:2786, Score:10549.717, sT:54156, sP:3.1289, sB:0.7883, nT:165598, nP:3.7164, nB:0.7542 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:3 , T3:
-Cond:8356, Score:10643.144, sT:54964, sP:3.1028, sB:0.7797, nT:169236, nP:3.6939, nB:0.7495
-Cond:5148, Score:10623.194, sT:55648, sP:3.117, sB:0.7715, nT:171446, nP:3.7075, nB:0.7404
-Cond:5356, Score:10621.414, sT:55457, sP:3.1199, sB:0.7742, nT:170822, nP:3.7109, nB:0.7428 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:4 , T3:
-Cond:8356, Score:10485.272, sT:52843, sP:3.0085, sB:0.7962, nT:159921, nP:3.5973, nB:0.7262
-Cond:5356, Score:10476.947, sT:53350, sP:3.0267, sB:0.7918, nT:161515, nP:3.6158, nB:0.7189
-Cond:5108, Score:10475.762, sT:53547, sP:3.0264, sB:0.7897, nT:162258, nP:3.6142, nB:0.7136 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:5 , T3:
-Cond:1, Score:9148.227, sT:43709, sP:2.938, sB:0.8252, nT:118286, nP:3.3053, nB:0.7591
-Cond:3, Score:9148.227, sT:43709, sP:2.938, sB:0.8252, nT:118286, nP:3.3053, nB:0.7591
-Cond:5, Score:9138.794, sT:43676, sP:2.9386, sB:0.8251, nT:118170, nP:3.306, nB:0.7587 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:6 , T3:
-Cond:8356, Score:10648.706, sT:54679, sP:3.113, sB:0.7863, nT:167867, nP:3.7034, nB:0.7524
-Cond:2784, Score:10629.345, sT:55411, sP:3.1278, sB:0.7782, nT:170110, nP:3.7165, nB:0.7408
-Cond:5148, Score:10629.021, sT:55365, sP:3.1273, sB:0.778, nT:170089, nP:3.7168, nB:0.7431 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:7 , T3:
-Cond:8356, Score:10701.751, sT:54079, sP:3.1048, sB:0.7949, nT:166506, nP:3.6982, nB:0.768
-Cond:5582, Score:10683.757, sT:54497, sP:3.1216, sB:0.7909, nT:167906, nP:3.715, nB:0.7605
-Cond:5108, Score:10679.981, sT:54687, sP:3.1205, sB:0.7883, nT:168540, nP:3.7127, nB:0.7565 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:8 , T3:
-Cond:8356, Score:10542.338, sT:54085, sP:3.076, sB:0.78, nT:167448, nP:3.6929, nB:0.7501
-Cond:5148, Score:10512.899, sT:54788, sP:3.0908, sB:0.7706, nT:169670, nP:3.7065, nB:0.7408
-Cond:5108, Score:10512.242, sT:54798, sP:3.0931, sB:0.7715, nT:169797, nP:3.7079, nB:0.7379 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:9 , T3:
-Cond:8356, Score:10565.35, sT:54142, sP:3.1109, sB:0.7832, nT:166325, nP:3.7043, nB:0.7644
-Cond:8446, Score:10548.943, sT:54307, sP:3.1275, sB:0.7823, nT:166706, nP:3.7214, nB:0.7622
-Cond:6938, Score:10547.888, sT:54643, sP:3.1284, sB:0.7782, nT:168004, nP:3.7224, nB:0.7563 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:10 , T3:
-Cond:8356, Score:10655.979, sT:54727, sP:3.103, sB:0.783, nT:168119, nP:3.6828, nB:0.756
-Cond:5148, Score:10633.133, sT:55416, sP:3.1171, sB:0.7744, nT:170333, nP:3.6965, nB:0.7467
-Cond:5108, Score:10632.629, sT:55426, sP:3.1193, sB:0.7753, nT:170461, nP:3.6979, nB:0.7438 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:11 , T3:
-Cond:8356, Score:10659.582, sT:54485, sP:3.1089, sB:0.7879, nT:167541, nP:3.7013, nB:0.7581
-Cond:6938, Score:10637.735, sT:54954, sP:3.1272, sB:0.7829, nT:169066, nP:3.7196, nB:0.7511
-Cond:2784, Score:10635.64, sT:55218, sP:3.1237, sB:0.7794, nT:169787, nP:3.7144, nB:0.7461 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:12 , T3:
-Cond:8356, Score:10665.632, sT:54503, sP:3.1028, sB:0.789, nT:168162, nP:3.6979, nB:0.7504
-Cond:5148, Score:10645.675, sT:55164, sP:3.1159, sB:0.7807, nT:170320, nP:3.7114, nB:0.7417
-Cond:5108, Score:10645.032, sT:55174, sP:3.1182, sB:0.7816, nT:170447, nP:3.7127, nB:0.7388 , T4:(empty)  #End#
-LowScoreRank , T0:True , T1:7 , T2:13 , T3:
-Cond:8356, Score:10726.087, sT:55228, sP:3.1058, sB:0.7827, nT:170297, nP:3.6965, nB:0.7516
-Cond:5148, Score:10704.928, sT:55919, sP:3.1197, sB:0.7743, nT:172519, nP:3.7098, nB:0.7424
-Cond:5108, Score:10704.591, sT:55929, sP:3.122, sB:0.7752, nT:172646, nP:3.7111, nB:0.7396 , T4:(empty)  #End#
-LowScoreRankAll , T0:True , T1:
-AndIdx:7, OrIdx:13, Cond:8356, Score:10726.087, sT:55228, sP:3.1058, sB:0.7827, nT:170297, nP:3.6965, nB:0.7516
-AndIdx:7, OrIdx:13, Cond:5148, Score:10704.928, sT:55919, sP:3.1197, sB:0.7743, nT:172519, nP:3.7098, nB:0.7424
-AndIdx:7, OrIdx:13, Cond:5108, Score:10704.591, sT:55929, sP:3.122, sB:0.7752, nT:172646, nP:3.7111, nB:0.7396
-AndIdx:7, OrIdx:13, Cond:2784, Score:10703.678, sT:55963, sP:3.1203, sB:0.7744, nT:172540, nP:3.7095, nB:0.7401
-AndIdx:7, OrIdx:13, Cond:5356, Score:10703.187, sT:55728, sP:3.1226, sB:0.777, nT:171895, nP:3.7132, nB:0.7448
-AndIdx:7, OrIdx:13, Cond:6148, Score:10703.158, sT:56023, sP:3.1192, sB:0.7736, nT:172886, nP:3.709, nB:0.7383
-AndIdx:7, OrIdx:13, Cond:6938, Score:10702.731, sT:55705, sP:3.1236, sB:0.7775, nT:171846, nP:3.7144, nB:0.7447
-AndIdx:7, OrIdx:13, Cond:4775, Score:10702.453, sT:55958, sP:3.1213, sB:0.7747, nT:172702, nP:3.711, nB:0.7389
-AndIdx:7, OrIdx:13, Cond:7160, Score:10702.006, sT:55984, sP:3.1199, sB:0.7738, nT:172762, nP:3.7099, nB:0.7397
-AndIdx:7, OrIdx:13, Cond:5334, Score:10701.8, sT:55975, sP:3.1204, sB:0.7743, nT:172756, nP:3.7106, nB:0.7387
-AndIdx:7, OrIdx:7, Cond:8356, Score:10701.751, sT:54079, sP:3.1048, sB:0.7949, nT:166506, nP:3.6982, nB:0.768
-AndIdx:7, OrIdx:13, Cond:7784, Score:10701.379, sT:56020, sP:3.1188, sB:0.7733, nT:172868, nP:3.7085, nB:0.7387
-AndIdx:7, OrIdx:13, Cond:8446, Score:10700.904, sT:55390, sP:3.1218, sB:0.7809, nT:170618, nP:3.7135, nB:0.75
-AndIdx:7, OrIdx:13, Cond:3574, Score:10700.596, sT:55998, sP:3.1201, sB:0.7737, nT:172841, nP:3.7097, nB:0.7388
-AndIdx:7, OrIdx:13, Cond:3800, Score:10700.544, sT:55991, sP:3.1202, sB:0.7739, nT:172814, nP:3.71, nB:0.7386
-AndIdx:7, OrIdx:13, Cond:2454, Score:10700.262, sT:56008, sP:3.1198, sB:0.7735, nT:172865, nP:3.7094, nB:0.7387
-AndIdx:7, OrIdx:13, Cond:7368, Score:10700.248, sT:55980, sP:3.1198, sB:0.7738, nT:172758, nP:3.7098, nB:0.7393
-AndIdx:7, OrIdx:13, Cond:2682, Score:10698.969, sT:56000, sP:3.12, sB:0.7736, nT:172842, nP:3.7096, nB:0.7385
-AndIdx:7, OrIdx:13, Cond:4008, Score:10698.246, sT:55971, sP:3.1203, sB:0.7741, nT:172728, nP:3.7106, nB:0.7385
-AndIdx:7, OrIdx:13, Cond:6238, Score:10698.07, sT:55998, sP:3.1196, sB:0.7732, nT:172803, nP:3.7089, nB:0.7395
-AndIdx:7, OrIdx:13, Cond:1774, Score:10697.955, sT:55934, sP:3.1208, sB:0.774, nT:172594, nP:3.7116, nB:0.741
-AndIdx:7, OrIdx:13, Cond:5090, Score:10697.769, sT:56007, sP:3.1197, sB:0.7732, nT:172846, nP:3.7096, nB:0.739
-AndIdx:7, OrIdx:13, Cond:7126, Score:10697.512, sT:55922, sP:3.1215, sB:0.7746, nT:172627, nP:3.7117, nB:0.7396
-AndIdx:7, OrIdx:13, Cond:3790, Score:10696.998, sT:55389, sP:3.1258, sB:0.7806, nT:170904, nP:3.7178, nB:0.7507
-AndIdx:7, OrIdx:13, Cond:7594, Score:10696.942, sT:55982, sP:3.1191, sB:0.7732, nT:172727, nP:3.709, nB:0.7399
-AndIdx:7, OrIdx:13, Cond:5372, Score:10696.207, sT:55983, sP:3.1193, sB:0.7729, nT:172745, nP:3.709, nB:0.7406
-AndIdx:7, OrIdx:13, Cond:2428, Score:10696.151, sT:55847, sP:3.1227, sB:0.7759, nT:172351, nP:3.7119, nB:0.7396
-AndIdx:7, OrIdx:13, Cond:2888, Score:10696.005, sT:56014, sP:3.1197, sB:0.7731, nT:172871, nP:3.7094, nB:0.7384
-AndIdx:7, OrIdx:13, Cond:5368, Score:10695.321, sT:56011, sP:3.1195, sB:0.773, nT:172856, nP:3.7093, nB:0.7386
-AndIdx:7, OrIdx:13, Cond:1698, Score:10695.24, sT:55978, sP:3.1206, sB:0.7736, nT:172738, nP:3.7107, nB:0.739 , T2:(empty)  #End#
-End , T0:05:22:25.4893203  #End#
-
-
-
 */
 		};
-		private static readonly int[] ConfirmOrs = new int[13] {
+		private static readonly int[] ConfirmOrs = new int[14] {
 			472,  // Cond:3444, Score:4839.551, sT:51450, sP:3.1411, sB:0.7736, nT:157219, nP:3.7187, nB:0.8079
 			66,   // Cond:5904, Score:4707.361, sT:50150, sP:3.0857, sB:0.7569, nT:161393, nP:3.7145, nB:0.7789
 			1977, // Cond:1977, Score:4864.97, sT:51332, sP:3.1188, sB:0.7739, nT:158137, nP:3.6953, nB:0.8106
 			2203, // Cond:1083, Score:4876.456, sT:51314, sP:3.1596, sB:0.7885, nT:157830, nP:3.7373, nB:0.7994
 			1618, // Cond:1602, Score:4847.739, sT:51510, sP:3.0996, sB:0.7727, nT:157259, nP:3.664, nB:0.7833
 			7436, // Cond:8298, Score:4771.598, sT:51574, sP:3.0373, sB:0.745, nT:158351, nP:3.5353, nB:0.7652
-			5388, // Cond:7642, Score:4878.302, sT:52784, sP:3.1533, sB:0.7683, nT:163227, nP:3.7368, nB:0.7798
+			4954, // Cond:7642, Score:4878.302, sT:52784, sP:3.1533, sB:0.7683, nT:163227, nP:3.7368, nB:0.7798
 			2639, // Cond:1083, Score:4863.172, sT:52714, sP:3.1514, sB:0.7662, nT:163416, nP:3.7414, nB:0.7782
 			52,   // Cond:1424, Score:4813.474, sT:52168, sP:3.1161, sB:0.7588, nT:161722, nP:3.7236, nB:0.7772
 			6717, // Cond:6717, Score:4880.38, sT:52635, sP:3.1429, sB:0.7679, nT:163309, nP:3.7239, nB:0.7812
 			6433, // Cond:6433, Score:5031.917, sT:54780, sP:3.0866, sB:0.7562, nT:169701, nP:3.6544, nB:0.7707
 			5059,
 			2998,
+			1069,
 /*
 Cond:2998, Score:5110.515, sT:53602, sP:3.0963, sB:0.7865, nT:165046, nP:3.6603, nB:0.7935 , T3:621,7922,2998,  #End#
 
- 
+ Cond:5059, Score:10755.67, sT:57219, sP:3.1296, sB:0.7628, nT:176271, nP:3.7144, nB:0.7335
+ AndCond:-1, OrCond:5388, Cond:4954, Score:10784.421, sT:57115, sP:3.1351, sB:0.7678, nT:175824, nP:3.7208, nB:0.7345
+
  */
 
 		};
@@ -870,7 +629,7 @@ Cond:2998, Score:5110.515, sT:53602, sP:3.0963, sB:0.7865, nT:165046, nP:3.6603,
 		private static void CheckCond51AllBase2(bool isAndCheck)
 		{
 			List<string> codeList = CsvControll.GetCodeList();
-			if (true) {
+			if (false) {
 				codeList = new List<string>();
 				int aaa = 0;
 				foreach (string code in CsvControll.GetCodeList()) {
@@ -962,7 +721,7 @@ Cond:2998, Score:5110.515, sT:53602, sP:3.0963, sB:0.7865, nT:165046, nP:3.6603,
 					}
 				}
 
-				Common.DebugInfo("CheckCond51AllBase2Symbol", symbol, DateTime.Now);
+				//Common.DebugInfo("CheckCond51AllBase2Symbol", symbol, DateTime.Now);
 			}
 
 			// 並び変えるか
@@ -1139,7 +898,34 @@ Cond:2998, Score:5110.515, sT:53602, sP:3.0963, sB:0.7865, nT:165046, nP:3.6603,
 			Common.DebugInfo("DebugCheckCond51", idx, andSkip, orSkip, score, skipTrue, Common.Round(skipB, 2), Common.Round(skipP, 2), noTrue, Common.Round(noB, 2), Common.Round(noP, 2));
 		}
 
+		private static readonly int[] ConfirmAndsTrue = new int[7] {
+			6130,2796,737,8046,8368,8344,51,
+		};
+		private static readonly int[] ConfirmOrsTrue = new int[14] {
+			472,66,1977,2203,1618,7436,4954,2639,52,6717,6433,5059,2998,1069,
+		};
+		/** 新しく作った条件一覧 */
+		public static List<string[]> GetNewConditions()
+		{
+			List<string[]> res = new List<string[]>();
 
+			for (int i = 0; i <= 1; i++){
+				foreach (int cond in (i == 0 ? ConfirmOrsTrue : ConfirmAndsTrue)) {
+					(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(cond);
+					res.Add(new string[7] {
+						i.ToString(), // and条件かor条件か
+						"51",
+						periodCntList[pIdx,0].ToString(), // c1:1,3,6,10,20,30,50
+						diffDayList[diffDayIdx].ToString(), //c3:1,3,6,10,20,30,50,70
+						periodCntList[pIdx,1].ToString(), // d1:1,2,3,4,5,6 いやc1に応じる感じか
+						isT ? "1" : "0", // 満たす満たさない
+						ratioList[ratioIdx].ToString(), // a1: 0.65,0.75,0.8,0.85,0.9,0.95,1,1.05,1.1,1.17,1.25,1.35,1.5,1.7
+					});
+				}
+			}
+
+			return res;
+		}
 
 
 

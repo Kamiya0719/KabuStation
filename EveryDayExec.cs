@@ -182,7 +182,7 @@ namespace CSharp_sample
 			// SP系の処理
 			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
 				string symbol = pair.Key;
-				if (Common.Sp10(symbol) && Common.Sp10BuyPrice(symbol) > 50) pair.Value.SetBuyBasePrice(Def.SpBuyBasePricew);
+				if (Common.Sp10(symbol) && Common.Sp10BuyPrice(symbol) > 50) pair.Value.SetBuyBasePrice(setBuyBasePrice);
 			}
 
 			// データをセット

@@ -106,7 +106,8 @@ namespace CSharp_sample
 			7133,7134,7380,7381,8103,9147,9166,9211,9214,9218,9219,9246,9247,9248,9259,9340,9341,9343,9560,9564,
 			5588,5830,5832,7383,1973,3254,3738,3857,3990,7342,7518,8732,8890,
 			1301,1332,1333,1375,1376,
-			9766,7803,
+			9766,7803,1717,3498,3612,9305,
+			1417,5038,5132,5253,5356,5592,5831,5834,5838,9023, // データが少ないが消さなくてもいいような気も
 		};
 		private static readonly int[] dangerCodes = new int[] { };
 		public static List<string> GetCodeList()
@@ -162,7 +163,12 @@ namespace CSharp_sample
 		// 日経平均過去データを取得
 		public static List<string[]> GetJapanRaw() { return GetCsvDatas(FILE_TYPE.JapanRaw); }
 		// 51条件一覧を取得
-		public static List<string[]> GetConditions() { return GetCsvDatas(FILE_TYPE.BuyConditions); }
+		public static List<string[]> GetConditions() { 
+			if(true){
+				return Condtions.GetNewConditions();
+			}
+			return GetCsvDatas(FILE_TYPE.BuyConditions);
+		}
 		// 購入可否情報を取得
 		public static List<string[]> GetBuyInfo(string code) { return GetCsvDatas(FILE_TYPE.BuyCode, code); }
 		// 購入可否情報をセーブ

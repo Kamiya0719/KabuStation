@@ -164,7 +164,7 @@ namespace CSharp_sample
 			int proIdx = GetDateIdx(DateTime.Parse(Def.Pro500Day));
 			if (proIdx - 5 < GetDateIdx(date) && proIdx >= GetDateIdx(date)) return 0.5;
 
-			if (proIdx - 10 < GetDateIdx(date) && proIdx - 5 >= GetDateIdx(date)) return 0.5;
+			if (proIdx - 10 < GetDateIdx(date) && proIdx - 5 >= GetDateIdx(date)) return 0;
 			if ((date.Month == 3 && date.Day >= 9) || (date.Month == 12 && date.Day >= 14)) return 0.5;
 
 			return 1;

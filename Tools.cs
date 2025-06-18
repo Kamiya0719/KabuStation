@@ -169,10 +169,16 @@ namespace CSharp_sample
 			List<DateTime> dateList = CsvControll.GetDateList();
 			List<string> codeList = CsvControll.GetCodeList();
 			codeList.Add("101");
+			List<string> skipCode = new List<string>();
 			foreach (string code in codeList) {
 				if (!Common.Pro500(code)) continue;
 				List<string[]> codeInfo = CsvControll.GetCodeInfo(code);
 				int codeStart = -1;
+				if (codeInfo.Count == 0) {
+					CsvControll.ErrorLog("DataChecker0", code, "", "");
+					skipCode.Add(code);
+					continue;
+				}
 				string firstDate = codeInfo[0][0];
 				double beforePrice = 0;
 				for (int i = 0; i < dateList.Count; i++) {
@@ -184,18 +190,19 @@ namespace CSharp_sample
 					if (date.ToString(CsvControll.DFORM) != info[0]) {
 						// エラー1 代表の1301の日付一覧と異なる
 						CsvControll.ErrorLog("DataChecker1", code, date.ToString(CsvControll.DFORM), info[0]);
-						if (code != "101") break;
+						if (code != "101") {skipCode.Add(code);							break; }
 					}
 					for (int j = 1; j <= 4; j++) {
 						if (Double.Parse(info[j]) <= 5) {
 							// エラー2 いくらなんでも5円以下は存在しないはず
 							CsvControll.ErrorLog("DataChecker2", code, i.ToString(), info[j]);
-							//return;
+							return;
 						}
 					}
 					if (beforePrice > 0 && (beforePrice >= Double.Parse(info[4]) * 1.6 || beforePrice * 1.6 <= Double.Parse(info[4]))) {
 						// エラー3 1.3倍はありえるんか？ => skipCodeにしてしまう
 						CsvControll.ErrorLog("DataChecker3", code, info[0], info[4]);
+						skipCode.Add(code);
 						break;
 					}
 					beforePrice = Double.Parse(info[4]);
@@ -203,10 +210,12 @@ namespace CSharp_sample
 				if (codeStart == -1 || codeStart >= 1000) {
 					// エラー4 データがなさすぎる
 					CsvControll.ErrorLog("DataChecker4", code, codeStart.ToString(), codeStart.ToString());
+					skipCode.Add(code);
 				}
 			}
-
-			CsvControll.Log("DataCheckerEnd", codeList.Count.ToString(), dateList.Count.ToString(), "");
+			string res = "";
+			foreach(string code in skipCode){ res += code + ","; }
+			CsvControll.Log("DataCheckerEnd", codeList.Count.ToString(), dateList.Count.ToString(), res);
 		}
 
 		// 過去用の日経平均スコアを雑に作成
@@ -463,11 +472,11 @@ namespace CSharp_sample
 		public static void BuyCheck()
 		{
 			for (int i = 0; i < 10; i++) {
-				DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Parse("2025/05/22")) - i);
+				DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Parse("2025/06/19")) - i);
 				List<string[]> conditions = CsvControll.GetConditions();
 				foreach (string symbol in CsvControll.GetCodeList()) {
 					if (Common.Pro500(symbol) && Condtions.IsCondOk(setDate, CsvControll.GetCodeInfo(symbol), conditions)) {
-						Common.DebugInfo("BuyCheck", setDate.ToString(CsvControll.DFORM), symbol);
+							Common.DebugInfo("BuyCheck", setDate.ToString(CsvControll.DFORM), symbol);
 					}
 				}
 			}
