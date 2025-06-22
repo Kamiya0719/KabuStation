@@ -224,17 +224,55 @@ namespace CSharp_sample
 			}
 			return res;
 		}
+
+		private static Dictionary<string, ResponseBoard> boards = null;
 		/** 板情報取得 */
-		public static ResponseBoard RequestBoard(int symbol, int exchange)
+		public static ResponseBoard RequestBoard(int symbol, int exchange, bool isLocal = false)
 		{
+			if (isLocal) {
+				if (boards == null) {
+					DateTime now = DateTime.Now;
+					boards = new Dictionary<string, ResponseBoard>();
+					List<string[]> infos = CsvControll.GetBoard();
+					if (infos.Count == 0) {
+						CsvControll.SaveBoard(new List<string[]>() { new string[1] { now.ToString() } });
+					} else {
+						for (int i = 0; i < infos.Count; i++) {
+							string[] info = infos[i];
+							if (i == 0) {
+								DateTime date = DateTime.Parse(info[0]);
+								// 時間が今日ならスルー、そうでないならリセット
+								if (Common.SameD(date, now)) {
+
+								} else {
+									CsvControll.SaveBoard(new List<string[]>() { new string[1] { now.ToString() } });
+									break;
+								}
+							} else {
+								ResponseBoard b = JsonConvert.DeserializeObject<ResponseBoard>(String.Join(",", info), GetJSSetting());
+								boards[b.Symbol] = b;
+							}
+						}
+					}
+				}
+				if (boards.ContainsKey(symbol.ToString())) return boards[symbol.ToString()];
+			}
+
 			ResponseBoard res = null;
 			for (int i = 0; i < RepeatNum; i++) {
+
 				RequestParam param = new RequestParam(REQUEST_TYPE.BOARD);
 				param.SetSymbol(symbol, exchange);
 				string raw = Request(param);
+
 				res = JsonConvert.DeserializeObject<ResponseBoard>(raw, GetJSSetting());
-				if (res != null && res.Symbol != "" && res.CurrentPrice > 0) {
+				if (res != null && res.Symbol != "") {
+					if (isLocal && res.CurrentPrice <= 0) return null;
 					SetRegister(res.Symbol);
+					if (isLocal) {
+						boards[symbol.ToString()] = res;
+						CsvControll.SaveBoard(new List<string[]>() { new string[1] { raw } }, true);
+					}
 					return res;
 				}
 				Failed(raw, i);

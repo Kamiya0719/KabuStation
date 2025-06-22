@@ -167,7 +167,10 @@ namespace CSharp_sample
 			foreach (KeyValuePair<int, double> pair in (Common.IsHalfSellDate(now, FisDate()) ? Def.idealSellRatioHalf : Def.idealSellRatio)) {
 				if (havePeriod <= pair.Key) { sellPrice = minBuyPrice * pair.Value; sellPeriod = pair.Key - havePeriod; }
 			}
-			if (type == Def.TypeSp) sellPrice = minBuyPrice + 1;
+			if (IsSp()) sellPrice = minBuyPrice + 1;
+			// 期間が過ぎてプロ500じゃなくなったら雑に売る
+			if (type == Def.TypePro && !Common.Pro500(Symbol)) sellPrice = minBuyPrice;
+
 			// 理想売のベーススコア保存 
 			idealSellPrice = YobinePrice(sellPrice);
 
@@ -375,11 +378,6 @@ namespace CSharp_sample
 			if (res == 0) return 0;
 			// 一応チェック
 			(int leaveQty, int havePeriod, int minBuyPrice, double minBenefit) = GetPosInfo();
-			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 0.8) {
-				// todo 仮
-				CsvControll.ErrorLog("BuyOrderNeed仮_" + Symbol, num.ToString(), ((num + leaveQty) * lastEndPrice).ToString(), buyBasePrice.ToString());
-				//return 0;
-			}
 			if ((num + leaveQty) * lastEndPrice > buyBasePrice * 1.2) {
 				CsvControll.ErrorLog("BuyOrderNeed2", Symbol, leaveQty.ToString(), num.ToString());
 				return 0;
@@ -429,6 +427,7 @@ namespace CSharp_sample
 		public DateTime FisDate() { return Common.DateParse(fisDate); }
 		public bool IsSp() { return type == Def.TypeSp; }
 		public int ExpireDay() { return expireDay; }
+		public int IdealSellPrice(){ return idealSellPrice;}
 		public HashSet<CodeResOrder> BuyValidOrders()
 		{
 			HashSet<CodeResOrder> res = new HashSet<CodeResOrder>();
@@ -447,7 +446,7 @@ namespace CSharp_sample
 		}
 
 		// 所持建玉・所持日数・購入金額を取得
-		private (int, int, int, double) GetPosInfo()
+		public (int, int, int, double) GetPosInfo()
 		{
 			int leaveQty = 0; // 合計値
 			int havePeriod = 0; // 一番長い値

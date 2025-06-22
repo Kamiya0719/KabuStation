@@ -29,6 +29,7 @@ namespace CSharp_sample
 			RankingInfo, // 詳細ランキングに関する情報
 			SpInfo, // Sp系情報
 			DayMemo, // 毎日のチェック用メモ
+			Board, // リクエストしたBoard情報を一時保存
 
 			/* デバッグ用？過去データ */
 			CodeResOrderOld, // 注文一覧情報 過去分
@@ -70,8 +71,9 @@ namespace CSharp_sample
 			{FILE_TYPE.CodeResOrder, @"EveryDay\CodeResOrder" }, // 注文一覧情報		
 			{FILE_TYPE.JapanCond, @"EveryDay\JapanCond\" }, // 日経平均の2000日付分の全51条件に対するそれぞれのTF情報
 			{FILE_TYPE.RankingInfo, @"EveryDay\RankingInfo" }, // 詳細ランキング情報
-			{FILE_TYPE.SpInfo, @"EveryDay\SpInfo" }, // Sp系情報			
+			{FILE_TYPE.SpInfo, @"EveryDay\SpInfo" }, // Sp系情報
 			{FILE_TYPE.DayMemo, @"EveryDay\DayMemo" }, // 毎日のチェック用メモ
+			{FILE_TYPE.Board, @"EveryDay\Board" }, // リクエストしたBoard情報を一時保存			
 			/* デバッグ用？過去データ */
 			{FILE_TYPE.CodeResOrderOld, @"Old\CodeResOrderOld\" }, // 注文一覧情報 過去分
 			{FILE_TYPE.CodeDailyOld, @"Old\CodeDailyOld\" }, // 銘柄各種情報 過去分
@@ -109,7 +111,6 @@ namespace CSharp_sample
 			9766,7803,1717,3498,3612,9305,
 			1417,5038,5132,5253,5356,5592,5831,5834,5838,9023, // データが少ないが消さなくてもいいような気も
 		};
-		private static readonly int[] dangerCodes = new int[] { };
 		public static List<string> GetCodeList()
 		{
 			char[] delimiterChars = { '\\', '.' };
@@ -256,6 +257,16 @@ namespace CSharp_sample
 		}
 		// 毎日のチェック用メモ
 		public static List<string[]> GetDayMemo() { return GetCsvDatas(FILE_TYPE.DayMemo); }
+		// リクエストしたBoard情報を一時保存
+		public static void SaveBoard(List<string[]> datas, bool isAddWrite = false)
+		{
+			SaveCsvDatas(FILE_TYPE.Board, "", datas, isAddWrite);
+		}
+		// リクエストしたBoard情報を一時保存
+		public static List<string[]> GetBoard() { return GetCsvDatas(FILE_TYPE.Board); }
+
+		
+
 		// デバッグ情報
 		public static void SaveDebugInfo(List<string[]> datas, bool isAddWrite = false)
 		{

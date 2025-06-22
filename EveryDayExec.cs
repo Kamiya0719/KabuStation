@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace CSharp_sample
@@ -117,7 +118,7 @@ namespace CSharp_sample
 				double lastLastEndPrice = Double.Parse(codeInfo[codeInfo.Count - 2][4]);
 				if (!Common.SameD(DateTime.Parse(codeInfo[codeInfo.Count - 1][0]), dDate)) {
 					// 板情報の取得リクエスト とりあえずexchangeは1
-					ResponseBoard resB = RequestBasic.RequestBoard(Int32.Parse(symbol), 1);
+					ResponseBoard resB = RequestBasic.RequestBoard(Int32.Parse(symbol), 1, true);
 					if (resB.CurrentPrice > 0) {
 						// data[0]が日付,data[1-4]がデータ
 						string[] data = new string[5] {
@@ -218,7 +219,8 @@ namespace CSharp_sample
 			List<string[]> buyData = new List<string[]>(); List<string[]> haveData = new List<string[]>();
 			double buySum = 0; double haveSum = 0;
 			int buyBasePrice = Int32.Parse(CsvControll.GetBuyBasePriceInfo()[0]);
-			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys()) {
+			foreach (KeyValuePair<string, CodeDaily> pair in MinitesExec.GetCodeDailys().OrderBy(c => c.Value.IsSp() ? c.Key : c.Key + 10000)) {
+				(int leaveQty, int havePeriod, int minBuyPrice, double minBenefit) = pair.Value.GetPosInfo();
 				double lastEndPrice = pair.Value.LastEndPrice();
 				if (pair.Value.IsBuy()) {
 					double tommorowBuy = pair.Value.TommorowBuy();
@@ -236,7 +238,8 @@ namespace CSharp_sample
 						"損切:"+pair.Value.IsLossSell().ToString(),
 						"評価額:"+(pair.Value.StartHave()*lastEndPrice).ToString(),
 						"所持数:"+pair.Value.StartHave().ToString(),
-						"理想売値:"+pair.Value.SellPrice().ToString(), // 理想売り値段
+						"最小購入値:"+minBuyPrice.ToString(),
+						"理想売値:"+pair.Value.IdealSellPrice().ToString(), // 理想売り値段
 						"前日終値:" + lastEndPrice.ToString(),
 						"SP系:" + pair.Value.IsSp().ToString(),
 					});
@@ -258,7 +261,7 @@ namespace CSharp_sample
 
 			buySum = 0; haveSum = 0;
 			List<string[]> buyOrder = new List<string[]>(); List<string[]> sellOrder = new List<string[]>();
-			foreach (KeyValuePair<string, CodeResOrder> pair in MinitesExec.GetCodeResOrders()) {
+			foreach (KeyValuePair<string, CodeResOrder> pair in MinitesExec.GetCodeResOrders().OrderBy(c => Common.Sp10(c.Value.Symbol) ? c.Value.Symbol : c.Value.Symbol + 10000)) {
 				if (pair.Value.CumQty <= 0) continue;
 				DateTime date = pair.Value.GetRecvTime();
 				bool isSameD = Common.SameD(lastDate, date);
@@ -270,6 +273,7 @@ namespace CSharp_sample
 						"コード:"+pair.Value.Symbol,
 						"数量:"+pair.Value.CumQty.ToString()+"/"+pair.Value.OrderQty.ToString(),
 						"値段:"+pair.Value.Price.ToString(),
+						"評価額:"+pair.Value.CumQty * pair.Value.Price + "/" + pair.Value.OrderQty * pair.Value.Price,
 						"SP系:" + (Common.Sp10(pair.Value.Symbol) ? "True" : "False"),
 					});
 					haveSum += (pair.Value.CumQty - oldCumQty) * pair.Value.Price;
@@ -279,6 +283,7 @@ namespace CSharp_sample
 						"コード:"+pair.Value.Symbol,
 						"数量:"+pair.Value.CumQty.ToString()+"/"+pair.Value.OrderQty.ToString(),
 						"値段:"+pair.Value.Price.ToString(),
+						"評価額:"+pair.Value.CumQty * pair.Value.Price + "/" + pair.Value.OrderQty * pair.Value.Price,
 						"SP系:" + (Common.Sp10(pair.Value.Symbol) ? "True" : "False"),
 					});
 					buySum += (pair.Value.CumQty - oldCumQty) * pair.Value.Price;

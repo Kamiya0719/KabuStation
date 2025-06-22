@@ -66,7 +66,9 @@ namespace CSharp_sample
 
 				if (!codeDaily.IsBoardCheck()) continue;
 
-				codeDaily.SetBoard(RequestBasic.RequestBoard(Int32.Parse(symbol), codeDaily.Exchange));
+				ResponseBoard board = RequestBasic.RequestBoard(Int32.Parse(symbol), codeDaily.Exchange);
+				if(board == null) continue;
+				codeDaily.SetBoard(board);
 
 				codeDaily.SetInfo();
 

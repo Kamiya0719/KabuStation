@@ -282,7 +282,7 @@ namespace CSharp_sample
 				saveDatas.Add(codeDaily.GetSaveInfo());
 
 				// 各種値段
-				ResponseBoard resB = RequestBasic.RequestBoard(Int32.Parse(symbol), 1);
+				ResponseBoard resB = RequestBasic.RequestBoard(Int32.Parse(symbol), 1, true);
 				saveDatas.Add(new string[7] { "StartPrice", "HighPrice", "LowPrice", "EndPrice", "LastEndPrice", "BeforeLoss", "Volume" });
 				saveDatas.Add(new string[7] {
 					lastData[1],lastData[2],lastData[3],lastData[4],lastLastEndPrice,
@@ -935,11 +935,32 @@ namespace CSharp_sample
 		}
 
 
+		/** テスト */
+		public static void CodeDailyTest()
+		{
+
+			// todo ダミーの何かを用意？
+
+			// 事前に調べる？所持状態やら注文状態やら？
+
+			// 
+			EveryDayExec.ExecBasic();
+
+			MinitesExec.ExecBasic();
+
+			// 終わったら調べる？所持状態やら注文状態やら？
+
+		}
+
+
 		// 関数とかを簡易テストしとこ
 		public static void TestExec()
 		{
-
-			CsvControll.SymbolLog("1111", "Test", "AAA");
+			//foreach (string symbol in new string[]{ "1435", "1663" }){
+			foreach (string symbol in new string[] { "1435", "1663", "1719", "1719", "1719", "1663", "1719" }) {
+				var res = RequestBasic.RequestBoard(Int32.Parse(symbol), 1, true);
+				Common.DebugInfo(symbol, res.Buy1.ToString(), res.CurrentPrice.ToString());
+			}
 
 		}
 
