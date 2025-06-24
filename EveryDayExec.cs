@@ -252,6 +252,11 @@ namespace CSharp_sample
 			data.Add(new string[1] { "-----HaveData(現在所持総額:" + haveSum.ToString() + ")-----" });
 			foreach (string[] d in haveData) data.Add(d);
 
+			Dictionary<string, CodeDaily> codeDailyOlds = new Dictionary<string, CodeDaily>();
+			foreach (string[] info in CsvControll.GetCodeDailyOld(lastDate)) {
+				CodeDaily codeDaily = new CodeDaily(info);
+				if(!codeDailyOlds.ContainsKey(codeDaily.Symbol)) codeDailyOlds[codeDaily.Symbol] = codeDaily;
+			}
 
 			Dictionary<string, double> oldCumQtys = new Dictionary<string, double>();
 			foreach (string[] info in CsvControll.GetCodeResOrderOld(lastLastDate)) {
@@ -268,12 +273,15 @@ namespace CSharp_sample
 				bool isSell = pair.Value.IsSell();
 				double oldCumQty = oldCumQtys.ContainsKey(pair.Key) ? oldCumQtys[pair.Key] : 0;
 				if (isSell && pair.Value.CumQty > oldCumQty) {
+					bool isLossSell = false;
+					if (codeDailyOlds.ContainsKey(pair.Value.Symbol)) isLossSell = codeDailyOlds[pair.Value.Symbol].IsLossSell();
 					// 昨日の約定数データと比較して今日分に絞る
 					sellOrder.Add(new string[] {
 						"コード:"+pair.Value.Symbol,
 						"数量:"+pair.Value.CumQty.ToString()+"/"+pair.Value.OrderQty.ToString(),
 						"値段:"+pair.Value.Price.ToString(),
 						"評価額:"+pair.Value.CumQty * pair.Value.Price + "/" + pair.Value.OrderQty * pair.Value.Price,
+						"損切:"+isLossSell,
 						"SP系:" + (Common.Sp10(pair.Value.Symbol) ? "True" : "False"),
 					});
 					haveSum += (pair.Value.CumQty - oldCumQty) * pair.Value.Price;
