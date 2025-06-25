@@ -408,9 +408,9 @@ namespace CSharp_sample
 				if (spPrice < 10) return Math.Min((int)lastEndPrice + 3, idealSellPrice - 1);
 
 				// 前日設定値+4<=買値 なら 前日設定値+4
-				if (spPrice + 4 <= idealSellPrice) return spPrice + 3;
+				if (spPrice + 3 <= idealSellPrice) return spPrice + 2;
 				// そうでない(前日設定値+1<=買値+2 or 前日設定値+2>=買値+1)なら高い方-1
-				return Math.Max(spPrice, idealSellPrice) - 1;
+				return Math.Max(spPrice, idealSellPrice);
 			}
 			if (idealSellPrice > 0) return idealSellPrice;
 			if (buyPrice > 0) return YobinePrice(buyPrice * 1.04); // 当日理想売り
