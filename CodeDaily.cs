@@ -407,7 +407,7 @@ namespace CSharp_sample
 				// 前日設定値の設定がない(結構前に買ってsp対象外となった)ならさっさと売りたい 前日終値+3と買い値で低い方
 				if (spPrice < 10) return Math.Min((int)lastEndPrice + 3, idealSellPrice - 1);
 
-				// 前日設定値+4<=買値 なら 前日設定値+4
+				// 前日設定値+4<=買値 なら 前日設定値+3
 				if (spPrice + 3 <= idealSellPrice) return spPrice + 2;
 				// そうでない(前日設定値+1<=買値+2 or 前日設定値+2>=買値+1)なら高い方-1
 				return Math.Max(spPrice, idealSellPrice);
