@@ -112,13 +112,14 @@ namespace CSharp_sample
 			// 買って
 			List<string[]> saveData = new List<string[]>();
 			List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
-			for (int i = 0; i < codeInfo.Count - 10; i++) {
+			int num = 20;
+			for (int i = 0; i < codeInfo.Count - num; i++) {
 				DateTime date = DateTime.Parse(codeInfo[i][0]);
 				double buyPrice = Double.Parse(codeInfo[i][4]); // 終値で売却
 
-				double sellPrice = Double.Parse(codeInfo[i + 10][4]);
+				double sellPrice = Double.Parse(codeInfo[i + num][4]);
 				int sellPeriod = 0;
-				for (int havePeriod = 1; havePeriod <= 10; havePeriod++) {
+				for (int havePeriod = 1; havePeriod <= num; havePeriod++) {
 					sellPeriod = havePeriod;
 					double sellRatio = 0.95;
 					// 理想売り
@@ -129,7 +130,7 @@ namespace CSharp_sample
 					// 前日終値より3％および当日高値が7％以上増えてたら損切 でも前日より13％増しは流石にいったんステイ
 					if (havePeriod >= 2
 						&& Double.Parse(codeInfo[i + havePeriod - 1][4]) >= buyPrice * 1.03
-						&& Double.Parse(codeInfo[i + havePeriod][2]) >= buyPrice * 1.07
+						&& Double.Parse(codeInfo[i + havePeriod][4]) >= buyPrice * 1.08
 						&& Double.Parse(codeInfo[i + havePeriod][4]) < Double.Parse(codeInfo[i + havePeriod - 1][4]) * 1.13
 					) {
 						sellPrice = Double.Parse(codeInfo[i + havePeriod][4]);
@@ -256,91 +257,39 @@ Cond:2998, Score:5110.515, sT:53602, sP:3.0963, sB:0.7865, nT:165046, nP:3.6603,
 
 		private static readonly int[] KaraConfirmAnds = new int[] {
 			//AllTrueCondIdx
+			//7181,1587,8297,2723,53,1619,937,7437,2739,993,739,5405,953,6809,7800,3611,3001,1635,7229,747,
 		};
 		private static readonly int[] KaraConfirmOrs = new int[] {
 			// AndCond:1, OrCond:-1, Cond:1830, Score:0.00290070921985816, sT:864, sP:2.934, sB:-4.1574, nT:1551, nP:2.6983, nB:-4.499
-			7180,1586,8296,2722,52,1618,
+			7180,1586,8296,2722,52,1618,936,7436,2738,992,738,5404,952,6808,7801,3610,//3000,1634,//7228,746,
+			7004,
 		};
 		private static readonly int[] KouhoAnds = new int[] {
 			//AllTrueCondIdx
 		};
 		private static readonly int[] KouhoOrs = new int[] {
-			//AllTrueCondIdx-1
-
-936, //Score:247.774307564693, sT:40706, sP:4.2573, sB:-1.3545, sR:0.4166, nT:165434, nP:4.6484, nB:-1.8122, nR:0.459
-1144, //Score:245.992768866444, sT:39637, sP:4.2339, sB:-1.3904, sR:0.4184, nT:161322, nP:4.6294, nB:-1.8214, nR:0.4591
-2998, //Score:245.729320799029, sT:39310, sP:4.2347, sB:-1.4069, sR:0.4196, nT:157907, nP:4.6301, nB:-1.8351, nR:0.4598
-14, //Score:245.720452384167, sT:43037, sP:4.2816, sB:-1.3397, sR:0.4154, nT:174832, nP:4.6584, nB:-1.7665, nR:0.4556
-920, //Score:245.622558501813, sT:38552, sP:4.2372, sB:-1.43, sR:0.421, nT:156067, nP:4.6391, nB:-1.8434, nR:0.4601
-238, //Score:245.61435282003, sT:41322, sP:4.2632, sB:-1.3529, sR:0.4156, nT:168509, nP:4.6551, nB:-1.7914, nR:0.4569
-7212, //Score:245.568310083239, sT:44124, sP:4.3423, sB:-1.3491, sR:0.4147, nT:187106, nP:4.8106, nB:-1.7304, nR:0.4511
-462, //Score:245.296041228096, sT:42452, sP:4.2696, sB:-1.3469, sR:0.4152, nT:174748, nP:4.6634, nB:-1.7655, nR:0.4553
-7196, //Score:244.530368024998, sT:39967, sP:4.2501, sB:-1.4201, sR:0.4192, nT:163799, nP:4.6649, nB:-1.8084, nR:0.457
-1604, //Score:244.514394387087, sT:38770, sP:4.2229, sB:-1.4363, sR:0.4209, nT:158230, nP:4.6381, nB:-1.8275, nR:0.4592
-/*
-
-LowScoreRankAll , T0:-1 , T1:
-AndCond:-1, OrCond:2998, Cond:1618, Score:245.729320799029, sT:39310, sP:4.2347, sB:-1.4069, sR:0.4196, nT:157907, nP:4.6301, nB:-1.8351, nR:0.4598
-AndCond:-1, OrCond:920, Cond:1618, Score:245.622558501813, sT:38552, sP:4.2372, sB:-1.43, sR:0.421, nT:156067, nP:4.6391, nB:-1.8434, nR:0.4601
-AndCond:-1, OrCond:3220, Cond:1618, Score:243.821885863197, sT:38355, sP:4.2289, sB:-1.4335, sR:0.4206, nT:155130, nP:4.6299, nB:-1.8382, nR:0.4596
-AndCond:-1, OrCond:1186, Cond:1618, Score:242.707235827245, sT:37983, sP:4.2375, sB:-1.4309, sR:0.4204, nT:153899, nP:4.6405, nB:-1.8371, nR:0.4596
-AndCond:-1, OrCond:2998, Cond:2738, Score:242.700756357553, sT:41664, sP:4.2673, sB:-1.277, sR:0.4079, nT:175161, nP:4.7709, nB:-1.7496, nR:0.4544
-AndCond:-1, OrCond:920, Cond:2738, Score:242.562612824762, sT:40888, sP:4.2695, sB:-1.2925, sR:0.4088, nT:173289, nP:4.7805, nB:-1.7564, nR:0.4547
-AndCond:-1, OrCond:2998, Cond:1604, Score:241.761815027954, sT:38009, sP:4.1752, sB:-1.4728, sR:0.4243, nT:148215, nP:4.5442, nB:-1.863, nR:0.4599
-AndCond:-1, OrCond:920, Cond:722, Score:241.713565535628, sT:37311, sP:4.1762, sB:-1.4278, sR:0.4208, nT:145201, nP:4.5505, nB:-1.879, nR:0.4604
-AndCond:-1, OrCond:920, Cond:1604, Score:241.563498051707, sT:37223, sP:4.1766, sB:-1.5034, sR:0.4263, nT:146290, nP:4.5526, nB:-1.8714, nR:0.4603
-AndCond:-1, OrCond:2998, Cond:722, Score:241.537475460002, sT:38051, sP:4.1784, sB:-1.4116, sR:0.4197, nT:146976, nP:4.5421, nB:-1.8691, nR:0.4599
-AndCond:-1, OrCond:920, Cond:7212, Score:241.430731278149, sT:42131, sP:4.2821, sB:-1.3929, sR:0.4182, nT:171097, nP:4.7431, nB:-1.7774, nR:0.4514
-AndCond:-1, OrCond:2998, Cond:7212, Score:241.351489997105, sT:42860, sP:4.2833, sB:-1.3808, sR:0.4173, nT:172934, nP:4.7337, nB:-1.769, nR:0.4511
-AndCond:-1, OrCond:3220, Cond:2738, Score:241.320495255158, sT:40742, sP:4.2638, sB:-1.2948, sR:0.4084, nT:172582, nP:4.7732, nB:-1.7526, nR:0.4544
-AndCond:-1, OrCond:920, Cond:7434, Score:240.974252025683, sT:37042, sP:4.1631, sB:-1.4663, sR:0.4234, nT:143017, nP:4.539, nB:-1.8898, nR:0.46
-AndCond:-1, OrCond:920, Cond:7196, Score:240.954500349501, sT:37948, sP:4.18, sB:-1.4726, sR:0.4233, nT:147625, nP:4.572, nB:-1.8713, nR:0.458
-AndCond:-1, OrCond:2998, Cond:238, Score:240.930224779467, sT:39920, sP:4.1991, sB:-1.387, sR:0.4181, nT:153910, nP:4.5587, nB:-1.837, nR:0.4572
-AndCond:-1, OrCond:2998, Cond:936, Score:240.844910711972, sT:38897, sP:4.1931, sB:-1.3842, sR:0.419, nT:149728, nP:4.5565, nB:-1.8533, nR:0.4587
-AndCond:-1, OrCond:920, Cond:2998, Score:240.83380561533, sT:37092, sP:4.1656, sB:-1.4593, sR:0.4233, nT:141192, nP:4.5333, nB:-1.8974, nR:0.4606
-AndCond:-1, OrCond:2998, Cond:920, Score:240.83380561533, sT:37092, sP:4.1656, sB:-1.4593, sR:0.4233, nT:141192, nP:4.5333, nB:-1.8974, nR:0.4606
-AndCond:-1, OrCond:2998, Cond:6332, Score:240.819575249166, sT:38453, sP:4.2136, sB:-1.4352, sR:0.421, nT:146945, nP:4.5687, nB:-1.87, nR:0.4588
-AndCond:-1, OrCond:920, Cond:6332, Score:240.806956218529, sT:37701, sP:4.2125, sB:-1.4505, sR:0.4222, nT:145109, nP:4.5781, nB:-1.8794, nR:0.4592
-AndCond:-1, OrCond:2998, Cond:7196, Score:240.745268328032, sT:38700, sP:4.1825, sB:-1.4544, sR:0.422, nT:149477, nP:4.563, nB:-1.8609, nR:0.4575
-AndCond:-1, OrCond:920, Cond:238, Score:240.722257916452, sT:39243, sP:4.1963, sB:-1.406, sR:0.4194, nT:152277, nP:4.564, nB:-1.8441, nR:0.4574
-AndCond:-1, OrCond:2998, Cond:528, Score:240.682145569649, sT:39422, sP:4.1775, sB:-1.4756, sR:0.4251, nT:146357, nP:4.5028, nB:-1.8704, nR:0.4592
-AndCond:-1, OrCond:2998, Cond:7434, Score:240.680308203707, sT:37768, sP:4.1663, sB:-1.4455, sR:0.422, nT:144784, nP:4.5307, nB:-1.8788, nR:0.4595
-AndCond:-1, OrCond:3220, Cond:1604, Score:240.64766860685, sT:37093, sP:4.1657, sB:-1.5093, sR:0.4261, nT:145557, nP:4.5411, nB:-1.8707, nR:0.46
-AndCond:-1, OrCond:1186, Cond:936, Score:240.620050546031, sT:38318, sP:4.186, sB:-1.4013, sR:0.4201, nT:147869, nP:4.5524, nB:-1.8609, nR:0.4591
-AndCond:-1, OrCond:920, Cond:528, Score:240.614764260922, sT:38686, sP:4.175, sB:-1.4908, sR:0.4261, nT:144582, nP:4.5106, nB:-1.8796, nR:0.4595
-AndCond:-1, OrCond:920, Cond:936, Score:240.498147133865, sT:38270, sP:4.1882, sB:-1.3993, sR:0.4198, nT:147624, nP:4.5537, nB:-1.8615, nR:0.4591
-AndCond:-1, OrCond:920, Cond:3372, Score:240.431842713373, sT:36284, sP:4.1647, sB:-1.4855, sR:0.4245, nT:139197, nP:4.5379, nB:-1.9066, nR:0.4608
-AndCond:-1, OrCond:920, Cond:3596, Score:240.413751241168, sT:36459, sP:4.1673, sB:-1.4807, sR:0.4242, nT:140238, nP:4.5378, nB:-1.9011, nR:0.4605
-AndCond:-1, OrCond:920, Cond:7210, Score:240.384987954704, sT:36375, sP:4.1615, sB:-1.4812, sR:0.4244, nT:139611, nP:4.5344, nB:-1.9034, nR:0.4608
-AndCond:-1, OrCond:920, Cond:6316, Score:240.314204293253, sT:36320, sP:4.1725, sB:-1.4811, sR:0.4242, nT:139090, nP:4.542, nB:-1.9064, nR:0.4608
-AndCond:-1, OrCond:2998, Cond:6988, Score:240.260460698269, sT:40007, sP:4.2238, sB:-1.4267, sR:0.4208, nT:156495, nP:4.6278, nB:-1.8262, nR:0.4555
-AndCond:-1, OrCond:920, Cond:7016, Score:240.221270954513, sT:36599, sP:4.1665, sB:-1.4748, sR:0.4239, nT:140713, nP:4.5391, nB:-1.8981, nR:0.4602
-AndCond:-1, OrCond:1186, Cond:1604, Score:240.203566960666, sT:36750, sP:4.1719, sB:-1.5151, sR:0.4264, nT:144365, nP:4.5503, nB:-1.8738, nR:0.4602
-AndCond:-1, OrCond:920, Cond:5388, Score:240.19710015386, sT:36724, sP:4.1599, sB:-1.481, sR:0.4243, nT:141362, nP:4.5371, nB:-1.8947, nR:0.46
-AndCond:-1, OrCond:920, Cond:6988, Score:240.172162350844, sT:39260, sP:4.2226, sB:-1.4416, sR:0.4219, nT:154649, nP:4.6375, nB:-1.8347, nR:0.4558
-AndCond:-1, OrCond:2998, Cond:6316, Score:240.162716587256, sT:37073, sP:4.1748, sB:-1.4636, sR:0.423, nT:140915, nP:4.5328, nB:-1.8957, nR:0.4603
-AndCond:-1, OrCond:1186, Cond:2738, Score:240.141541773703, sT:40379, sP:4.2716, sB:-1.2897, sR:0.408, nT:171357, nP:4.7835, nB:-1.7508, nR:0.4543
-AndCond:-1, OrCond:920, Cond:6778, Score:240.136061820884, sT:36338, sP:4.1648, sB:-1.4819, sR:0.4244, nT:139436, nP:4.5381, nB:-1.9032, nR:0.4607
-AndCond:-1, OrCond:2998, Cond:7210, Score:240.134032973733, sT:37108, sP:4.1647, sB:-1.4625, sR:0.4231, nT:141403, nP:4.5255, nB:-1.8922, nR:0.4603
-
-
-
- */
+			//AllTrueCondIdx-1,
+			1864, //Score:13716.3411967708, sT:80331, sP:7.7371, sB:-0.8711, sR:0.317, nT:399249, nP:8.1194, nB:-1.5449, nR:0.3655
+968, //Score:13713.3621388777, sT:85953, sP:7.8232, sB:-0.7979, sR:0.3124, nT:437842, nP:8.2865, nB:-1.4723, nR:0.3604
+1822, //Score:13676.5216582757, sT:75963, sP:7.7136, sB:-0.9426, sR:0.321, nT:368874, nP:7.9456, nB:-1.6032, nR:0.3701
+8118, //Score:13670.6231872087, sT:75859, sP:7.6946, sB:-0.947, sR:0.3211, nT:368089, nP:7.9183, nB:-1.6045, nR:0.3702
+3000, //Score:13667.4935497439, sT:83411, sP:7.8516, sB:-0.8356, sR:0.3141, nT:408995, nP:8.1737, nB:-1.5261, nR:0.3636
+926, //Score:13664.5961609949, sT:76770, sP:7.7235, sB:-0.9327, sR:0.3205, nT:374631, nP:7.9661, nB:-1.5882, nR:0.3693
 		};
+
 		private const int AllCond51Num = 3754886; // 2000日*2500銘柄
 		private const double AllCond51Ratio = -0.000912;
 		public const double PeriodPow = 0.5;
 		public const int NoSkipRatio = 8;
-		private const int LowRatio = -3;
+		private const int LowRatio = -6;
+		private const bool IsKara = true;
 		/** 51条件の全検証 */
 		public static void CheckCond51All()
 		{
-			bool isKara = true;
+			int[] confirmAnds = IsKara ? KaraConfirmAnds : ConfirmAnds;
+			int[] confirmOrs = IsKara ? KaraConfirmOrs : ConfirmOrs;
 
-			int[] confirmAnds = isKara ? KaraConfirmAnds : ConfirmAnds;
-			int[] confirmOrs = isKara ? KaraConfirmOrs : ConfirmOrs;
-
-			CheckCond51AllBase(confirmAnds, confirmOrs, -1, -1, isKara);
+			CheckCond51AllBase(confirmAnds, confirmOrs, -1, -1, IsKara);
 
 			/*
 			if (IsAndCheck) {
@@ -545,7 +494,7 @@ AndCond:-1, OrCond:2998, Cond:7210, Score:240.134032973733, sT:37108, sP:4.1647,
 				Common.DebugInfo("LowScoreRank", kouhoList[i], result, result2);
 			}
 
-			result = ""; result2 = ""; max = 300;
+			result = ""; result2 = ""; max = 30;
 			foreach (CondRes c in condResAll.OrderByDescending(c => c.skipTrue > 50000 ? c.scores[0] : c.scores[0])) {
 				if (max > 0) {
 					result += "\nAndCond:" + c.andCond + ", OrCond:" + c.orCond + ", Cond:" + c.condIdx + ", Score:" + c.scores[0] + ", sT:" + c.skipTrue
@@ -758,10 +707,15 @@ AndCond:-1, OrCond:2998, Cond:7210, Score:240.134032973733, sT:37108, sP:4.1647,
 			int[] confirmAnds = isOldCheck ? OldAnd51List : ConfirmAnds;
 			int[] confirmOrs = isOldCheck ? OldOr51List : ConfirmOrs;
 
-			DebugCheckCond51ScoreBase(confirmAnds, confirmOrs);
+			if (IsKara) {
+				confirmAnds = KaraConfirmAnds;
+				confirmOrs = KaraConfirmOrs;
+			}
+
+			DebugCheckCond51ScoreBase(confirmAnds, confirmOrs, IsKara);
 
 		}
-		private static void DebugCheckCond51ScoreBase(int[] confirmAnds, int[] confirmOrs)
+		private static void DebugCheckCond51ScoreBase(int[] confirmAnds, int[] confirmOrs, bool isKara)
 		{
 			DateTime startDate = DateTime.Parse("2024/06/10");
 			DateTime endDate = DateTime.Parse("2024/09/10");
@@ -794,31 +748,16 @@ AndCond:-1, OrCond:2998, Cond:7210, Score:240.134032973733, sT:37108, sP:4.1647,
 
 			int maxDay = 10;
 
-			int skipBenefit = 0; int skipPeriod = 0; int skipTrue = 0;
-			int noBenefit = 0; int noPeriod = 0; int noTrue = 0;
+			int skipBenefit = 0; int skipPeriod = 0; int skipTrue = 0; int skipRatio = 0;
+			int noBenefit = 0; int noPeriod = 0; int noTrue = 0; int noRatio = 0;
 			int numAll = 0;
 			Dictionary<int, int> benefitNum = new Dictionary<int, int>();
 			foreach (string symbol in codeList) {
 				Dictionary<string, int> benefits = new Dictionary<string, int>();
 				Dictionary<string, int> havePeriods = new Dictionary<string, int>();
-				List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
-				for (int i = 0; i < codeInfo.Count - maxDay; i++) {
-					double buyPrice = Double.Parse(codeInfo[i][4]); // 終値で購入
-					double sellPrice = Double.Parse(codeInfo[i + maxDay][4]);
-					int sellPeriod = maxDay;
-					for (int havePeriod = 1; havePeriod <= maxDay; havePeriod++) {
-						if (sellPrice <= Double.Parse(codeInfo[i + havePeriod][4])) {
-							sellPrice = Double.Parse(codeInfo[i + havePeriod][4]);
-							sellPeriod = havePeriod;
-						}
-					}
-					int benefit = (int)Math.Round((sellPrice / buyPrice - 1) * 100, MidpointRounding.AwayFromZero);
-					if (benefit > 100) {
-						Common.DebugInfo("Error?", symbol, codeInfo[i][0], buyPrice, sellPrice);
-						continue;
-					}
-					benefits[codeInfo[i][0]] = benefit;
-					havePeriods[codeInfo[i][0]] = sellPeriod;
+				foreach (string[] benefitInfo in CsvControll.GetBenefitAll(isKara ? "Kara_" + symbol : symbol)) {
+					benefits[benefitInfo[0]] = Int32.Parse(benefitInfo[1]);
+					havePeriods[benefitInfo[0]] = Int32.Parse(benefitInfo[2]);
 				}
 
 				int nowHaves = 0;
@@ -841,29 +780,40 @@ AndCond:-1, OrCond:2998, Cond:7210, Score:240.134032973733, sT:37108, sP:4.1647,
 					noBenefit += benefits[cond51[0]];
 					noPeriod += havePeriods[cond51[0]];
 					noTrue++;
+					if (LowRatio >= benefits[cond51[0]]) noRatio++;
 
 					if (nowHaves > i) continue;
 					skipBenefit += benefits[cond51[0]];
 					skipPeriod += havePeriods[cond51[0]];
 					skipTrue++;
+					if (LowRatio >= benefits[cond51[0]]) skipRatio++;
+
 					nowHaves = i + havePeriods[cond51[0]] + 1;
 				}
 			}
 
-			double skipB = (double)skipBenefit / skipTrue;
-			double skipP = (double)skipPeriod / skipTrue;
-			double noB = (double)noBenefit / noTrue;
-			double noP = (double)noPeriod / noTrue;
-			double score = Common.Round(Math.Pow(skipTrue, 0.85) * skipB / Math.Pow(skipP, PeriodPow)
-				+ Math.Pow(noTrue, 0.85) * noB / Math.Pow(noP, PeriodPow) / NoSkipRatio, 3);
-
+			
+			CondRes condRes = new CondRes();
+			condRes.noTrue = noTrue;
+			condRes.noBenefit = (double)noBenefit / noTrue;
+			condRes.noPeriod = (double)noPeriod / noTrue;
+			condRes.noRatio = Common.Round((double)noRatio / noTrue, 4);
+			condRes.skipTrue = skipTrue;
+			condRes.skipBenefit = (double)skipBenefit / skipTrue;
+			condRes.skipPeriod = (double)skipPeriod / skipTrue;
+			condRes.skipRatio = Common.Round((double)skipRatio / skipTrue, 4);
+			for (int k = 0; k < 4; k++) { condRes.SetScore(k); }
+			
 			string res = "";
 			foreach (KeyValuePair<int, int> pair in benefitNum) {
 				res += pair.Key + ":" + pair.Value + ", ";
 			}
 			Common.DebugInfo(res);
 			//int idx = andSkip == -1 ? confirmOrs[orSkip] : confirmAnds[andSkip];
-			Common.DebugInfo("DebugCheckCond51", score, skipTrue, Common.Round(skipB, 2), Common.Round(skipP, 2), noTrue, Common.Round(noB, 2), Common.Round(noP, 2));
+			Common.DebugInfo("DebugCheckCond51", condRes.scores[0], condRes.scores[1], condRes.scores[2], condRes.scores[3], skipTrue, 
+				Common.Round(condRes.skipBenefit, 2), Common.Round(condRes.skipPeriod, 2), Common.Round(condRes.skipRatio, 2),
+				noTrue, Common.Round(condRes.noBenefit, 2), Common.Round(condRes.noPeriod, 2), Common.Round(condRes.noRatio, 2)
+			);
 		}
 
 		private static readonly int[] ConfirmAndsTrue = new int[7] {
@@ -1760,9 +1710,18 @@ AndCond:-1, OrCond:2998, Cond:7210, Score:240.134032973733, sT:37108, sP:4.1647,
 				if (noBenefit == 0 || noTrue == 0 || noRatio == 0) {
 					scores[i] = 0; return;
 				}
-				scores[i] = -(noBenefit * Math.Pow(noTrue, 0.5) * Math.Pow(noRatio, 1.4));
+				scores[i] = -(noBenefit * Math.Pow(noTrue, 0.9) * Math.Pow(noRatio, 2.5));
+				//7004, //Score:7193.80390891577, sT:75200, sP:7.715, sB:-0.9481, sR:0.3212, nT:362778, nP:7.9275, nB:-1.6159, nR:0.3708
 				return;
 			}
+			if (i == 1) {
+				if (noBenefit == 0 || noTrue == 0 || noRatio == 0) {
+					scores[i] = 0; return;
+				}
+				scores[i] = -(noBenefit * Math.Pow(noTrue, 1.5) * Math.Pow(noRatio, 3.5));
+				return;
+			}
+
 			double ratio = i == 0 ? 0.8 : i == 1 ? 0.85 : i == 2 ? 0.9 : 0.95;
 			scores[i] = Common.Round(Math.Pow(skipTrue, ratio) * skipBenefit / Math.Pow(skipPeriod, Condtions.PeriodPow)
 			  + Math.Pow(noTrue, ratio) * noBenefit / Math.Pow(noPeriod, Condtions.PeriodPow) / Condtions.NoSkipRatio, 3);

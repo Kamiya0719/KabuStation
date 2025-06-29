@@ -402,15 +402,16 @@ namespace CSharp_sample
 			if (type == Def.TypeSp) {
 				// 時間に応じて+1をなくすか
 				int spPrice = YobinePrice(Common.Sp10BuyPrice(Symbol) + (timeIdx == TimeIdx.T1525 ? 0 : 1));
+				if (spPrice < 10 && idealSellPrice < 10) { CsvControll.ErrorLog("SellPrice", Symbol, "", ""); return 0; }
 				// 理想売が設定されてない(今日購入で前日に所持してない)か同値なら適当に
-				if (idealSellPrice < 10 || spPrice == idealSellPrice) return Math.Max(spPrice, idealSellPrice);
+				if (spPrice >= idealSellPrice) return spPrice;
 				// 前日設定値の設定がない(結構前に買ってsp対象外となった)ならさっさと売りたい 前日終値+3と買い値で低い方
 				if (spPrice < 10) return Math.Min((int)lastEndPrice + 3, idealSellPrice - 1);
 
 				// 前日設定値+4<=買値 なら 前日設定値+3
 				if (spPrice + 3 <= idealSellPrice) return spPrice + 2;
 				// そうでない(前日設定値+1<=買値+2 or 前日設定値+2>=買値+1)なら高い方-1
-				return Math.Max(spPrice, idealSellPrice);
+				return timeIdx == TimeIdx.T1525 ? idealSellPrice - 1 : idealSellPrice;
 			}
 			if (idealSellPrice > 0) return idealSellPrice;
 			if (buyPrice > 0) return YobinePrice(buyPrice * 1.04); // 当日理想売り
@@ -427,7 +428,7 @@ namespace CSharp_sample
 		public DateTime FisDate() { return Common.DateParse(fisDate); }
 		public bool IsSp() { return type == Def.TypeSp; }
 		public int ExpireDay() { return expireDay; }
-		public int IdealSellPrice(){ return idealSellPrice;}
+		public int IdealSellPrice() { return idealSellPrice; }
 		public HashSet<CodeResOrder> BuyValidOrders()
 		{
 			HashSet<CodeResOrder> res = new HashSet<CodeResOrder>();
@@ -445,7 +446,7 @@ namespace CSharp_sample
 			return res;
 		}
 
-		// 所持建玉・所持日数・購入金額を取得
+		// 合計所持建玉数・最長所持日数・最安値購入金額・最小利益を取得
 		public (int, int, int, double) GetPosInfo()
 		{
 			int leaveQty = 0; // 合計値

@@ -250,6 +250,7 @@ namespace CSharp_sample
 			return GetCsvDatas(FILE_TYPE.CodeResOrderOld, date.ToString(DFILEFORM));
 		}
 
+
 		// 毎日のチェック用メモ
 		public static void SaveDayMemo(List<string[]> datas, bool isAddWrite = false)
 		{
@@ -257,6 +258,8 @@ namespace CSharp_sample
 		}
 		// 毎日のチェック用メモ
 		public static List<string[]> GetDayMemo() { return GetCsvDatas(FILE_TYPE.DayMemo); }
+
+
 		// リクエストしたBoard情報を一時保存
 		public static void SaveBoard(List<string[]> datas, bool isAddWrite = false)
 		{
@@ -481,6 +484,9 @@ namespace CSharp_sample
 		private static string GetFilePath(FILE_TYPE type, string addName)
 		{
 			//return Environment.CurrentDirectory + @"\csv\" + FileNames[type] + addName + ".csv";
+			if(type == FILE_TYPE.DayMemo){
+				return @"C:\Users\ojiro\Documents\C#\CSharp\" + FileNames[type] + addName + ".csv";
+			}
 			return FilePath + FileNames[type] + addName + ".csv";
 		}
 
