@@ -72,7 +72,7 @@ namespace CSharp_sample
 			{FILE_TYPE.JapanCond, @"EveryDay\JapanCond\" }, // 日経平均の2000日付分の全51条件に対するそれぞれのTF情報
 			{FILE_TYPE.RankingInfo, @"EveryDay\RankingInfo" }, // 詳細ランキング情報
 			{FILE_TYPE.SpInfo, @"EveryDay\SpInfo" }, // Sp系情報
-			{FILE_TYPE.DayMemo, @"EveryDay\DayMemo" }, // 毎日のチェック用メモ
+			{FILE_TYPE.DayMemo, @"DayMemo" }, // 毎日のチェック用メモ
 			{FILE_TYPE.Board, @"EveryDay\Board" }, // リクエストしたBoard情報を一時保存			
 			/* デバッグ用？過去データ */
 			{FILE_TYPE.CodeResOrderOld, @"Old\CodeResOrderOld\" }, // 注文一覧情報 過去分

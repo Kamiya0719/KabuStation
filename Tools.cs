@@ -329,7 +329,7 @@ namespace CSharp_sample
 		{
 			List<string> codeList = CsvControll.GetCodeList();
 			foreach (string symbol in codeList) {
-				if (8886 >= Int32.Parse(symbol)) continue;
+				//if (8886 >= Int32.Parse(symbol)) continue;
 				ResponseSymbol resS = RequestBasic.RequestSymbol(Int32.Parse(symbol), 1);
 				List<string[]> saveList = new List<string[]>();
 				saveList.Add(new string[]{
