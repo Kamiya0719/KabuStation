@@ -11,6 +11,7 @@ namespace CSharp_sample
 		{
 			/* 外部から取得 */
 			Pro500, // 今季のプロ500銘柄一覧(銘柄コードのみ？)
+			Pro500All, // プロ500全部
 			JapanRaw, // Webで仕入れてきた日経平均データの過去生データ
 			SplitDate, // Webから取得した分割・合併銘柄日時情報
 			OldDataRaw, // Excelで作った2000銘柄の過去生データ(巨大)
@@ -57,6 +58,7 @@ namespace CSharp_sample
 		private static readonly Dictionary<FILE_TYPE, string> FileNames = new Dictionary<FILE_TYPE, string>() {
 			/* 外部から取得 */
 			{FILE_TYPE.Pro500, @"Import\Pro500" }, // 今季のプロ500銘柄一覧(銘柄コードのみ？)
+			{FILE_TYPE.Pro500All, @"Import\Pro500All" }, // プロ500全部
 			{FILE_TYPE.JapanRaw, @"Import\JapanRaw" }, // Webで仕入れてきた日経平均データの過去生データ
 			{FILE_TYPE.SplitDate, @"Import\SplitDate" }, // Webから取得した分割・合併銘柄日時情報
 			{FILE_TYPE.OldDataRaw, @"Import\OldDataRaw" }, // Excelで作った2000銘柄の過去生データ(巨大)
@@ -164,8 +166,9 @@ namespace CSharp_sample
 		// 日経平均過去データを取得
 		public static List<string[]> GetJapanRaw() { return GetCsvDatas(FILE_TYPE.JapanRaw); }
 		// 51条件一覧を取得
-		public static List<string[]> GetConditions() { 
-			if(true){
+		public static List<string[]> GetConditions()
+		{
+			if (true) {
 				return Condtions.GetNewConditions();
 			}
 			return GetCsvDatas(FILE_TYPE.BuyConditions);
@@ -175,7 +178,7 @@ namespace CSharp_sample
 		// 購入可否情報をセーブ
 		public static void SaveBuyInfo(string code, List<string[]> datas) { SaveCsvDatas(FILE_TYPE.BuyCode, code, datas); }
 		// 日経平均の各日付の値を取得
-		public static List<string[]> GetJapanInfo() { return GetCodeInfo("101"); }
+		public static List<string[]> GetJapanInfo() { return GetCodeInfo(Def.JapanSymbol); }
 		// 日経平均 条件に対するTF
 		public static void SaveJapanCond(int condIdx, List<string[]> datas, bool isAddWrite = false)
 		{
@@ -268,7 +271,7 @@ namespace CSharp_sample
 		// リクエストしたBoard情報を一時保存
 		public static List<string[]> GetBoard() { return GetCsvDatas(FILE_TYPE.Board); }
 
-		
+
 
 		// デバッグ情報
 		public static void SaveDebugInfo(List<string[]> datas, bool isAddWrite = false)
@@ -369,6 +372,21 @@ namespace CSharp_sample
 
 		// プロ500を取得 とりあえず1行500列
 		public static List<string[]> GetPro500() { return GetCsvDatas(FILE_TYPE.Pro500); }
+		private static List<string>[] Pro500All = null;
+		public static List<string>[] GetPro500All()
+		{
+			if (Pro500All != null) return Pro500All;
+			var raws = GetCsvDatas(FILE_TYPE.Pro500All);
+			for (int i = 0; i < raws.Count; i++) {
+				string[] info = raws[i];
+				if (i == 0) {
+					Pro500All = new List<string>[info.Length];
+					for (int j = 0; j < info.Length; j++) Pro500All[j] = new List<string>();
+				}
+				for (int j = 0; j < info.Length; j++) Pro500All[j].Add(info[j]);
+			}
+			return Pro500All;
+		}
 
 		// 全銘柄コード一覧を取得
 		public static void SaveAllCodeList(List<string[]> datas) { SaveCsvDatas(FILE_TYPE.AllCodeList, "", datas); }
@@ -484,7 +502,7 @@ namespace CSharp_sample
 		private static string GetFilePath(FILE_TYPE type, string addName)
 		{
 			//return Environment.CurrentDirectory + @"\csv\" + FileNames[type] + addName + ".csv";
-			if(type == FILE_TYPE.DayMemo){
+			if (type == FILE_TYPE.DayMemo) {
 				return @"C:\Users\ojiro\Documents\C#\CSharp\" + FileNames[type] + addName + ".csv";
 			}
 			return FilePath + FileNames[type] + addName + ".csv";

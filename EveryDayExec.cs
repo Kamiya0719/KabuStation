@@ -102,7 +102,7 @@ namespace CSharp_sample
 		private static void SetEveryDay(DateTime setDate)
 		{
 			List<string> codeList = CsvControll.GetCodeList();
-			codeList.Add("101");
+			codeList.Add(Def.JapanSymbol);
 
 			// 被りなし所持銘柄コード一覧
 			List<string> posList = new List<string>();
@@ -110,7 +110,7 @@ namespace CSharp_sample
 
 			DateTime dDate = Common.GetDateByIdx(Common.GetDateIdx(setDate) - 1);
 			foreach (string symbol in codeList) {
-				if (!(Common.Pro500(symbol) || Common.Sp10(symbol) || posList.Contains(symbol) || symbol == "101")) continue;
+				if (!(Common.Pro500(symbol) || Common.Sp10(symbol) || posList.Contains(symbol) || symbol == Def.JapanSymbol)) continue;
 
 				List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
 				// ファイル読み込みを行って、一番下の行のDateTimeが同じ日付だったらスキップ
@@ -138,7 +138,7 @@ namespace CSharp_sample
 				}
 
 				if (Common.Sp10(symbol)) CsvControll.SaveSpInfo(new List<string[]>() { new string[2] { symbol, Tools.IsLowPriceCheck(symbol).ToString() } }, true);
-				if (symbol == "101") continue;
+				if (symbol == Def.JapanSymbol) continue;
 
 				// 購入・売却対象以外はここで終了(101も) プロ500か現在所持中 なら シンボル情報取得でCodeDailyの基本をセット
 				lastLastEndPrices[symbol] = lastLastEndPrice; // 前々日終値

@@ -19,6 +19,7 @@ namespace CSharp_sample
 		public const string Pro500Day = "2025/06/18";
 		// 代表となる銘柄 最新まであることが必須 プロ500にいなければならない
 		public const string CapitalSymbol = "1605";
+		public const string JapanSymbol = "101";
 
 		// トランプモード todo 理想売りはhalfにするかな 損切はオーバーアップ時のみ(全売) 購入はオーバーダウン時のみ？
 		public const bool TranpMode = false;

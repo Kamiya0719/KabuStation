@@ -459,7 +459,7 @@ namespace CSharp_sample
 				DateTime buyDate = DateTime.ParseExact(pos.ExecutionDay.ToString(), CsvControll.DFILEFORM, null);
 				havePeriod = Math.Max(havePeriod, Common.GetDateIdx(now) - Common.GetDateIdx(buyDate));
 				minBuyPrice = Math.Min((int)pos.Price, minBuyPrice);
-				minBenefit = Math.Min((int)pos.ProfitLossRate, minBenefit);
+				minBenefit = Math.Min(pos.ProfitLossRate, minBenefit);
 			}
 			if (minBuyPrice == 999999999) minBuyPrice = 0;
 			return (leaveQty, havePeriod, minBuyPrice, minBenefit);

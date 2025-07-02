@@ -160,7 +160,7 @@ namespace CSharp_sample
 					});
 				}
 			}
-			CsvControll.SaveCodeInfo("101", trueWriteDatas);
+			CsvControll.SaveCodeInfo(Def.JapanSymbol, trueWriteDatas);
 		}
 
 		// エラーデータチェック あとSkip対象の選別
@@ -168,7 +168,7 @@ namespace CSharp_sample
 		{
 			List<DateTime> dateList = CsvControll.GetDateList();
 			List<string> codeList = CsvControll.GetCodeList();
-			codeList.Add("101");
+			codeList.Add(Def.JapanSymbol);
 			List<string> skipCode = new List<string>();
 			foreach (string code in codeList) {
 				if (!Common.Pro500(code)) continue;
@@ -190,7 +190,7 @@ namespace CSharp_sample
 					if (date.ToString(CsvControll.DFORM) != info[0]) {
 						// エラー1 代表の1301の日付一覧と異なる
 						CsvControll.ErrorLog("DataChecker1", code, date.ToString(CsvControll.DFORM), info[0]);
-						if (code != "101") {skipCode.Add(code);							break; }
+						if (code != Def.JapanSymbol) {skipCode.Add(code);							break; }
 					}
 					for (int j = 1; j <= 4; j++) {
 						if (Double.Parse(info[j]) <= 5) {
@@ -472,11 +472,21 @@ namespace CSharp_sample
 		public static void BuyCheck()
 		{
 			for (int i = 0; i < 10; i++) {
-				DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Parse("2025/06/19")) - i);
+				DateTime setDate = Common.GetDateByIdx(Common.GetDateIdx(DateTime.Parse("2025/06/18")) - i);
 				List<string[]> conditions = CsvControll.GetConditions();
 				foreach (string symbol in CsvControll.GetCodeList()) {
-					if (Common.Pro500(symbol) && Condtions.IsCondOk(setDate, CsvControll.GetCodeInfo(symbol), conditions)) {
-							Common.DebugInfo("BuyCheck", setDate.ToString(CsvControll.DFORM), symbol);
+					List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
+					if (Common.Pro500(symbol) && Condtions.IsCondOk(setDate, codeInfo, conditions)) {
+						double buyPrice = 0;
+						string res = "";
+						foreach (string[] info in codeInfo){
+							if(Common.SameD(DateTime.Parse(info[0]), setDate)){
+								buyPrice = Double.Parse(info[4]);
+							}else if(buyPrice > 0){ // 買った日以降
+								res += Common.Round((1 - Double.Parse(info[4]) / buyPrice) * 100) + ",";
+							}
+						}
+						Common.DebugInfo("BuyCheck", symbol, setDate.ToString(CsvControll.DFORM), res);
 					}
 				}
 			}
@@ -485,7 +495,7 @@ namespace CSharp_sample
 		// 日経平均が下がりすぎのラインを調査
 		public static void CheckJapanInfo()
 		{
-			string symbol = "101";
+			string symbol = Def.JapanSymbol;
 			List<string[]> codeInfo = CsvControll.GetCodeInfo(symbol);
 			for (int i = 2; i < codeInfo.Count - 1; i++) {
 				DateTime date = DateTime.Parse(codeInfo[i][0]);
@@ -956,10 +966,14 @@ namespace CSharp_sample
 		// 関数とかを簡易テストしとこ
 		public static void TestExec()
 		{
+			var a = CsvControll.GetPro500All();
 			//foreach (string symbol in new string[]{ "1435", "1663" }){
-			foreach (string symbol in new string[] { "1435", "1663", "1719", "1719", "1719", "1663", "1719" }) {
-				var res = RequestBasic.RequestBoard(Int32.Parse(symbol), 1, true);
-				Common.DebugInfo(symbol, res.Buy1.ToString(), res.CurrentPrice.ToString());
+			foreach (List<string> symbols in a) {
+				string res = "\n";
+				foreach(string info in symbols){
+					res += info + ",";
+				}
+				Common.DebugInfo(res);
 			}
 
 		}

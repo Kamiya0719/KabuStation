@@ -94,7 +94,7 @@ namespace CSharp_sample
 		private static int GetJapanScoreNow()
 		{
 			List<string[]> jScoreIkichis = CsvControll.GetJScoreIkichis();
-			ResponseBoard jScoreRes = RequestBasic.RequestBoard(101, 1);
+			ResponseBoard jScoreRes = RequestBasic.RequestBoard(Int32.Parse(Def.JapanSymbol), 1);
 			if (jScoreRes == null) return Def.JScoreNotGet;
 
 			if (jScoreRes.ChangePreviousClosePer >= 4) return Def.JScoreOverUp;
