@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace CSharp_sample
@@ -190,7 +188,7 @@ namespace CSharp_sample
 					if (date.ToString(CsvControll.DFORM) != info[0]) {
 						// エラー1 代表の1301の日付一覧と異なる
 						CsvControll.ErrorLog("DataChecker1", code, date.ToString(CsvControll.DFORM), info[0]);
-						if (code != Def.JapanSymbol) {skipCode.Add(code);							break; }
+						if (code != Def.JapanSymbol) { skipCode.Add(code); break; }
 					}
 					for (int j = 1; j <= 4; j++) {
 						if (Double.Parse(info[j]) <= 5) {
@@ -214,7 +212,7 @@ namespace CSharp_sample
 				}
 			}
 			string res = "";
-			foreach(string code in skipCode){ res += code + ","; }
+			foreach (string code in skipCode) { res += code + ","; }
 			CsvControll.Log("DataCheckerEnd", codeList.Count.ToString(), dateList.Count.ToString(), res);
 		}
 
@@ -479,10 +477,10 @@ namespace CSharp_sample
 					if (Common.Pro500(symbol) && Condtions.IsCondOk(setDate, codeInfo, conditions)) {
 						double buyPrice = 0;
 						string res = "";
-						foreach (string[] info in codeInfo){
-							if(Common.SameD(DateTime.Parse(info[0]), setDate)){
+						foreach (string[] info in codeInfo) {
+							if (Common.SameD(DateTime.Parse(info[0]), setDate)) {
 								buyPrice = Double.Parse(info[4]);
-							}else if(buyPrice > 0){ // 買った日以降
+							} else if (buyPrice > 0) { // 買った日以降
 								res += Common.Round((1 - Double.Parse(info[4]) / buyPrice) * 100) + ",";
 							}
 						}
@@ -878,14 +876,14 @@ namespace CSharp_sample
 					double nowLowest = 0;
 
 					Dictionary<int, double> list = pair.Value;
-					if(stPList[date].ContainsKey(symbol)) list[0900] = stPList[date][symbol];
+					if (stPList[date].ContainsKey(symbol)) list[0900] = stPList[date][symbol];
 
 					// 時間差
 					int upTime = 0;
 					foreach (KeyValuePair<int, double> pair2 in list.OrderBy(c => c.Key)) {
 						int time = pair2.Key;
 						double ratio = pair2.Value;
-												
+
 						for (int t = time - 1; t >= time - timeDiff; t--) {
 							if (list.ContainsKey(t) && ratio >= list[t] + 2) {
 								upTime = time;
@@ -893,7 +891,7 @@ namespace CSharp_sample
 								break;
 							}
 						}
-						
+
 
 						nowLowest = Math.Min(nowLowest, ratio);
 						// 購入
@@ -934,7 +932,7 @@ namespace CSharp_sample
 				codeDaily.SetBuyBasePrice(600000);
 				codeDaily.SetInfo();
 				Common.DebugInfo("Check", codeDaily.Symbol, codeDaily.IsLossSell());
-				foreach(CodeResOrder order in codeDaily.BuyValidOrders()) {
+				foreach (CodeResOrder order in codeDaily.BuyValidOrders()) {
 					Common.DebugInfo("CheckB", order.Symbol, order.OrderQty, order.startCumQty, order.Price);
 				}
 				foreach (CodeResOrder order in codeDaily.SellValidOrders()) {
@@ -966,15 +964,21 @@ namespace CSharp_sample
 		// 関数とかを簡易テストしとこ
 		public static void TestExec()
 		{
-			var a = CsvControll.GetPro500All();
-			//foreach (string symbol in new string[]{ "1435", "1663" }){
-			foreach (List<string> symbols in a) {
-				string res = "\n";
-				foreach(string info in symbols){
-					res += info + ",";
+			string res = "";
+			List<string> codeList = CsvControll.GetCodeList();
+			Dictionary<int, int> sum = new Dictionary<int, int>();
+			foreach (string symbol in codeList) {
+				foreach (string[] benefitInfo in CsvControll.GetBenefitAll(symbol)) {
+					int a = Int32.Parse(benefitInfo[1]);
+					if (!sum.ContainsKey(a)) sum[a] = 0;
+					sum[a]++;
 				}
-				Common.DebugInfo(res);
 			}
+			foreach (KeyValuePair<int, int> pair in sum) {
+				res += "" + pair.Key + "_" + pair.Value + "\n";
+			}
+			Common.DebugInfo(res);
+
 
 		}
 

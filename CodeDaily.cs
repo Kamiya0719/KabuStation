@@ -211,6 +211,13 @@ namespace CSharp_sample
 		private void SetIsLossSell()
 		{
 			if (jScore == Def.JScoreOverUp) { isLossSell = true; return; }
+
+
+			// todo 
+			isLossSell = false;
+			return;
+
+
 			//if (Def.TranpMode) { isLossSell = false; return; }
 			// todo 普段はオーバーダウンでもあれかなー
 			if (jScore == Def.JScoreOverDown) {
