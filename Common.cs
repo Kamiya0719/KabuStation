@@ -48,7 +48,7 @@ namespace CSharp_sample
 
 		public static int Sp10BuyPrice(string symbol)
 		{
-			if (symbol == "6740") return 16; //todo 売れたら
+			//if (symbol == "6740") return 16; //todo 売れたら
 			foreach (string[] info in CsvControll.GetSpInfo()) {
 				if (info[0] == symbol) return Int32.Parse(info[1]);
 			}
@@ -122,7 +122,7 @@ namespace CSharp_sample
 		private static HashSet<DateTime> GetDateList()
 		{
 			if (dateList.Count == 0) {
-				DateTime loopDate = new DateTime(2025, 12, 31);// todo とりあえず2026年まで
+				DateTime loopDate = new DateTime(2026, 12, 31);// todo とりあえず2026年まで
 				for (int i = 0; i < 365 * (2025 - 2017 + 1); i++) { // とりあえず2017年まで
 					string youbi = loopDate.ToString("ddd");
 					if (!(youbi == "土" || youbi == "日" || IsRestDate(loopDate))) dateList.Add(loopDate);
