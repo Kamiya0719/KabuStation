@@ -93,12 +93,12 @@ namespace CSharp_sample
 		public static int GetDateIdx(DateTime setDate)
 		{
 			int idx = 0;
-			bool isNew = false;
-			foreach (DateTime date in GetDateList()) {
+			bool isOld = false;
+			foreach (DateTime date in GetDateList()) { // 古い順から渡される
 				if (NewD2(setDate, date)) {
-					isNew = true;
+					if (isOld) return idx;
 				}else{
-					if (isNew) return idx;
+					isOld = true;
 				}
 				idx++;
 			}
@@ -122,11 +122,11 @@ namespace CSharp_sample
 		private static HashSet<DateTime> GetDateList()
 		{
 			if (dateList.Count == 0) {
-				DateTime loopDate = new DateTime(2026, 12, 31);// todo とりあえず2026年まで
-				for (int i = 0; i < 365 * (2025 - 2017 + 1); i++) { // とりあえず2017年まで
+				DateTime loopDate = new DateTime(2017, 1, 1);// todo とりあえず2026年まで
+				for (int i = 0; i < 365 * (2027 - 2017); i++) { // とりあえず2017年まで
 					string youbi = loopDate.ToString("ddd");
 					if (!(youbi == "土" || youbi == "日" || IsRestDate(loopDate))) dateList.Add(loopDate);
-					loopDate = loopDate.AddDays(-1);
+					loopDate = loopDate.AddDays(1);
 				}
 			}
 			return dateList;

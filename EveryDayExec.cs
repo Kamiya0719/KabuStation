@@ -24,7 +24,7 @@ namespace CSharp_sample
 
 			// 各データの初期化 その日使ったデータ保存しておく
 			MinitesExec.InitInfo(Common.GetDateByIdx(Common.GetDateIdx(setDate) - 1));
-			CsvControll.Log("Interval", "InitInfo", "", "");
+			CsvControll.Log("Interval", "InitInfo", setDate.ToString(CsvControll.DFORM), add.ToString());
 
 			posRes = RequestBasic.RequestPositions();
 			MinitesExec.SetResponseOrders(RequestBasic.RequestOrders(), true);
@@ -119,7 +119,7 @@ namespace CSharp_sample
 				if (!Common.SameD(DateTime.Parse(codeInfo[codeInfo.Count - 1][0]), dDate)) {
 					// 板情報の取得リクエスト とりあえずexchangeは1
 					ResponseBoard resB = RequestBasic.RequestBoard(Int32.Parse(symbol), 1, true);
-					if (resB.CurrentPrice > 0) {
+					if (resB != null && resB.CurrentPrice > 0) {
 						// data[0]が日付,data[1-4]がデータ
 						string[] data = new string[5] {
 							// 始値,高値,安値,終値
@@ -133,7 +133,7 @@ namespace CSharp_sample
 						lastLastEndPrice = Double.Parse(lastEndPrice);
 						lastEndPrice = data[4];
 					} else {
-						CsvControll.ErrorLog("SetEveryDay_CurrentPrice_0", symbol, lastEndPrice, resB.CurrentPrice.ToString());
+						CsvControll.ErrorLog("SetEveryDay_CurrentPrice_0", symbol, lastEndPrice, resB?.CurrentPrice.ToString());
 					}
 				}
 
