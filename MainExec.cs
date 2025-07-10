@@ -20,7 +20,7 @@ namespace CSharp_sample
 				if (execType == "9") RequestBasic.RequestWallet();
 				if (execType == "10") Condtions.SaveBuyInfo();
 				if (execType == "11") Condtions.BenefitSum();
-				if (execType == "12") Condtions.SaveJapanCond();
+				//if (execType == "12") Condtions.SaveJapanCond();
 				//if (execType == "13") Condtions.SaveAllCond();
 				if (execType == "14") Tools.AddNewPro500();
 				if (execType == "15") Tools.GetAllResponseSymbol();
