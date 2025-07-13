@@ -97,7 +97,7 @@ namespace CSharp_sample
 		};
 		public const string DFORM = "yyyy/MM/dd";
 		public const string DFILEFORM = "yyyyMMdd";
-		private const string FilePath = @"C:\Users\ojiro\Documents\C#\CSharp\csv\";
+		//private const string FilePath = @"C:\Users\ojiro\Documents\C#\CSharp\csv\";
 
 		// コード一覧を取得(スキップ対象の銘柄は除外)
 		private static readonly int[] skipCodes = new int[] {
@@ -118,7 +118,7 @@ namespace CSharp_sample
 			char[] delimiterChars = { '\\', '.' };
 			List<string> list = new List<string>();
 			for (int f = 1000; f <= 9000; f += 1000) {
-				foreach (string file in Directory.EnumerateFiles(FilePath + FileNames[FILE_TYPE.Code] + f.ToString(), "*", SearchOption.TopDirectoryOnly)) {
+				foreach (string file in Directory.EnumerateFiles(FilePath() + FileNames[FILE_TYPE.Code] + f.ToString(), "*", SearchOption.TopDirectoryOnly)) {
 					string[] words = file.Split(delimiterChars);
 					if (Array.IndexOf(skipCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
 					//if (Array.IndexOf(dangerCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
@@ -329,7 +329,7 @@ namespace CSharp_sample
 		{
 			char[] delimiterChars = { '\\', '.' };
 			List<string> list = new List<string>();
-			foreach (string file in Directory.EnumerateFiles(FilePath + FileNames[FILE_TYPE.RankingInfoOld], "*", SearchOption.TopDirectoryOnly)) {
+			foreach (string file in Directory.EnumerateFiles(FilePath() + FileNames[FILE_TYPE.RankingInfoOld], "*", SearchOption.TopDirectoryOnly)) {
 				string[] words = file.Split(delimiterChars);
 				list.Add(words[words.Length - 2]);
 			}
@@ -503,17 +503,27 @@ namespace CSharp_sample
 		{
 			//return Environment.CurrentDirectory + @"\csv\" + FileNames[type] + addName + ".csv";
 			if (type == FILE_TYPE.DayMemo) {
-				return @"C:\Users\ojiro\Documents\C#\CSharp\" + FileNames[type] + addName + ".csv";
+				return FilePath() + @"..\" + FileNames[type] + addName + ".csv";
+				//return @"C:\Users\ojiro\Documents\C#\CSharp\" + FileNames[type] + addName + ".csv";
 			}
-			return FilePath + FileNames[type] + addName + ".csv";
+			return FilePath() + FileNames[type] + addName + ".csv";
 		}
 
 		private static void CreateFolder(FILE_TYPE type, string addName)
 		{
-			string path = FilePath + FileNames[type] + addName;
+			string path = FilePath() + FileNames[type] + addName;
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 		}
-
+		public static void CreateFolders()
+		{
+			for (int diffDayIdx = 0; diffDayIdx < Condtions.diffDayList.Length; diffDayIdx++) {
+				for (int ratioIdx = 0; ratioIdx < Condtions.ratioList.Length; ratioIdx++) {
+					string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString();
+					CreateFolder(FILE_TYPE.Cond51All,addName);
+				}
+			}
+		}
+		private static string FilePath() { return Directory.GetCurrentDirectory() + @"\..\..\csv\"; }
 
 
 

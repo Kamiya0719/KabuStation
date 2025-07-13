@@ -220,7 +220,7 @@ namespace CSharp_sample
 			double buySum = 0; double haveSum = 0;
 			int buyBasePrice = Int32.Parse(CsvControll.GetBuyBasePriceInfo()[0]);
 			var dailys = MinitesExec.GetCodeDailys();
-			foreach (KeyValuePair<string, CodeDaily> pair in dailys.OrderBy(c => c.Value.IsSp() ? c.Key : c.Key + 10000)) {
+			foreach (KeyValuePair<string, CodeDaily> pair in dailys.OrderBy(c => c.Value.IsSp() ? "SP_" + c.Key : "PRO_" + c.Key)) {
 				(int leaveQty, int havePeriod, int minBuyPrice, double minBenefit) = pair.Value.GetPosInfo();
 				double lastEndPrice = pair.Value.LastEndPrice();
 				if (pair.Value.IsBuy()) {
@@ -258,7 +258,7 @@ namespace CSharp_sample
 			Dictionary<string, CodeDaily> codeDailyOlds = new Dictionary<string, CodeDaily>();
 			foreach (string[] info in CsvControll.GetCodeDailyOld(lastDate)) {
 				CodeDaily codeDaily = new CodeDaily(info);
-				if(!codeDailyOlds.ContainsKey(codeDaily.Symbol)) codeDailyOlds[codeDaily.Symbol] = codeDaily;
+				if (!codeDailyOlds.ContainsKey(codeDaily.Symbol)) codeDailyOlds[codeDaily.Symbol] = codeDaily;
 			}
 
 			Dictionary<string, double> oldCumQtys = new Dictionary<string, double>();
@@ -270,7 +270,7 @@ namespace CSharp_sample
 			buySum = 0; haveSum = 0;
 			List<string[]> buyOrder = new List<string[]>(); List<string[]> sellOrder = new List<string[]>();
 			var orders = MinitesExec.GetCodeResOrders();
-			foreach (KeyValuePair<string, CodeResOrder> pair in orders.OrderBy(c => Common.Sp10(c.Value.Symbol) ? c.Value.Symbol : c.Value.Symbol + 10000)) {
+			foreach (KeyValuePair<string, CodeResOrder> pair in orders.OrderBy(c => Common.Sp10(c.Value.Symbol) ? "SP_" + c.Value.Symbol : "PRO_" + c.Value.Symbol)) {
 				if (pair.Value.CumQty <= 0) continue;
 				DateTime date = pair.Value.GetRecvTime();
 				bool isSameD = Common.SameD(lastDate, date);

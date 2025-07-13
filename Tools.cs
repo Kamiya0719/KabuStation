@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CSharp_sample
@@ -205,7 +206,7 @@ namespace CSharp_sample
 					}
 					beforePrice = Double.Parse(info[4]);
 				}
-				if (codeStart == -1 || codeStart >= 1000) {
+				if (codeStart == -1 || codeStart >= 1250) {
 					// エラー4 データがなさすぎる
 					CsvControll.ErrorLog("DataChecker4", code, codeStart.ToString(), codeStart.ToString());
 					skipCode.Add(code);
@@ -964,20 +965,10 @@ namespace CSharp_sample
 		// 関数とかを簡易テストしとこ
 		public static void TestExec()
 		{
-			string res = "";
-			List<string> codeList = CsvControll.GetCodeList();
-			Dictionary<int, int> sum = new Dictionary<int, int>();
-			foreach (string symbol in codeList) {
-				foreach (string[] benefitInfo in CsvControll.GetBenefitAll(symbol)) {
-					int a = Int32.Parse(benefitInfo[1]);
-					if (!sum.ContainsKey(a)) sum[a] = 0;
-					sum[a]++;
-				}
-			}
-			foreach (KeyValuePair<int, int> pair in sum) {
-				res += "" + pair.Key + "_" + pair.Value + "\n";
-			}
-			Common.DebugInfo(res);
+			string res = "aa:";
+
+			List<string[]> a = CsvControll.GetPro500();
+			Common.DebugInfo(res + a.Count);
 
 
 		}
