@@ -97,7 +97,6 @@ namespace CSharp_sample
 		};
 		public const string DFORM = "yyyy/MM/dd";
 		public const string DFILEFORM = "yyyyMMdd";
-		//private const string FilePath = @"C:\Users\ojiro\Documents\C#\CSharp\csv\";
 
 		// コード一覧を取得(スキップ対象の銘柄は除外)
 		private static readonly int[] skipCodes = new int[] {
@@ -523,8 +522,14 @@ namespace CSharp_sample
 				}
 			}
 		}
-		private static string FilePath() { return Directory.GetCurrentDirectory() + @"\..\..\csv\"; }
-
+		private static string FilePath() { return Secret.FilePath; }
+		public static void FileTest()
+		{
+			Console.WriteLine("GetCurrentDirectory:" + Directory.GetCurrentDirectory());
+			Console.WriteLine("FilePath:" + FilePath());
+			Console.WriteLine("GetFilePath:" + GetFilePath(FILE_TYPE.Pro500, ""));
+			Console.WriteLine("GetFilePathExists:" + File.Exists(GetFilePath(FILE_TYPE.Pro500, "")));
+		}
 
 
 		private static string[] GetBasicInfo(int row)

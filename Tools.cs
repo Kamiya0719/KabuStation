@@ -965,6 +965,7 @@ namespace CSharp_sample
 		// 関数とかを簡易テストしとこ
 		public static void TestExec()
 		{
+			CsvControll.FileTest();
 			string res = "aa:";
 
 			List<string[]> a = CsvControll.GetPro500();
