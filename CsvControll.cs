@@ -122,6 +122,8 @@ namespace CSharp_sample
 					if (Array.IndexOf(skipCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
 					//if (Array.IndexOf(dangerCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
 					list.Add(words[words.Length - 2]);
+
+					//todo Common.DebugInfo("codelist", string.Join("→", words));
 				}
 			}
 			return list;
@@ -518,7 +520,7 @@ namespace CSharp_sample
 			for (int diffDayIdx = 0; diffDayIdx < Condtions.diffDayList.Length; diffDayIdx++) {
 				for (int ratioIdx = 0; ratioIdx < Condtions.ratioList.Length; ratioIdx++) {
 					string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString();
-					CreateFolder(FILE_TYPE.Cond51All,addName);
+					CreateFolder(FILE_TYPE.Cond51All, addName);
 				}
 			}
 		}

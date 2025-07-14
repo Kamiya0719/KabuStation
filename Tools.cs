@@ -966,8 +966,10 @@ namespace CSharp_sample
 		public static void TestExec()
 		{
 			CsvControll.FileTest();
-			string res = "aa:";
 
+			CsvControll.GetCodeList();
+
+			string res = "aa:";
 			List<string[]> a = CsvControll.GetPro500();
 			Common.DebugInfo(res + a.Count);
 
