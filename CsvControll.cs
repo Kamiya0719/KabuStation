@@ -53,6 +53,48 @@ namespace CSharp_sample
 			Cond51All, // 全ての51判定情報を一時保存しておく
 			BenefitAll, // 全ての購入時利益情報を一時保存しておく
 		}
+		private enum FOLDER_TYPE { Import, Code, EveryDay, Old, Log, Debug, } // DayMemo		
+		// ファイルタイプごとのフォルダ名
+		private static readonly Dictionary<FILE_TYPE, FOLDER_TYPE> FolderTypes = new Dictionary<FILE_TYPE, FOLDER_TYPE>() {
+			/* 外部から取得 */
+			{FILE_TYPE.Pro500, FOLDER_TYPE.Import }, // 今季のプロ500銘柄一覧(銘柄コードのみ？)
+			{FILE_TYPE.Pro500All, FOLDER_TYPE.Import }, // プロ500全部
+			{FILE_TYPE.JapanRaw, FOLDER_TYPE.Import }, // Webで仕入れてきた日経平均データの過去生データ
+			{FILE_TYPE.SplitDate, FOLDER_TYPE.Import }, // Webから取得した分割・合併銘柄日時情報
+			{FILE_TYPE.OldDataRaw, FOLDER_TYPE.Import }, // Excelで作った2000銘柄の過去生データ(巨大)
+			{FILE_TYPE.BuyConditions, FOLDER_TYPE.Import }, // 購入決定のための51条件一覧(とりあえず固定)
+			/* コード情報 */
+			{FILE_TYPE.Code, FOLDER_TYPE.Code }, // 銘柄ごとの各値段一覧データ
+			/* 毎日取得 */
+			{FILE_TYPE.Basic, FOLDER_TYPE.EveryDay }, // 汎用情報(トークン/当日最大JScore/推定登録中銘柄情報)
+			{FILE_TYPE.BaseJScore, FOLDER_TYPE.EveryDay }, // 日経平均スコア
+			{FILE_TYPE.JScoreIkichis, FOLDER_TYPE.EveryDay }, // 当日の安値を見て当日暫定日経平均スコアを決定する閾値
+			{FILE_TYPE.CodeDaily, FOLDER_TYPE.EveryDay }, // 銘柄各種情報
+			{FILE_TYPE.CodeResOrder, FOLDER_TYPE.EveryDay }, // 注文一覧情報		
+			{FILE_TYPE.JapanCond, FOLDER_TYPE.EveryDay }, // 日経平均の2000日付分の全51条件に対するそれぞれのTF情報
+			{FILE_TYPE.RankingInfo, FOLDER_TYPE.EveryDay }, // 詳細ランキング情報
+			{FILE_TYPE.SpInfo, FOLDER_TYPE.EveryDay }, // Sp系情報
+			{FILE_TYPE.Board, FOLDER_TYPE.EveryDay }, // リクエストしたBoard情報を一時保存			
+			//{FILE_TYPE.DayMemo, FOLDER_TYPE.EveryDay }, // 毎日のチェック用メモ
+			/* デバッグ用？過去データ */
+			{FILE_TYPE.CodeResOrderOld, FOLDER_TYPE.Old }, // 注文一覧情報 過去分
+			{FILE_TYPE.CodeDailyOld, FOLDER_TYPE.Old }, // 銘柄各種情報 過去分
+			{FILE_TYPE.RankingInfoOld, FOLDER_TYPE.Old }, // 詳細ランキングに関する情報 過去分			
+			/* ログ系 */
+			{FILE_TYPE.Log, FOLDER_TYPE.Log }, // ログ今日分(タグごとにファイル分ける？)
+			{FILE_TYPE.ErrorLog, FOLDER_TYPE.Log }, // エラーログ今日分(タグごとにファイル分ける？)
+			{FILE_TYPE.SymbolLog, FOLDER_TYPE.Log }, // シンボルログ今日分(タグごとにファイル分ける？)
+			{FILE_TYPE.LogOld, FOLDER_TYPE.Log }, // ログ過去分
+			{FILE_TYPE.ErrorLogOld, FOLDER_TYPE.Log }, // エラーログ過去分
+			/* 検証用一時情報 */
+			{FILE_TYPE.BuyCode, FOLDER_TYPE.Debug }, // 購入可否情報(検証用一時情報)
+			{FILE_TYPE.AllCodeList, FOLDER_TYPE.Debug }, // 日経平均の2000日付分の全51条件に対するそれぞれのTF情報(検証用一時情報)		
+			{FILE_TYPE.CodeDispInfo, FOLDER_TYPE.Debug }, // 銘柄各種情報表示
+			{FILE_TYPE.ResponseSymbol, FOLDER_TYPE.Debug }, // 銘柄各種情報表示
+			{FILE_TYPE.DebugInfo, FOLDER_TYPE.Debug }, // デバッグ情報一時保存
+			{FILE_TYPE.Cond51All, FOLDER_TYPE.Debug }, // 全ての51判定情報を一時保存しておく
+			{FILE_TYPE.BenefitAll, FOLDER_TYPE.Debug }, // 全ての購入時利益情報を一時保存しておく		
+		};
 
 		// ファイルタイプごとのファイル名
 		private static readonly Dictionary<FILE_TYPE, string> FileNames = new Dictionary<FILE_TYPE, string>() {
@@ -117,7 +159,7 @@ namespace CSharp_sample
 			char[] delimiterChars = { '\\', '.' };
 			List<string> list = new List<string>();
 			for (int f = 1000; f <= 9000; f += 1000) {
-				foreach (string file in Directory.EnumerateFiles(FilePath() + FileNames[FILE_TYPE.Code] + f.ToString(), "*", SearchOption.TopDirectoryOnly)) {
+				foreach (string file in Directory.EnumerateFiles(GetFilePath(FILE_TYPE.Code, f.ToString(), false), "*", SearchOption.TopDirectoryOnly)) {
 					string[] words = file.Split(delimiterChars);
 					if (Array.IndexOf(skipCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
 					//if (Array.IndexOf(dangerCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
@@ -152,8 +194,11 @@ namespace CSharp_sample
 
 			return res;
 		}
-		// ファイル削除
-		public static void DeleteCodeInfo(string code) { DeleteFile(FILE_TYPE.Code, CodeAddName(code)); }
+		private static string CodeAddName(string code)
+		{
+			string folder = (Int32.Parse(code) - Int32.Parse(code) % 1000).ToString();
+			return folder + @"\" + code;
+		}
 		// 日付一覧を取得(代表として1301を用いる)
 		public static List<DateTime> GetDateList()
 		{
@@ -330,7 +375,7 @@ namespace CSharp_sample
 		{
 			char[] delimiterChars = { '\\', '.' };
 			List<string> list = new List<string>();
-			foreach (string file in Directory.EnumerateFiles(FilePath() + FileNames[FILE_TYPE.RankingInfoOld], "*", SearchOption.TopDirectoryOnly)) {
+			foreach (string file in Directory.EnumerateFiles(GetFilePath(FILE_TYPE.RankingInfoOld, "", false), "*", SearchOption.TopDirectoryOnly)) {
 				string[] words = file.Split(delimiterChars);
 				list.Add(words[words.Length - 2]);
 			}
@@ -493,26 +538,16 @@ namespace CSharp_sample
 			if (File.Exists(GetFilePath(type, addName))) File.Delete(GetFilePath(type, addName));
 		}
 
-
-		private static string CodeAddName(string code)
+		private static string GetFilePath(FILE_TYPE type, string addName, bool isCsv = true)
 		{
-			string folder = (Int32.Parse(code) - Int32.Parse(code) % 1000).ToString();
-			return folder + @"\" + code;
-		}
-
-		private static string GetFilePath(FILE_TYPE type, string addName)
-		{
-			//return Environment.CurrentDirectory + @"\csv\" + FileNames[type] + addName + ".csv";
-			if (type == FILE_TYPE.DayMemo) {
-				return FilePath() + @"..\" + FileNames[type] + addName + ".csv";
-				//return @"C:\Users\ojiro\Documents\C#\CSharp\" + FileNames[type] + addName + ".csv";
-			}
-			return FilePath() + FileNames[type] + addName + ".csv";
+			string path = FilePath() + FileNames[type] + addName;
+			if (type == FILE_TYPE.DayMemo) path = FilePath() + @"..\" + FileNames[type] + addName;
+			return isCsv ? path + ".csv" : path;
 		}
 
 		private static void CreateFolder(FILE_TYPE type, string addName)
 		{
-			string path = FilePath() + FileNames[type] + addName;
+			string path = GetFilePath(type, addName, false);
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 		}
 		public static void CreateFolders()
@@ -531,6 +566,7 @@ namespace CSharp_sample
 			Console.WriteLine("FilePath:" + FilePath());
 			Console.WriteLine("GetFilePath:" + GetFilePath(FILE_TYPE.Pro500, ""));
 			Console.WriteLine("GetFilePathExists:" + File.Exists(GetFilePath(FILE_TYPE.Pro500, "")));
+			Console.WriteLine("GetFilePathExists2:" + File.Exists(GetFilePath(FILE_TYPE.DayMemo, "")));
 		}
 
 
