@@ -565,6 +565,20 @@ namespace CSharp_sample
 			Console.WriteLine("GetCurrentDirectory:" + Directory.GetCurrentDirectory());
 			Console.WriteLine("FilePath:" + FilePath());
 			Console.WriteLine("GetFilePath:" + GetFilePath(FILE_TYPE.Pro500, ""));
+			foreach (FILE_TYPE type in Enum.GetValues(typeof(FILE_TYPE))) {
+				string add = "";
+				if((new List<FILE_TYPE>(){ FILE_TYPE.Pro500}).Contains(type)){
+
+				}
+				if(type == FILE_TYPE.Code){
+
+				}
+				if(File.Exists(GetFilePath(type, add))){
+
+				}else{
+					Console.WriteLine("NoExists:" + type.ToString());
+				}
+			}
 			Console.WriteLine("GetFilePathExists:" + File.Exists(GetFilePath(FILE_TYPE.Pro500, "")));
 			Console.WriteLine("GetFilePathExists2:" + File.Exists(GetFilePath(FILE_TYPE.DayMemo, "")));
 		}
