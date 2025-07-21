@@ -54,7 +54,7 @@ namespace CSharp_sample
 			BenefitAll, // 全ての購入時利益情報を一時保存しておく
 		}
 		private enum FOLDER_TYPE { Import, Code, EveryDay, Old, Log, Debug, } // DayMemo		
-		// ファイルタイプごとのフォルダ名
+																			  // ファイルタイプごとのフォルダ名
 		private static readonly Dictionary<FILE_TYPE, FOLDER_TYPE> FolderTypes = new Dictionary<FILE_TYPE, FOLDER_TYPE>() {
 			/* 外部から取得 */
 			{FILE_TYPE.Pro500, FOLDER_TYPE.Import }, // 今季のプロ500銘柄一覧(銘柄コードのみ？)
@@ -220,9 +220,9 @@ namespace CSharp_sample
 			return GetCsvDatas(FILE_TYPE.BuyConditions);
 		}
 		// 購入可否情報を取得
-		public static List<string[]> GetBuyInfo(string code) { return GetCsvDatas(FILE_TYPE.BuyCode, code); }
+		public static List<string[]> GetBuyCode(string code) { return GetCsvDatas(FILE_TYPE.BuyCode, code); }
 		// 購入可否情報をセーブ
-		public static void SaveBuyInfo(string code, List<string[]> datas) { SaveCsvDatas(FILE_TYPE.BuyCode, code, datas); }
+		public static void SaveBuyCode(string code, List<string[]> datas) { SaveCsvDatas(FILE_TYPE.BuyCode, code, datas); }
 		// 日経平均の各日付の値を取得
 		public static List<string[]> GetJapanInfo() { return GetCodeInfo(Def.JapanSymbol); }
 		// 日経平均 条件に対するTF
@@ -567,20 +567,35 @@ namespace CSharp_sample
 			Console.WriteLine("GetFilePath:" + GetFilePath(FILE_TYPE.Pro500, ""));
 			foreach (FILE_TYPE type in Enum.GetValues(typeof(FILE_TYPE))) {
 				string add = "";
-				if((new List<FILE_TYPE>(){ FILE_TYPE.Pro500}).Contains(type)){
-
+				bool isOk = false;
+				if ((new List<FILE_TYPE>() { FILE_TYPE.AllCodeList, FILE_TYPE.LogOld, FILE_TYPE.SymbolLog }).Contains(type)) {
+					continue; // 未使用
 				}
-				if(type == FILE_TYPE.Code){
-
+				if (type == FILE_TYPE.Code) {
+					isOk = GetCodeInfo(Def.CapitalSymbol)[0][0] != "";
+				} else if (type == FILE_TYPE.BenefitAll) {
+					isOk = GetBenefitAll(Def.CapitalSymbol)[0][0] != "";
+				} else if (type == FILE_TYPE.BuyCode) {
+					isOk = GetBuyCode(Def.CapitalSymbol)[0][0] != "";
+				} else if (type == FILE_TYPE.CodeDispInfo) {
+					isOk = GetCodeDispInfo(Def.CapitalSymbol)[0][0] != "";
+				} else if (type == FILE_TYPE.Cond51All) {
+					isOk = GetCond51All(Def.CapitalSymbol, 0, 0)[0][0] != "";
+				} else if (type == FILE_TYPE.JapanCond) {
+					isOk = GetJapanCond(189)[0][0] != "";
+				} else if (type == FILE_TYPE.ErrorLogOld) {
+					isOk = GetErrorLogOld(DateTime.Parse("2025/07/18"))[0][0] != "";
+				} else if (type == FILE_TYPE.CodeDailyOld) {
+					isOk = GetCodeDailyOld(DateTime.Parse("2025/07/18"))[0][0] != "";					
+				} else if (type == FILE_TYPE.CodeResOrderOld) {
+					isOk = GetCodeResOrderOld(DateTime.Parse("2025/07/18"))[0][0] != "";					
+				} else if (type == FILE_TYPE.RankingInfoOld) {
+					isOk = GetRankingInfoOld(DateTime.Parse("2025/07/17"))[0][0] != "";					
+				} else { // その他 単体ファイル
+					isOk = File.Exists(GetFilePath(type, add));
 				}
-				if(File.Exists(GetFilePath(type, add))){
-
-				}else{
-					Console.WriteLine("NoExists:" + type.ToString());
-				}
+				Console.WriteLine((isOk ? "Ok:" : "\n\n\n\n!!!!!!!NoExists!!!!!!:") + type.ToString());
 			}
-			Console.WriteLine("GetFilePathExists:" + File.Exists(GetFilePath(FILE_TYPE.Pro500, "")));
-			Console.WriteLine("GetFilePathExists2:" + File.Exists(GetFilePath(FILE_TYPE.DayMemo, "")));
 		}
 
 

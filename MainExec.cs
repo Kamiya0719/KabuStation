@@ -42,6 +42,7 @@ namespace CSharp_sample
 				if (execType == "31") Tools.SaveJapanScoreMulti(DateTime.Parse("2025/05/29"), DateTime.Parse("2025/06/03"));
 				if (execType == "32") Tools.CheckLossSell();
 				if (execType == "33") Condtions.CheckCond51All2();
+				if (execType == "34") CsvControll.FileTest();
 
 			} catch (Exception e) {
 				Console.WriteLine(e);
