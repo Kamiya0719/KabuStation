@@ -156,16 +156,19 @@ namespace CSharp_sample
 		};
 		public static List<string> GetCodeList()
 		{
-			char[] delimiterChars = { '\\', '.' };
+			//char[] delimiterChars = { '\\', '.' };
 			List<string> list = new List<string>();
 			for (int f = 1000; f <= 9000; f += 1000) {
 				foreach (string file in Directory.EnumerateFiles(GetFilePath(FILE_TYPE.Code, f.ToString(), false), "*", SearchOption.TopDirectoryOnly)) {
-					string[] words = file.Split(delimiterChars);
-					if (Array.IndexOf(skipCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
-					//if (Array.IndexOf(dangerCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
-					list.Add(words[words.Length - 2]);
+					//string[] words = file.Split(delimiterChars);
+					//if (Array.IndexOf(skipCodes, Int32.Parse(words[words.Length - 2])) >= 0) continue;
+					//list.Add(words[words.Length - 2]);
 
-					//todo Common.DebugInfo("codelist", string.Join("→", words));
+					string symbol = Path.GetFileNameWithoutExtension(file);
+					if (Array.IndexOf(skipCodes, Int32.Parse(symbol)) >= 0) continue;
+					list.Add(symbol);
+
+					//Common.DebugInfo("AAA", f, symbol);
 				}
 			}
 			return list;
@@ -373,11 +376,12 @@ namespace CSharp_sample
 		public static List<string[]> GetRankingInfoOld(DateTime date) { return GetCsvDatas(FILE_TYPE.RankingInfoOld, date.ToString(DFILEFORM)); }
 		public static List<string> GetRankingOldList()
 		{
-			char[] delimiterChars = { '\\', '.' };
+			//char[] delimiterChars = { '\\', '.' };
 			List<string> list = new List<string>();
 			foreach (string file in Directory.EnumerateFiles(GetFilePath(FILE_TYPE.RankingInfoOld, "", false), "*", SearchOption.TopDirectoryOnly)) {
-				string[] words = file.Split(delimiterChars);
-				list.Add(words[words.Length - 2]);
+				//string[] words = file.Split(delimiterChars);
+				//list.Add(words[words.Length - 2]);
+				list.Add(Path.GetFileNameWithoutExtension(file));
 			}
 			return list;
 		}
