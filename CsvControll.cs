@@ -197,7 +197,7 @@ namespace CSharp_sample
 		private static string CodeAddName(string code)
 		{
 			string folder = (Int32.Parse(code) - Int32.Parse(code) % 1000).ToString();
-			return folder + @"\" + code;
+			return Path.Combine(folder, code);
 		}
 		// 日付一覧を取得(代表として1301を用いる)
 		public static List<DateTime> GetDateList()
@@ -329,12 +329,12 @@ namespace CSharp_sample
 		// 全ての51判定情報を一時保存しておく
 		public static void SaveCond51All(List<string[]> datas, string symbol, int diffDayIdx, int ratioIdx)
 		{
-			string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString() + @"\" + symbol;
+			string addName = Path.Combine(diffDayIdx.ToString(), ratioIdx.ToString(), symbol);
 			SaveCsvDatas(FILE_TYPE.Cond51All, addName, datas);
 		}
 		public static List<string[]> GetCond51All(string symbol, int diffDayIdx, int ratioIdx)
 		{
-			string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString() + @"\" + symbol;
+			string addName = Path.Combine(diffDayIdx.ToString(), ratioIdx.ToString(), symbol);
 			return GetCsvDatas(FILE_TYPE.Cond51All, addName);
 		}
 
@@ -494,7 +494,7 @@ namespace CSharp_sample
 			string dateString = DateTime.Today.ToString(DFILEFORM);
 			foreach (KeyValuePair<string, List<string[]>> pair in symbolLogs) {
 				CreateFolder(FILE_TYPE.SymbolLog, pair.Key);
-				SaveCsvDatas(FILE_TYPE.SymbolLog, pair.Key + @"\" + pair.Key + "_" + dateString + "_SymbolLog", pair.Value, true);
+				SaveCsvDatas(FILE_TYPE.SymbolLog, Path.Combine(pair.Key, pair.Key + "_" + dateString + "_SymbolLog"), pair.Value, true);
 			}
 		}
 
@@ -540,8 +540,14 @@ namespace CSharp_sample
 
 		private static string GetFilePath(FILE_TYPE type, string addName, bool isCsv = true)
 		{
-			string path = FilePath() + FileNames[type] + addName;
-			if (type == FILE_TYPE.DayMemo) path = FilePath() + @"..\" + FileNames[type] + addName;
+			string path;
+			if (type == FILE_TYPE.DayMemo) {
+				path = Path.Combine(FilePath(), "..", type.ToString(), addName);
+			}else		if (type == FILE_TYPE.Code) {
+				path = Path.Combine(FilePath(), type.ToString(), addName);
+			}else{
+				path = Path.Combine(FilePath(), FolderTypes[type].ToString(), type.ToString(), addName);
+			}
 			return isCsv ? path + ".csv" : path;
 		}
 
@@ -554,7 +560,7 @@ namespace CSharp_sample
 		{
 			for (int diffDayIdx = 0; diffDayIdx < Condtions.diffDayList.Length; diffDayIdx++) {
 				for (int ratioIdx = 0; ratioIdx < Condtions.ratioList.Length; ratioIdx++) {
-					string addName = diffDayIdx.ToString() + @"\" + ratioIdx.ToString();
+					string addName = Path.Combine(diffDayIdx.ToString(), ratioIdx.ToString());
 					CreateFolder(FILE_TYPE.Cond51All, addName);
 				}
 			}
@@ -565,6 +571,7 @@ namespace CSharp_sample
 			Console.WriteLine("GetCurrentDirectory:" + Directory.GetCurrentDirectory());
 			Console.WriteLine("FilePath:" + FilePath());
 			Console.WriteLine("GetFilePath:" + GetFilePath(FILE_TYPE.Pro500, ""));
+			Console.WriteLine("GetFilePath:" + GetFilePath(FILE_TYPE.DayMemo, ""));
 			foreach (FILE_TYPE type in Enum.GetValues(typeof(FILE_TYPE))) {
 				string add = "";
 				bool isOk = false;
@@ -572,7 +579,7 @@ namespace CSharp_sample
 					continue; // 未使用
 				}
 				if (type == FILE_TYPE.Code) {
-					isOk = GetCodeInfo(Def.CapitalSymbol)[0][0] != "";
+					isOk = GetCodeInfo(Def.CapitalSymbol)[0][0] != "" && GetCodeList().Count > 2000;
 				} else if (type == FILE_TYPE.BenefitAll) {
 					isOk = GetBenefitAll(Def.CapitalSymbol)[0][0] != "";
 				} else if (type == FILE_TYPE.BuyCode) {
@@ -586,11 +593,11 @@ namespace CSharp_sample
 				} else if (type == FILE_TYPE.ErrorLogOld) {
 					isOk = GetErrorLogOld(DateTime.Parse("2025/07/18"))[0][0] != "";
 				} else if (type == FILE_TYPE.CodeDailyOld) {
-					isOk = GetCodeDailyOld(DateTime.Parse("2025/07/18"))[0][0] != "";					
+					isOk = GetCodeDailyOld(DateTime.Parse("2025/07/18"))[0][0] != "";
 				} else if (type == FILE_TYPE.CodeResOrderOld) {
-					isOk = GetCodeResOrderOld(DateTime.Parse("2025/07/18"))[0][0] != "";					
+					isOk = GetCodeResOrderOld(DateTime.Parse("2025/07/18"))[0][0] != "";
 				} else if (type == FILE_TYPE.RankingInfoOld) {
-					isOk = GetRankingInfoOld(DateTime.Parse("2025/07/17"))[0][0] != "";					
+					isOk = GetRankingInfoOld(DateTime.Parse("2025/07/17"))[0][0] != "";
 				} else { // その他 単体ファイル
 					isOk = File.Exists(GetFilePath(type, add));
 				}
