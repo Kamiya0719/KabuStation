@@ -468,7 +468,7 @@ namespace CSharp_sample
 				minBuyPrice = Math.Min((int)pos.Price, minBuyPrice);
 				minBenefit = Math.Min(pos.ProfitLossRate, minBenefit);
 			}
-			if (minBuyPrice == 999999999) minBuyPrice = 0;
+			if (minBuyPrice == 99999999) minBuyPrice = 0;
 			return (leaveQty, havePeriod, minBuyPrice, minBenefit);
 		}
 

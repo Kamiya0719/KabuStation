@@ -147,6 +147,20 @@ Path 'Code', line 1, position 8.,
 To fix this error either change the JSON to a JSON array (e.g. [1,2,3]) or change the deserialized type so that it is a normal .NET type (e.g. not a primitive type like integer, not a collection type like an array or List<T>) that can be deserialized from a JSON object. JsonObjectAttribute can also be added to the type to force it to deserialize from a JSON object.
 Path 'Code', line 1, position 8.,
 2025/07/21 2:04:38,SaveJapanScoreOneDay,2025/07/22 0:00:00,DataExist,0
+2025/07/21 14:20:11,Exception,34,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
+パラメーター名:index,
+2025/07/21 14:21:56,Exception,34,文字列は有効な DateTime ではありませんでした。,
+2025/07/21 14:22:38,Exception,34,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
+パラメーター名:index,
+2025/07/21 14:30:46,Exception,34,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
+パラメーター名:index,
+2025/07/21 14:32:35,Exception,34,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
+パラメーター名:index,
+2025/07/21 14:36:20,Exception,34,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
+パラメーター名:index,
+2025/07/21 14:36:39,Exception,34,指定されたキーはディレクトリ内に存在しませんでした。,
+2025/07/21 14:37:34,Exception,34,指定されたキーはディレクトリ内に存在しませんでした。,
+2025/07/22 0:13:22,SaveJapanScoreOneDay,2025/07/22 0:00:00,DataExist,0
 -----BuyData(明日購入総額:1072500,余力:3736352.16216216, 単体余力:954845.552552553)-----
 コード:3791,推定購入費用:928800,前日終値:1548,所持数:0,SP系:False
 コード:1435,推定購入費用:0,前日終値:149,所持数:200,SP系:True

@@ -595,13 +595,13 @@ namespace CSharp_sample
 				} else if (type == FILE_TYPE.JapanCond) {
 					isOk = GetJapanCond(189)[0][0] != "";
 				} else if (type == FILE_TYPE.ErrorLogOld) {
-					isOk = GetErrorLogOld(DateTime.Parse("2025/07/18"))[0][0] != "";
+					isOk = GetErrorLogOld(DateTime.Parse("2025/07/11"))[0][0] != "";
 				} else if (type == FILE_TYPE.CodeDailyOld) {
-					isOk = GetCodeDailyOld(DateTime.Parse("2025/07/18"))[0][0] != "";
+					isOk = GetCodeDailyOld(DateTime.Parse("2025/07/11"))[0][0] != "";
 				} else if (type == FILE_TYPE.CodeResOrderOld) {
-					isOk = GetCodeResOrderOld(DateTime.Parse("2025/07/18"))[0][0] != "";
+					isOk = GetCodeResOrderOld(DateTime.Parse("2025/07/11"))[0][0] != "";
 				} else if (type == FILE_TYPE.RankingInfoOld) {
-					isOk = GetRankingInfoOld(DateTime.Parse("2025/07/17"))[0][0] != "";
+					isOk = GetRankingInfoOld(DateTime.Parse("2025/07/11"))[0][0] != "";
 				} else { // その他 単体ファイル
 					isOk = File.Exists(GetFilePath(type, add));
 				}
