@@ -8,6 +8,7 @@ namespace CSharp_sample
 		{
 			DateTime now = DateTime.Now;
 			string execType = args[0];
+			string param1 = args.Length >= 2 ? args[1] : "";
 			try {
 				if (execType == "1") EveryDayExec.ExecBasic();
 				if (execType == "2") MinitesExec.ExecBasic();
@@ -25,7 +26,7 @@ namespace CSharp_sample
 				if (execType == "14") Tools.AddNewPro500();
 				if (execType == "15") Tools.GetAllResponseSymbol();
 				if (execType == "16") Tools.CheckDateBenefitLoss();
-				if (execType == "17") Tools.TestExec();
+				if (execType == "17") Tools.TestExec(param1);
 				if (execType == "18") Tools.BuyCheck();
 				if (execType == "19") EveryDayExec.SetDayMemo(DateTime.Today);
 				if (execType == "20") Tools.CheckJapanInfo();
@@ -34,14 +35,14 @@ namespace CSharp_sample
 				if (execType == "23") Tools.OldCheck();
 				if (execType == "24") Condtions.SaveCond51All();
 				if (execType == "25") Condtions.SaveBenefitAll();
-				if (execType == "26") Condtions.CheckCond51All();
-				if (execType == "27") Condtions.DebugCheckCond51Score();
+				if (execType == "26") Condtions.CheckCond51All(param1);
+				if (execType == "27") Condtions.DebugCheckCond51Score(param1);
 				if (execType == "28") Tools.CheckRanking();
 				if (execType == "29") Tools.CheckRankingBenfitAll();
 				//if (execType == "30") Condtions.Aaa();
 				if (execType == "31") Tools.SaveJapanScoreMulti(DateTime.Parse("2025/05/29"), DateTime.Parse("2025/06/03"));
 				if (execType == "32") Tools.CheckLossSell();
-				if (execType == "33") Condtions.CheckCond51All2();
+				if (execType == "33") Condtions.CheckCond51All2(param1);
 				if (execType == "34") CsvControll.FileTest();
 
 			} catch (Exception e) {

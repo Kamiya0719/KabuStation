@@ -963,15 +963,13 @@ namespace CSharp_sample
 
 
 		// 関数とかを簡易テストしとこ
-		public static void TestExec()
+		public static void TestExec(string param1)
 		{
 			CsvControll.FileTest();
 
 			CsvControll.GetCodeList();
 
-			string res = "aa:";
-			List<string[]> a = CsvControll.GetPro500();
-			Common.DebugInfo(res + a.Count);
+			Common.DebugInfo("A:" + param1 + "_" + CsvControll.GetPro500().Count);
 
 			foreach(string date in new string[]{
 				"2025/07/17","2025/07/18","2025/07/19","2025/07/20","2025/07/21","2025/07/22","2025/07/23","2025/07/24","2025/07/25",
@@ -982,7 +980,6 @@ namespace CSharp_sample
 			}
 
 			TimeZoneInfo localZone = TimeZoneInfo.Local;
-
 			Console.WriteLine($"ID: {localZone.Id}");
 			Console.WriteLine($"表示名: {localZone.DisplayName}");
 			Console.WriteLine($"標準時名: {localZone.StandardName}");
