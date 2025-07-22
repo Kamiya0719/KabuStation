@@ -973,7 +973,15 @@ namespace CSharp_sample
 			List<string[]> a = CsvControll.GetPro500();
 			Common.DebugInfo(res + a.Count);
 
+			TimeZoneInfo localZone = TimeZoneInfo.Local;
 
+			Console.WriteLine($"ID: {localZone.Id}");
+			Console.WriteLine($"表示名: {localZone.DisplayName}");
+			Console.WriteLine($"標準時名: {localZone.StandardName}");
+			Console.WriteLine($"夏時間名: {localZone.DaylightName}");
+			Console.WriteLine($"夏時間対応: {localZone.SupportsDaylightSavingTime}");
+			Console.WriteLine($"UTCオフセット: {localZone.BaseUtcOffset}");
+			Console.WriteLine($"現在のUTCオフセット: {localZone.GetUtcOffset(DateTime.Now)}");
 		}
 
 

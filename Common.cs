@@ -58,7 +58,6 @@ namespace CSharp_sample
 
 
 
-
 		// 営業日休み一覧 2026年になったら順次追加
 		private static readonly string[] restDates = new string[] {
 			"2025/01/01","2025/01/02","2025/01/03","2025/01/13","2025/02/11","2025/02/23","2025/02/24","2025/03/20",

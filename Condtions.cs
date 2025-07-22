@@ -257,7 +257,7 @@ namespace CSharp_sample
 			//AllTrueCondIdx, // 全部を許可するやつ Andのみチェック用
 
 			528,6625,2615, // 少ない
-			8203,3234,			
+			8203,3234,
 			992, //Score:183554, Beny:【Be1】And:-1Or:-1,DAll:-34856,Sum:34856,Sub:183554,SB:0.5679,0:-631(0.018),1:-3245(0.093),2:-7786(0.223),3:-4691(0.135),4:-3588(0.103),5:-14915(0.428),, 【Be2】631,3245,7786,4691,3588,14915, , sT:12500, sP:4.7785, sB:0.5679, nT:34856, nP:4.8579, nB:0.8091,  #End#
 			8296, //Score:165393, Beny:【Be1】And:-1Or:992,DAll:-5467,Sum:35354,Sub:165393,SB:0.573,0:-87(0.016),1:-611(0.112),2:-1077(0.197),3:-552(0.101),4:-960(0.176),5:-2180(0.399),, 【Be2】634,3298,7914,4770,3636,15102, , sT:12615, sP:4.7724, sB:0.573, nT:35354, nP:4.8587, nB:0.8032,
 			5923,//Score:179760, Beny:【Be1】And:-1,Or:1957,DAll:-2882,Sum:39917,Sub:179760,Sub2:6062,SB:0.5289,0:-20(0.007),1:-320(0.111),2:-672(0.233),3:-357(0.124),4:-460(0.16),5:-1053(0.365),, 【Be2】692,3791,9052,5397,4205,16780, , sT:13990, sP:4.8051, sB:0.5289, nT:39917, nP:4.9273, nB:0.7518,
@@ -1361,7 +1361,7 @@ End , T0:02:50:52.8773554
 			if (IsKara) { confirmAnds = KaraConfirmAnds; confirmOrs = KaraConfirmOrs; }
 			if (false) { confirmAnds = OldAnd51List; confirmOrs = OldOr51List; }
 			if (false) { confirmAnds = Old2And51List; confirmOrs = Old2Or51List; }
-			if (true) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
+			if (false) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
 			return (confirmAnds, confirmOrs);
 		}
 		private static int GetBeny(int benefit)
@@ -1477,6 +1477,7 @@ End , T0:02:50:52.8773554
 				if (IsPro500AllOnly) {
 					if (!pro500Date.ContainsKey(symbol)) continue;
 					debug += pro500Ds.Count;
+					//Common.DebugInfo("debug", symbol, pro500Ds.Count);
 				}
 
 				(Dictionary<string, int> benefits, Dictionary<string, int> havePeriods) = GetBenefitData(symbol);
@@ -1525,9 +1526,9 @@ End , T0:02:50:52.8773554
 			//foreach (KeyValuePair<int, int> pair in benefitNum) res += pair.Key + ":" + pair.Value + ", ";
 			//Common.DebugInfo(res);
 			//int idx = andSkip == -1 ? confirmOrs[orSkip] : confirmAnds[andSkip];
-			Common.DebugInfo("DebugCheckCond51", 
-				debug, 
-				codeList.Count, pro500Date.Count, beforeNotAnd.Count, beforeOr.Count, benefitNum.Count,
+			Common.DebugInfo("DebugCheckCond51",
+				debug,
+				//codeList.Count, pro500Date.Count, beforeNotAnd.Count, beforeOr.Count, benefitNum.Count, 全て同じを確認
 				condRes.DispRes()
 			);
 		}
