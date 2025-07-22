@@ -1361,7 +1361,7 @@ End , T0:02:50:52.8773554
 			if (IsKara) { confirmAnds = KaraConfirmAnds; confirmOrs = KaraConfirmOrs; }
 			if (false) { confirmAnds = OldAnd51List; confirmOrs = OldOr51List; }
 			if (false) { confirmAnds = Old2And51List; confirmOrs = Old2Or51List; }
-			if (false) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
+			if (true) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
 			return (confirmAnds, confirmOrs);
 		}
 		private static int GetBeny(int benefit)
@@ -1443,7 +1443,7 @@ End , T0:02:50:52.8773554
 		// ささっと全体のスコアを調べる
 		public static void DebugCheckCond51Score()
 		{
-			if (false) {
+			if (true) {
 				DebugCheckCond51ScoreBase();
 			} else {
 				// AndのフルチェックをするときはconfirmOrsを空配列にする
@@ -1525,7 +1525,11 @@ End , T0:02:50:52.8773554
 			//foreach (KeyValuePair<int, int> pair in benefitNum) res += pair.Key + ":" + pair.Value + ", ";
 			//Common.DebugInfo(res);
 			//int idx = andSkip == -1 ? confirmOrs[orSkip] : confirmAnds[andSkip];
-			Common.DebugInfo("DebugCheckCond51", debug, condRes.DispRes());
+			Common.DebugInfo("DebugCheckCond51", 
+				debug, 
+				codeList.Count, pro500Date.Count, beforeNotAnd.Count, beforeOr.Count, benefitNum.Count,
+				condRes.DispRes()
+			);
 		}
 
 
