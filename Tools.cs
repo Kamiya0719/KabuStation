@@ -973,6 +973,14 @@ namespace CSharp_sample
 			List<string[]> a = CsvControll.GetPro500();
 			Common.DebugInfo(res + a.Count);
 
+			foreach(string date in new string[]{
+				"2025/07/17","2025/07/18","2025/07/19","2025/07/20","2025/07/21","2025/07/22","2025/07/23","2025/07/24","2025/07/25",
+			}){
+				DateTime d = DateTime.Parse(date);
+				int idx = Common.GetDateIdx(d);
+				Common.DebugInfo("date", date, d.ToString(), idx, Common.GetDateByIdx(idx).ToString());
+			}
+
 			TimeZoneInfo localZone = TimeZoneInfo.Local;
 
 			Console.WriteLine($"ID: {localZone.Id}");

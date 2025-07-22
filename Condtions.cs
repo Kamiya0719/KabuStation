@@ -1378,7 +1378,7 @@ End , T0:02:50:52.8773554
 			List<string>[] pro500All = CsvControll.GetPro500All();
 			Dictionary<string, HashSet<DateTime>> pro500Date = new Dictionary<string, HashSet<DateTime>>();
 			foreach (List<string> info in pro500All) {
-				DateTime date = DateTime.Now;
+				DateTime date = DateTime.Parse("2000/01/01");
 				for (int i = 0; i < info.Count; i++) {
 					if (i == 0) {
 						date = DateTime.Parse(info[0]);
