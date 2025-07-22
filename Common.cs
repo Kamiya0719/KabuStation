@@ -123,8 +123,7 @@ namespace CSharp_sample
 			if (dateList.Count == 0) {
 				DateTime loopDate = new DateTime(2017, 1, 1);// todo とりあえず2026年まで
 				for (int i = 0; i < 365 * (2027 - 2017); i++) { // とりあえず2017年まで
-					string youbi = loopDate.ToString("ddd");
-					if (!(youbi == "土" || youbi == "日" || IsRestDate(loopDate))) dateList.Add(loopDate);
+					if (!(loopDate.DayOfWeek == DayOfWeek.Saturday || loopDate.DayOfWeek == DayOfWeek.Sunday || IsRestDate(loopDate))) dateList.Add(loopDate);
 					loopDate = loopDate.AddDays(1);
 				}
 			}
