@@ -35,14 +35,14 @@ namespace CSharp_sample
 				if (execType == "23") Tools.OldCheck();
 				if (execType == "24") Condtions.SaveCond51All();
 				if (execType == "25") Condtions.SaveBenefitAll();
-				if (execType == "26") Condtions.CheckCond51All(param1);
-				if (execType == "27") Condtions.DebugCheckCond51Score(param1);
+				if (execType == "26") Condtions.Check51Rmv(param1);
+				if (execType == "27") Condtions.Check51One(param1);
 				if (execType == "28") Tools.CheckRanking();
 				if (execType == "29") Tools.CheckRankingBenfitAll();
 				//if (execType == "30") Condtions.Aaa();
 				if (execType == "31") Tools.SaveJapanScoreMulti(DateTime.Parse("2025/05/29"), DateTime.Parse("2025/06/03"));
 				if (execType == "32") Tools.CheckLossSell();
-				if (execType == "33") Condtions.CheckCond51All2(param1);
+				if (execType == "33") Condtions.Check51Alter(param1);
 				if (execType == "34") CsvControll.FileTest();
 
 			} catch (Exception e) {
