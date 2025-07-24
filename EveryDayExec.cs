@@ -54,6 +54,7 @@ namespace CSharp_sample
 
 			MinitesExec.SaveCodeDaily(true);
 			MinitesExec.SaveCodeResOrder();
+			CsvControll.Log("Interval", "SaveCodeResOrder", "", "");
 
 			Tools.DataChecker();
 			CsvControll.Log("Interval", "DataChecker", "", "");
@@ -119,22 +120,21 @@ namespace CSharp_sample
 				if (!Common.SameD(DateTime.Parse(codeInfo[codeInfo.Count - 1][0]), dDate)) {
 					// 板情報の取得リクエスト とりあえずexchangeは1
 					ResponseBoard resB = RequestBasic.RequestBoard(Int32.Parse(symbol), 1, true);
-					if (resB != null && resB.CurrentPrice > 0) {
-						// data[0]が日付,data[1-4]がデータ
-						string[] data = new string[5] {
-							// 始値,高値,安値,終値
-							dDate.ToString(CsvControll.DFORM) , resB.OpeningPrice.ToString(), resB.HighPrice.ToString(), resB.LowPrice.ToString(), resB.CurrentPrice.ToString()
-						};
-						for (int i = 1; i <= 4; i++) {
-							if (data[i] == "" || Double.Parse(data[i]) == 0) data[i] = lastEndPrice; // データがなければ前日のものをつっこむ
-						}
-						CsvControll.SaveCodeInfo(symbol, new List<string[]>() { data }, true);
-
-						lastLastEndPrice = Double.Parse(lastEndPrice);
-						lastEndPrice = data[4];
-					} else {
-						CsvControll.ErrorLog("SetEveryDay_CurrentPrice_0", symbol, lastEndPrice, resB?.CurrentPrice.ToString());
+					if (resB == null || resB.CurrentPrice == null || resB.CurrentPrice <= 0) {
+						CsvControll.ErrorLog("SetEveryDay_CurrentPrice_0", symbol, lastEndPrice, resB?.ToString());
 					}
+					// data[0]が日付,data[1-4]がデータ
+					string[] data = new string[5] {
+						// 始値,高値,安値,終値
+						dDate.ToString(CsvControll.DFORM) , resB?.OpeningPrice.ToString(), resB?.HighPrice.ToString(), resB?.LowPrice.ToString(), resB?.CurrentPrice.ToString()
+					};
+					for (int i = 1; i <= 4; i++) {
+						if (data[i] == null || data[i] == "" || Double.Parse(data[i]) == 0) data[i] = lastEndPrice; // データがなければ前日のものをつっこむ
+					}
+					CsvControll.SaveCodeInfo(symbol, new List<string[]>() { data }, true);
+
+					lastLastEndPrice = Double.Parse(lastEndPrice);
+					lastEndPrice = data[4];
 				}
 
 				if (Common.Sp10(symbol)) CsvControll.SaveSpInfo(new List<string[]>() { new string[2] { symbol, Tools.IsLowPriceCheck(symbol).ToString() } }, true);

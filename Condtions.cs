@@ -281,7 +281,7 @@ namespace CSharp_sample
 		public const int NoSkipRatio = 8;
 		private const bool TestCodeNum = false; // とりあえず30コードだけでテスト実行
 		private const bool IsKara = false; // 空売り用
-		//public const bool IsAndCheck = false; // andチェックかorチェックか
+										   //public const bool IsAndCheck = false; // andチェックかorチェックか
 		private const bool IsPro500Only = false;
 		private const bool IsPro500AllOnly = true; // 8年分のプロ500のみ
 		public static readonly double[] BenScore = new double[6] { 12, 3, 1, 0.3, -1, -3 };
@@ -462,7 +462,7 @@ namespace CSharp_sample
 			Check51Alter(isAndCheck);
 			//CheckCond51AllBase2(true);
 		}
-		private static void Check51Alter(bool isAndCheck)
+		private static bool Check51Alter(bool isAndCheck)
 		{
 			List<string> codeList = CsvControll.GetCodeList();
 			if (TestCodeNum) codeList = codeList.GetRange(0, 30);
@@ -555,6 +555,7 @@ namespace CSharp_sample
 			// 並び変えるか
 			HashSet<CondRes> condResAll = new HashSet<CondRes>();
 			string result = "";
+			double baseScore = 999999999;
 			for (int i = 0; i < kouhoNum; i++) {
 				int andIdx = i >= confirmAnds.Length ? confirmAnds.Length : i;
 				int orIdx = i < confirmAnds.Length ? confirmOrs.Length : i - confirmAnds.Length;
@@ -570,6 +571,11 @@ namespace CSharp_sample
 					);
 					condResList.Add(condRes);
 					condResAll.Add(condRes);
+
+					// ベーススコアを取得-1,-1,idx=0
+					if (condRes.andCond == -1 && condRes.orCond == -1 && ((isAndCheck && condRes.condIdx == AllTrueCondIdx) || (!isAndCheck && condRes.condIdx == AllTrueCondIdx - 1))) {
+						baseScore = condRes.subScore;
+					}
 				}
 
 				result = "";
@@ -578,8 +584,36 @@ namespace CSharp_sample
 			}
 
 			result = "";
-			foreach (CondRes c in condResAll.OrderByDescending(c => c.SortNum()).Take(80)) result += c.DispRes();
-			Common.DebugInfo("LowScoreRankAll", isAndCheck, result);
+			Dictionary<int, double> scores = new Dictionary<int, double>();
+			foreach (CondRes c in condResAll.OrderByDescending(c => c.SortNum()).Take(50)) {
+				result += c.DispRes();
+
+				double scoreDiff = c.subScore - baseScore;
+				if (scoreDiff > 0) {
+					int i = kouhoNum - 1;
+					if (c.andIdx != confirmAnds.Length) i = c.andIdx;
+					if (c.orIdx != confirmOrs.Length) i = c.orIdx + confirmAnds.Length;
+
+					if (!scores.ContainsKey(i)) scores[i] = 0;
+					scores[i] += scoreDiff;
+				}
+			}
+			foreach (var item in scores.OrderByDescending(kv => kv.Value)) {
+				int i = item.Key;
+				int andIdx = i >= confirmAnds.Length ? confirmAnds.Length : i;
+				int orIdx = i < confirmAnds.Length ? confirmOrs.Length : i - confirmAnds.Length;
+				foreach (CondRes c in condResAll.OrderByDescending(c => c.SortNum()).Take(50)) {
+					if (c.andIdx == andIdx && c.orIdx == orIdx) {
+						SaveConfirm(c);
+						Common.DebugInfo("Check51AlterTrue", item.Value, c.DispRes(), result);
+						return true;
+					}
+				}
+				Common.DebugInfo("Check51AlterError", andIdx, orIdx, item.Value, isAndCheck, result);
+			}
+
+			Common.DebugInfo("Check51AlterFalse", isAndCheck, result);
+			return false;
 		}
 
 
@@ -611,6 +645,12 @@ namespace CSharp_sample
 			if (false) { confirmAnds = OldAnd51List; confirmOrs = OldOr51List; }
 			if (false) { confirmAnds = Old2And51List; confirmOrs = Old2Or51List; }
 			if (false) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
+			if (true) {
+				List<string[]> info = CsvControll.GetCondConfirm();
+				confirmAnds = new int[info[0].Length]; confirmOrs = new int[info[1].Length];
+				for (int i = 0; i < info[0].Length; i++) confirmAnds[i] = Int32.Parse(info[0][i]);
+				for (int i = 0; i < info[1].Length; i++) confirmOrs[i] = Int32.Parse(info[1][i]);
+			}
 			return (confirmAnds, confirmOrs);
 		}
 		private static int GetBeny(int benefit)
@@ -685,6 +725,25 @@ namespace CSharp_sample
 				}
 			}
 			return (beforeNotAnd, beforeOr);
+		}
+		private static void SaveConfirm(CondRes res)
+		{
+			(bool isRmAnd, int rmIdx, bool isAddAnd, int addIdx) = res.GetChangeIdx();
+			List<string[]> info = CsvControll.GetCondConfirm();
+			List<int> confirmAnds = new List<int>(); List<int> confirmOrs = new List<int>();
+			foreach (string s in info[0]) {
+				if (isRmAnd && Int32.Parse(s) == rmIdx) continue;
+				confirmAnds.Add(Int32.Parse(s));
+			}
+			if (isAddAnd && addIdx >= 0) confirmAnds.Add(addIdx);
+			foreach (string s in info[1]) {
+				if (!isRmAnd && Int32.Parse(s) == rmIdx) continue;
+				confirmOrs.Add(Int32.Parse(s));
+			}
+			if (!isAddAnd && addIdx >= 0) confirmOrs.Add(addIdx);
+
+			info.Add(new string[] { res.DispRes() });
+			CsvControll.SetCondConfirm(info, false);
 		}
 
 
@@ -1449,9 +1508,9 @@ namespace CSharp_sample
 		}
 		public double SortNum()
 		{
-			return noBenys.Sum() >= 50000 ? subScore : (subScore / 10); // いったん5万以下は排除
-			//return subScore;
-			//return Condtions.IsAndCheck ? scores[3] : subScore;
+			return noBenys.Sum() >= 50000 ? subScore : (subScore / 100); // いったん5万以下は排除
+																		 //return subScore;
+																		 //return Condtions.IsAndCheck ? scores[3] : subScore;
 		}
 
 		public void SetNoBeny(int beny, int num, int confirmBeny)
@@ -1460,9 +1519,20 @@ namespace CSharp_sample
 		}
 		public void SetSkipBeny(int beny, int num) { skipBenys[beny] = num; }
 
+		public (bool, int, bool, int) GetChangeIdx()
+		{
+			// 削除対象がand,orどっちかとidx
+			bool isRmAnd = andIdx >= 0;
+			// 追加対象がand,orどっちかとidx
+			return (
+				isRmAnd, isRmAnd ? andIdx : orIdx,
+				isAndCheck, condIdx
+			);
+		}
+
 		public string DispRes()
 		{
-			return "\n" + condIdx + ", //Score:" + SortNum() + ", Beny:" + DispBeny()
+			return "\n" + condIdx + ", //Score:" + SortNum() + ", Beny:" + DispBeny() + ", isAndC:" + isAndCheck
 				+ ", sT:" + skipTrue + ", sP:" + skipPeriod + ", sB:" + skipBenefit
 				+ ", nT:" + noTrue + ", nP:" + noPeriod + ", nB:" + noBenefit + ",";
 			/*

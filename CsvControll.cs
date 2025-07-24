@@ -52,6 +52,7 @@ namespace CSharp_sample
 			DebugInfo, // DebugInfoで出力したやつをとりあえず保存しておく
 			Cond51All, // 全ての51判定情報を一時保存しておく
 			BenefitAll, // 全ての購入時利益情報を一時保存しておく
+			CondConfirm, // cond検証におけるconfirmAndとconfirmOrと変更ログ
 		}
 		private enum FOLDER_TYPE { Import, Code, EveryDay, Old, Log, Debug, } // DayMemo		
 																			  // ファイルタイプごとのフォルダ名
@@ -93,50 +94,10 @@ namespace CSharp_sample
 			{FILE_TYPE.ResponseSymbol, FOLDER_TYPE.Debug }, // 銘柄各種情報表示
 			{FILE_TYPE.DebugInfo, FOLDER_TYPE.Debug }, // デバッグ情報一時保存
 			{FILE_TYPE.Cond51All, FOLDER_TYPE.Debug }, // 全ての51判定情報を一時保存しておく
-			{FILE_TYPE.BenefitAll, FOLDER_TYPE.Debug }, // 全ての購入時利益情報を一時保存しておく		
+			{FILE_TYPE.BenefitAll, FOLDER_TYPE.Debug }, // 全ての購入時利益情報を一時保存しておく
+			{FILE_TYPE.CondConfirm, FOLDER_TYPE.Debug }, // cond検証におけるconfirmAndとconfirmOrと変更ログ
 		};
 
-		// ファイルタイプごとのファイル名
-		private static readonly Dictionary<FILE_TYPE, string> FileNames = new Dictionary<FILE_TYPE, string>() {
-			/* 外部から取得 */
-			{FILE_TYPE.Pro500, @"Import\Pro500" }, // 今季のプロ500銘柄一覧(銘柄コードのみ？)
-			{FILE_TYPE.Pro500All, @"Import\Pro500All" }, // プロ500全部
-			{FILE_TYPE.JapanRaw, @"Import\JapanRaw" }, // Webで仕入れてきた日経平均データの過去生データ
-			{FILE_TYPE.SplitDate, @"Import\SplitDate" }, // Webから取得した分割・合併銘柄日時情報
-			{FILE_TYPE.OldDataRaw, @"Import\OldDataRaw" }, // Excelで作った2000銘柄の過去生データ(巨大)
-			{FILE_TYPE.BuyConditions, @"Import\BuyConditions" }, // 購入決定のための51条件一覧(とりあえず固定)
-			/* コード情報 */
-			{FILE_TYPE.Code, @"Code\" }, // 銘柄ごとの各値段一覧データ
-			/* 毎日取得 */
-			{FILE_TYPE.Basic, @"EveryDay\Basic" }, // 汎用情報(トークン/当日最大JScore/推定登録中銘柄情報)
-			{FILE_TYPE.BaseJScore, @"EveryDay\BaseJScore" }, // 日経平均スコア
-			{FILE_TYPE.JScoreIkichis, @"EveryDay\JScoreIkichis" }, // 当日の安値を見て当日暫定日経平均スコアを決定する閾値
-			{FILE_TYPE.CodeDaily, @"EveryDay\CodeDaily" }, // 銘柄各種情報
-			{FILE_TYPE.CodeResOrder, @"EveryDay\CodeResOrder" }, // 注文一覧情報		
-			{FILE_TYPE.JapanCond, @"EveryDay\JapanCond\" }, // 日経平均の2000日付分の全51条件に対するそれぞれのTF情報
-			{FILE_TYPE.RankingInfo, @"EveryDay\RankingInfo" }, // 詳細ランキング情報
-			{FILE_TYPE.SpInfo, @"EveryDay\SpInfo" }, // Sp系情報
-			{FILE_TYPE.DayMemo, @"DayMemo" }, // 毎日のチェック用メモ
-			{FILE_TYPE.Board, @"EveryDay\Board" }, // リクエストしたBoard情報を一時保存			
-			/* デバッグ用？過去データ */
-			{FILE_TYPE.CodeResOrderOld, @"Old\CodeResOrderOld\" }, // 注文一覧情報 過去分
-			{FILE_TYPE.CodeDailyOld, @"Old\CodeDailyOld\" }, // 銘柄各種情報 過去分
-			{FILE_TYPE.RankingInfoOld, @"Old\RankingInfoOld\" }, // 詳細ランキングに関する情報 過去分			
-			/* ログ系 */
-			{FILE_TYPE.Log, @"Log\Log" }, // ログ今日分(タグごとにファイル分ける？)
-			{FILE_TYPE.ErrorLog, @"Log\ErrorLog" }, // エラーログ今日分(タグごとにファイル分ける？)
-			{FILE_TYPE.SymbolLog, @"Log\SymbolLog\" }, // シンボルログ今日分(タグごとにファイル分ける？)
-			{FILE_TYPE.LogOld, @"Log\LogOld\" }, // ログ過去分
-			{FILE_TYPE.ErrorLogOld, @"Log\ErrorLogOld\" }, // エラーログ過去分
-			/* 検証用一時情報 */
-			{FILE_TYPE.BuyCode, @"Debug\BuyCode\" }, // 購入可否情報(検証用一時情報)
-			{FILE_TYPE.AllCodeList, @"Debug\AllCodeList\" }, // 日経平均の2000日付分の全51条件に対するそれぞれのTF情報(検証用一時情報)		
-			{FILE_TYPE.CodeDispInfo, @"Debug\CodeDispInfo\" }, // 銘柄各種情報表示
-			{FILE_TYPE.ResponseSymbol, @"Debug\ResponseSymbol" }, // 銘柄各種情報表示
-			{FILE_TYPE.DebugInfo, @"Debug\DebugInfo" }, // デバッグ情報一時保存
-			{FILE_TYPE.Cond51All, @"Debug\Cond51All\" }, // 全ての51判定情報を一時保存しておく
-			{FILE_TYPE.BenefitAll, @"Debug\BenefitAll\" }, // 全ての購入時利益情報を一時保存しておく		
-		};
 		public const string DFORM = "yyyy/MM/dd";
 		public const string DFILEFORM = "yyyyMMdd";
 
@@ -452,6 +413,11 @@ namespace CSharp_sample
 		// 検証用 リクエスト保存用
 		public static List<string[]> GetResponseSymbol() { return GetCsvDatas(FILE_TYPE.ResponseSymbol); }
 
+		// 検証用 check51用各種情報
+		public static void SetCondConfirm(List<string[]> datas, bool isAddWrite) { SaveCsvDatas(FILE_TYPE.CondConfirm, "", datas, isAddWrite); }
+		// 検証用 check51用各種情報
+		public static List<string[]> GetCondConfirm() { return GetCsvDatas(FILE_TYPE.CondConfirm); }
+
 
 		// ログ情報を保存
 		public static void Log(string tag, string d1, string d2, string d3)
@@ -547,9 +513,9 @@ namespace CSharp_sample
 			string path;
 			if (type == FILE_TYPE.DayMemo) {
 				path = Path.Combine(FilePath(), "..", type.ToString(), addName);
-			}else		if (type == FILE_TYPE.Code) {
+			} else if (type == FILE_TYPE.Code) {
 				path = Path.Combine(FilePath(), type.ToString(), addName);
-			}else{
+			} else {
 				path = Path.Combine(FilePath(), FolderTypes[type].ToString(), type.ToString(), addName);
 			}
 			return isCsv ? path + ".csv" : path;

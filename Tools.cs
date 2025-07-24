@@ -185,6 +185,9 @@ namespace CSharp_sample
 					if (date.ToString(CsvControll.DFORM) == firstDate) codeStart = i;
 					if (codeStart < 0) { continue; }// 1301ほど古い日付がないやつ用のスキップ
 
+					if(codeInfo.Count <= i - codeStart) {
+						CsvControll.ErrorLog("DataChecker0", code, date.ToString(CsvControll.DFORM),i.ToString());
+					}
 					string[] info = codeInfo[i - codeStart];
 					if (date.ToString(CsvControll.DFORM) != info[0]) {
 						// エラー1 代表の1301の日付一覧と異なる
