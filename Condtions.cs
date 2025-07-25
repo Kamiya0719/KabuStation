@@ -1081,15 +1081,15 @@ csv
 		{
 			return periodCntList.GetLength(0) * ratioList.Length * diffDayList.Length * 2;
 		}
-		private static (int[], int[]) GetConfirms()
+		private static (int[], int[]) GetConfirms(int type = 4)
 		{
 			int[] confirmAnds = ConfirmAnds; int[] confirmOrs = ConfirmOrs;
 
 			if (IsKara) { confirmAnds = KaraConfirmAnds; confirmOrs = KaraConfirmOrs; }
-			if (false) { confirmAnds = OldAnd51List; confirmOrs = OldOr51List; }
-			if (false) { confirmAnds = Old2And51List; confirmOrs = Old2Or51List; }
-			if (false) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
-			if (true) {
+			if (type == 1) { confirmAnds = OldAnd51List; confirmOrs = OldOr51List; }
+			if (type == 2) { confirmAnds = Old2And51List; confirmOrs = Old2Or51List; }
+			if (type == 3) { confirmAnds = new int[0] { }; confirmOrs = new int[1] { AllTrueCondIdx }; }
+			if (type == 4) {
 				List<string[]> info = CsvControll.GetCondConfirm();
 				confirmAnds = new int[info[0].Length]; confirmOrs = new int[info[1].Length];
 				for (int i = 0; i < info[0].Length; i++) confirmAnds[i] = Int32.Parse(info[0][i]);
@@ -1289,6 +1289,90 @@ csv
 		}
 
 
+		// 複数のConfirmでのスコアを調べる
+		public static void Check51Double()
+		{
+			// a
+			(int[] confirmAnds, int[] confirmOrs) = GetConfirms();
+
+			//(int[] confirmAnds, int[] confirmOrs) = GetConfirms();
+
+			bool isAllScore = false; // Andチェック・Orチェックを無視する
+			bool isOrOkForce = confirmOrs.Length == 0; // orチェックを強制でOKにしておく
+			List<string> codeList = CsvControll.GetCodeList();
+			if (IsPro500Only) codeList = codeList.FindAll(c => Array.IndexOf(OldPro500, Int32.Parse(c)) >= 0);
+
+			(Dictionary<string, HashSet<string>> beforeNotAnd, Dictionary<string, HashSet<string>> beforeOr) = GetBeforeInfo(codeList, confirmAnds, confirmOrs, -1, -1);
+
+			Dictionary<string, HashSet<DateTime>> pro500Date = Getpro500Date();
+
+			int[] info = new int[IdxMax * 2];
+			int numAll = 0;
+			Dictionary<int, int> benefitNum = new Dictionary<int, int>();
+			foreach (string symbol in codeList) {
+				HashSet<string> pro500Ds = GetPro500Ds(pro500Date, symbol);
+				if (IsPro500AllOnly) {
+					if (!pro500Date.ContainsKey(symbol)) continue;
+				}
+
+				(Dictionary<string, int> benefits, Dictionary<string, int> havePeriods) = GetBenefitData(symbol);
+
+				int nowHaves = 0;
+				(int pIdx, int ratioIdx, int diffDayIdx, bool isT) = SplitCondIdx(AllTrueCondIdx);
+				List<string[]> list = CsvControll.GetCond51All(symbol, diffDayIdx, ratioIdx);
+				for (int i = 0; i < list.Count; i++) {
+					string[] cond51 = list[i];
+					if (IsPro500AllOnly && !pro500Ds.Contains(cond51[0])) continue;
+					if (!benefits.ContainsKey(cond51[0])) continue;
+
+					numAll++;
+					if (!isAllScore) {
+						if (beforeNotAnd[symbol].Contains(cond51[0])) continue;
+						if (!isOrOkForce && !beforeOr[symbol].Contains(cond51[0])) continue;
+					}
+
+					if (!benefitNum.ContainsKey(benefits[cond51[0]])) benefitNum[benefits[cond51[0]]] = 0;
+					benefitNum[benefits[cond51[0]]]++;
+
+					info[IdxMax + GetBeny(benefits[cond51[0]])]++;
+					info[IdxMax + IdxTrue]++;
+					info[IdxMax + IdxBene] += benefits[cond51[0]];
+					info[IdxMax + IdxPeri] += havePeriods[cond51[0]];
+
+					if (nowHaves > i) continue;
+
+					info[GetBeny(benefits[cond51[0]])]++;
+					info[IdxTrue]++;
+					info[IdxBene] += benefits[cond51[0]];
+					info[IdxPeri] += havePeriods[cond51[0]];
+					nowHaves = i + havePeriods[cond51[0]] + 1;
+				}
+			}
+
+			int[] confirmBeny = new int[6];
+			CondRes condRes = new CondRes(-1, -1, -1, -1, 0, info, confirmBeny, false);
+			Common.DebugInfo("DebugCheckCond51", condRes.DispRes());
+		}
+		private static void GetAa(List<string> codeList, List<int> types, bool isAnd)
+		{
+			Dictionary<string, HashSet<string>> okListAll = new Dictionary<string, HashSet<string>>();
+			foreach (int type in types) {
+				(int[] confirmAnds, int[] confirmOrs) = GetConfirms(type);
+				(Dictionary<string, HashSet<string>> beforeNotAnd, Dictionary<string, HashSet<string>> beforeOr) = GetBeforeInfo(codeList, confirmAnds, confirmOrs, -1, -1);
+				Dictionary<string, HashSet<string>> okList = new Dictionary<string, HashSet<string>>();
+				foreach (var item in beforeOr) {
+					foreach (string date in item.Value) {
+						if (beforeNotAnd[item.Key].Contains(date)) continue;
+						if (!okList.ContainsKey(item.Key)) okList[item.Key] = new HashSet<string>();
+						okList[item.Key].Add(date);
+					}
+				}
+
+
+			}
+
+
+		}
 
 
 
@@ -1944,7 +2028,7 @@ csv
 					subScore2 += (double)noBenys[beny] / noSum * Condtions.BenScore[beny];
 				}
 				scores[i] = Common.Round(scores[i], 3);
-				subScore = Common.Round((subScore2 * -10000) * Math.Pow(noSum, 0.55) * Math.Pow(Math.Max(skipBenefit, 0.000001), 0.5)) / Math.Pow(skipPeriod, 0.2);
+				subScore = Common.Round((subScore2 * -10000) * Math.Pow(noSum, 0.5) * Math.Pow(Math.Max(skipBenefit, 0.000001), 0.5)) / Math.Pow(skipPeriod, 0.2);
 				subScore2 = Common.Round(subScore2 * -10000);
 				return;
 			}
@@ -1972,7 +2056,7 @@ csv
 			bool isRmAnd = andIdx >= 0;
 			// 追加対象がand,orどっちかとidx
 			return (
-				isRmAnd, isRmAnd ? andIdx : orIdx,
+				isRmAnd, isRmAnd ? andCond : orCond,
 				isAndCheck, condIdx
 			);
 		}
