@@ -891,14 +891,14 @@ csv
 		// confirmAnds,confirmOrsのうち一個のcondを抜いて、新しいものを一個追加した際の検証を全通り(Kouhoは使わない)
 		public static void Check51Alter(string param1)
 		{
-			if(true){
+			if (true) {
 				bool isAndCheck = param1 == "1";
 				Check51AlterBase(isAndCheck);
 				//Check51Alter(!isAndCheck);
 			} else {
-				while(true){
+				while (true) {
 					bool isOrOk = true;
-					for(int i =0; i < 4; i++){
+					for (int i = 0; i < 4; i++) {
 						isOrOk = Check51AlterBase(false);
 						if (!isOrOk) break;
 					}
@@ -1049,7 +1049,7 @@ csv
 				foreach (CondRes c in condResAll.OrderByDescending(c => c.SortNum()).Take(50)) {
 					if (c.andIdx == andIdx && c.orIdx == orIdx) {
 						SaveConfirm(c);
-						Common.DebugInfo("Check51AlterTrue", item.Value, c.DispRes(), result);
+						Common.DebugInfo("Check51AlterTrue", item.Value, baseScore, c.DispRes(), result);
 						return true;
 					}
 				}
@@ -1174,19 +1174,20 @@ csv
 		{
 			(bool isRmAnd, int rmIdx, bool isAddAnd, int addIdx) = res.GetChangeIdx();
 			List<string[]> info = CsvControll.GetCondConfirm();
-			List<int> confirmAnds = new List<int>(); List<int> confirmOrs = new List<int>();
+			List<string> confirmAnds = new List<string>(); List<string> confirmOrs = new List<string>();
 			foreach (string s in info[0]) {
 				if (isRmAnd && Int32.Parse(s) == rmIdx) continue;
-				confirmAnds.Add(Int32.Parse(s));
+				confirmAnds.Add(s);
 			}
-			if (isAddAnd && addIdx >= 0) confirmAnds.Add(addIdx);
+			if (isAddAnd && addIdx >= 0) confirmAnds.Add(addIdx.ToString());
+			info[0] = confirmAnds.ToArray();
+
 			foreach (string s in info[1]) {
 				if (!isRmAnd && Int32.Parse(s) == rmIdx) continue;
-				confirmOrs.Add(Int32.Parse(s));
+				confirmOrs.Add(s);
 			}
-			if (!isAddAnd && addIdx >= 0) confirmOrs.Add(addIdx);
-
-			// todo confirmを変換してinfoに突っ込む
+			if (!isAddAnd && addIdx >= 0) confirmOrs.Add(addIdx.ToString());
+			info[1] = confirmOrs.ToArray();
 
 			info.Add(new string[] { res.DispRes() });
 			CsvControll.SetCondConfirm(info, false);
@@ -1943,7 +1944,7 @@ csv
 					subScore2 += (double)noBenys[beny] / noSum * Condtions.BenScore[beny];
 				}
 				scores[i] = Common.Round(scores[i], 3);
-				subScore = Common.Round((subScore2 * -10000) * Math.Pow(noSum, 0.65) * Math.Pow(Math.Max(skipBenefit, 0.000001), 0.5)) * Math.Pow(skipPeriod, 0.2);
+				subScore = Common.Round((subScore2 * -10000) * Math.Pow(noSum, 0.55) * Math.Pow(Math.Max(skipBenefit, 0.000001), 0.5)) / Math.Pow(skipPeriod, 0.2);
 				subScore2 = Common.Round(subScore2 * -10000);
 				return;
 			}

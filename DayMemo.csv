@@ -1,79 +1,36 @@
 -----ErrorLog-----
-2025/07/24 16:37:33,SetEveryDay_CurrentPrice_0,5922,13270,
-2025/07/24 17:01:35,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 17:01:35,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 17:01:35,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 17:01:35,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 17:01:37,DateParse,0,,
-2025/07/24 17:01:37,DateParse,0,,
-2025/07/24 17:01:37,DateParse,0,,
-2025/07/24 17:01:37,DateParse,0,,
-2025/07/24 17:01:50,Exception,1,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
-パラメーター名:index,
-2025/07/24 20:18:58,SetEveryDay_CurrentPrice_0,5922,13270,
-2025/07/24 20:23:21,SaveJapanScoreOneDay,2025/07/25 0:00:00,DataExist,0
-2025/07/24 20:23:23,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:23:23,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:23:23,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:23:23,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:23:24,DateParse,0,,
-2025/07/24 20:23:24,DateParse,0,,
-2025/07/24 20:23:37,Exception,1,インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
-パラメーター名:index,
-2025/07/24 20:26:16,DataChecker0,5922,2025/07/24,1999
-2025/07/24 20:26:16,Exception:System.ArgumentOutOfRangeException,Exec:5,Mes:インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
-パラメーター名:index,Stack:   場所 System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
-   場所 System.Collections.Generic.List`1.get_Item(Int32 index)
-   場所 CSharp_sample.Tools.DataChecker() 場所 C:\Users\ojiro\Documents\C#\CSharp\Tools.cs:行 191
-   場所 CSharp_sample.MainExec.Main(String[] args) 場所 C:\Users\ojiro\Documents\C#\CSharp\MainExec.cs:行 17
-2025/07/24 20:32:59,SetEveryDay_CurrentPrice_0,5922,13270,
-2025/07/24 20:37:26,SaveJapanScoreOneDay,2025/07/25 0:00:00,DataExist,0
-2025/07/24 20:37:28,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:37:28,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:37:28,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:37:28,Is51Cond,2025/07/25 0:00:00,2025/07/23 0:00:00,
-2025/07/24 20:37:30,DateParse,0,,
-2025/07/24 20:37:30,DateParse,0,,
-2025/07/24 20:37:42,DataChecker0,5922,2025/07/24,1999
-2025/07/24 20:37:42,Exception:System.ArgumentOutOfRangeException,Exec:1,Mes:インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
-パラメーター名:index,Stack:   場所 System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
-   場所 System.Collections.Generic.List`1.get_Item(Int32 index)
-   場所 CSharp_sample.Tools.DataChecker() 場所 C:\Users\ojiro\Documents\C#\CSharp\Tools.cs:行 191
-   場所 CSharp_sample.EveryDayExec.ExecBasic() 場所 C:\Users\ojiro\Documents\C#\CSharp\EveryDayExec.cs:行 59
-   場所 CSharp_sample.MainExec.Main(String[] args) 場所 C:\Users\ojiro\Documents\C#\CSharp\MainExec.cs:行 13
-2025/07/24 21:01:29,SetEveryDay_CurrentPrice_0,5922,13270,
-2025/07/24 21:01:29,Exception:System.ArgumentNullException,Exec:1,Mes:値を Null にすることはできません。
-パラメーター名:value,Stack:   場所 System.Number.ParseDouble(String value, NumberStyles options, NumberFormatInfo numfmt)
-   場所 System.Double.Parse(String s)
-   場所 CSharp_sample.EveryDayExec.SetEveryDay(DateTime setDate) 場所 C:\Users\ojiro\Documents\C#\CSharp\EveryDayExec.cs:行 132
-   場所 CSharp_sample.EveryDayExec.ExecBasic() 場所 C:\Users\ojiro\Documents\C#\CSharp\EveryDayExec.cs:行 37
-   場所 CSharp_sample.MainExec.Main(String[] args) 場所 C:\Users\ojiro\Documents\C#\CSharp\MainExec.cs:行 13
-
 2025/07/24 21:22:26,SetEveryDay_CurrentPrice_0,5922,13270,
 2025/07/24 21:26:49,SaveJapanScoreOneDay,2025/07/25 0:00:00,DataExist,0
------BuyData(明日購入総額:329000,余力:3789835.13513514, 単体余力:968513.423423424)-----
-コード:1435,推定購入費用:46200,前日終値:154,所持数:0,SP系:True
+2025/07/24 23:32:14,Exception:System.ArgumentOutOfRangeException,Exec:33,Mes:インデックスが範囲を超えています。負でない値で、コレクションのサイズよりも小さくなければなりません。
+パラメーター名:index,Stack:   場所 System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   場所 System.Collections.Generic.List`1.get_Item(Int32 index)
+   場所 CSharp_sample.Condtions.GetConfirms() 場所 C:\Users\ojiro\Documents\C#\CSharp\Condtions.cs:行 650
+   場所 CSharp_sample.Condtions.Check51Alter(Boolean isAndCheck) 場所 C:\Users\ojiro\Documents\C#\CSharp\Condtions.cs:行 469
+   場所 CSharp_sample.Condtions.Check51Alter(String param1) 場所 C:\Users\ojiro\Documents\C#\CSharp\Condtions.cs:行 462
+   場所 CSharp_sample.MainExec.Main(String[] args) 場所 C:\Users\ojiro\Documents\C#\CSharp\MainExec.cs:行 45
+-----BuyData(明日購入総額:280300,余力:3802071.62162162, 単体余力:971640.525525525)-----
+コード:1435,推定購入費用:46500,前日終値:155,所持数:0,SP系:True
 コード:2930,推定購入費用:43800,前日終値:146,所持数:0,SP系:True
 コード:3656,推定購入費用:48400,前日終値:121,所持数:0,SP系:True
-コード:4571,推定購入費用:41400,前日終値:138,所持数:0,SP系:True
-コード:4829,推定購入費用:47600,前日終値:119,所持数:0,SP系:True
-コード:6048,推定購入費用:50000,前日終値:100,所持数:0,SP系:True
-コード:6054,推定購入費用:0,前日終値:146,所持数:300,SP系:True
+コード:4571,推定購入費用:42000,前日終値:140,所持数:0,SP系:True
+コード:4829,推定購入費用:48000,前日終値:120,所持数:0,SP系:True
+コード:6048,推定購入費用:0,前日終値:99,所持数:300,SP系:True
+コード:6054,推定購入費用:0,前日終値:145,所持数:200,SP系:True
 コード:6072,推定購入費用:51600,前日終値:172,所持数:0,SP系:True
------HaveData(現在所持総額:3118300)-----
-コード:2432,損切:False,評価額:968000,所持数:400,最小購入値:2410,最小利益:0.357883817427386,理想売値:2579,前日終値:2420,SP系:False
-コード:3791,損切:False,評価額:1023000,所持数:600,最小購入値:1710,最小利益:-0.32504873294347,理想売値:1830,前日終値:1705,SP系:False
-コード:3915,損切:False,評価額:947600,所持数:400,最小購入値:2407,最小利益:-1.61127267691455,理想売値:2576,前日終値:2369,SP系:False
-コード:6054,損切:False,評価額:43800,所持数:300,最小購入値:147,最小利益:-0.712018140589569,理想売値:148,前日終値:146,SP系:True
-コード:6093,損切:False,評価額:38700,所持数:300,最小購入値:135,最小利益:-4.93333333333333,理想売値:136,前日終値:129,SP系:True
-コード:8202,損切:False,評価額:97200,所持数:600,最小購入値:163,最小利益:-2.65050505050505,理想売値:164,前日終値:162,SP系:True
------BuyOrder(今日購入総額:97600)-----
+-----HaveData(現在所持総額:2101100)-----
+コード:2432,損切:False,評価額:952400,所持数:400,最小購入値:2410,最小利益:-1.26846473029046,理想売値:2507,前日終値:2381,SP系:False
+コード:3915,損切:False,評価額:954400,所持数:400,最小購入値:2407,最小利益:-0.913169921063565,理想売値:2576,前日終値:2386,SP系:False
+コード:6048,損切:False,評価額:29700,所持数:300,最小購入値:100,最小利益:-1.01,理想売値:101,前日終値:99,SP系:True
+コード:6054,損切:False,評価額:29000,所持数:200,最小購入値:147,最小利益:-1.40136054421769,理想売値:148,前日終値:145,SP系:True
+コード:6093,損切:False,評価額:39000,所持数:300,最小購入値:135,最小利益:-4.2,理想売値:136,前日終値:130,SP系:True
+コード:8202,損切:False,評価額:96600,所持数:600,最小購入値:163,最小利益:-3.26464646464646,理想売値:164,前日終値:161,SP系:True
+-----BuyOrder(今日購入総額:109500)-----
 コード:4829,数量:400/400,値段:119,評価額:47600/47600,SP系:True
+コード:4829,数量:100/0,値段:119,評価額:11900/0,SP系:True
 コード:6048,数量:500/500,値段:100,評価額:50000/50000,SP系:True
------SellOrder(今日売却総額:252600)-----
-コード:3656,数量:400/400,値段:120,評価額:48000/48000,損切:False,SP系:True
-コード:4571,数量:300/300,値段:139,評価額:41700/41700,損切:False,SP系:True
+-----SellOrder(今日売却総額:1193000)-----
+コード:3791,数量:600/600,値段:1830,評価額:1098000/1098000,損切:False,SP系:False
 コード:4829,数量:400/400,値段:120,評価額:48000/48000,損切:False,SP系:True
-コード:6048,数量:500/500,値段:101,評価額:50500/50500,損切:False,SP系:True
-コード:6072,数量:300/300,値段:171,評価額:51300/51300,損切:False,SP系:True
-コード:6093,数量:100/0,値段:131,評価額:13100/0,損切:False,SP系:True
+コード:4829,数量:100/100,値段:120,評価額:12000/12000,損切:False,SP系:True
+コード:6048,数量:200/500,値段:101,評価額:20200/50500,損切:False,SP系:True
+コード:6054,数量:100/0,値段:148,評価額:14800/0,損切:False,SP系:True
