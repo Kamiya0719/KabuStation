@@ -253,8 +253,8 @@ namespace CSharp_sample
 			1069,
 			*/
 			//AllTrueCondIdx, // 全部を許可するやつ Andのみチェック用
-			528,6625,2615,8203,3234,992,8296,8393,4762,6151,3012,3456,1939,5612,4806,7910,2086,
-			8165,7995,2280,6096,7787,4100,3359,8031,6068,2147,2738,7077,7979,6905,24,
+			528,6625,8203,3234,992,8296,8393,4762,6151,3012,3456,1939,5612,4806,7910,2086,
+			8165,7995,2280,6096,7787,4100,3359,8031,6068,2147,2738,7077,7979,6905,24,391,
 
 /*
 LowScoreRank , T0:False , T1:0 , T2:32 , T3:
@@ -891,7 +891,7 @@ csv
 		// confirmAnds,confirmOrsのうち一個のcondを抜いて、新しいものを一個追加した際の検証を全通り(Kouhoは使わない)
 		public static void Check51Alter(string param1)
 		{
-			if (true) {
+			if (false) {
 				bool isAndCheck = param1 == "1";
 				Check51AlterBase(isAndCheck);
 				//Check51Alter(!isAndCheck);
@@ -1368,7 +1368,24 @@ csv
 					}
 				}
 
+				if (okListAll.Count == 0) {
+					okListAll = new Dictionary<string, HashSet<string>>(okList);
+				} else {
+					// andは全部を満たし(満たしてないものを排除していく)、orはいずれか(満たしているものを足していく)
+					if (isAnd) {
+						foreach(var item in okListAll){
+							string symbol = item.Key;
+							// 丸ごと消す　あとで？
+							if(!okList.ContainsKey(symbol)) okListAll[symbol] = new HashSet<string>();
 
+						}
+					} else {
+						foreach (var item in okList) {
+							string symbol = item.Key;
+
+						}
+					}
+				}
 			}
 
 
@@ -2053,7 +2070,7 @@ csv
 		public (bool, int, bool, int) GetChangeIdx()
 		{
 			// 削除対象がand,orどっちかとidx
-			bool isRmAnd = andIdx >= 0;
+			bool isRmAnd = andCond >= 0;
 			// 追加対象がand,orどっちかとidx
 			return (
 				isRmAnd, isRmAnd ? andCond : orCond,
